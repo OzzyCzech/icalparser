@@ -42,6 +42,9 @@
  * </code>
  *
  */
+
+namespace Helpers\Calendar;
+
 class ical
 {
 

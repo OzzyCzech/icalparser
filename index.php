@@ -9,8 +9,7 @@
   <body>
     <?php
     require_once 'ical.php';
-
-    $ical = new ical('http://www.google.com/calendar/ical/cs.czech%23holiday%40group.v.calendar.google.com/public/basic.ics');
+    $ical = new \Helpers\Calendar\ical('http://www.google.com/calendar/ical/cs.czech%23holiday%40group.v.calendar.google.com/public/basic.ics');
     $ical->parse();
 
     echo '<h1>Unsort events list</h1>';
