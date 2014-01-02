@@ -1,5 +1,4 @@
-About iCal parser
-----------------
+# About iCal parser
 
 Internet Calendaring Parser (http://www.ietf.org/rfc/rfc2445.txt) or iCal parser is simple PHP 5 class under for parsing format into array.
 
