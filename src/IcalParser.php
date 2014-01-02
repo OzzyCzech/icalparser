@@ -1,50 +1,11 @@
 <?php
-/*
-  Copyright (c) 2010, Roman Ožana
-
-  Permission is hereby granted, free of charge, to any person
-  obtaining a copy of this software and associated documentation
-  files (the "Software"), to deal in the Software without
-  restriction, including without limitation the rights to use,
-  copy, modify, merge, publish, distribute, sublicense, and/or sell
-  copies of the Software, and to permit persons to whom the
-  Software is furnished to do so, subject to the following
-  conditions:
-
-  The above copyright notice and this permission notice shall be
-  included in all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-  HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-  OTHER DEALINGS IN THE SOFTWARE.
- */
+namespace om;
 /**
- * This class Parse iCal standard. Is prepare to iCal feature version. Now is testing with apple iCal standard 2.0.
+ * Copyright (c) 2004 Roman Ožana (http://www.omdesign.cz)
  *
- * @name iCal parser
- * @copyright Roman Ožana, 2011
- * @author Roman Ožana 2006-2011
- * @link www.nabito.net
- * @link www.omdesign.cz
- * @version 2.0
- * @license MIT
- *
- * <code>
- *  $ical = new ical('./calendar.ics');
- *  $ical->parse();
- *  echo '<pre>'.print_r($ical->get_all_data(), true).'</pre>';
- * </code>
- *
+ * @author Roman Ožana <ozana@omdesign.cz>
  */
-
-namespace Helpers\Calendar;
-
-class ical {
+class IcalParser {
 
 	/** @var string content of file */
 	private $plain_content = null;
@@ -57,20 +18,14 @@ class ical {
 	/** @var string nesting or open tag */
 	private $nesting = 'VCALENDAR';
 
-
 	/**
-	 * Constructr iCal parser object
-	 *
-	 * @param string $filename
+	 * @param string|null $filename
 	 */
 	public function __construct($filename = null) {
 		if (!is_null($filename)) $this->read_file($filename);
 	}
 
-
 	/**
-	 * Read iCal file
-	 *
 	 * @param string $filename
 	 */
 	public function read_file($filename) {
@@ -86,16 +41,14 @@ class ical {
 
 
 	/**
-	 * Prekladac kalendare
-	 *
-	 * @param string|url $filename
-	 * @return unknown
+	 * @return array
+	 * @throws \Exception
 	 */
 	public function parse() {
 		$this->plain_content = preg_split("/[\n]/", $this->plain_content); // split by lines
 		// is this text vcalendar standart text ? on line 1 is BEGIN:VCALENDAR
 		if (strpos($this->plain_content[0], 'BEGIN:VCALENDAR') === false) {
-			throw new Exception('Not a VCALENDAR file');
+			throw new \Exception('Not a VCALENDAR file');
 		}
 
 		foreach ($this->plain_content as $text) {
@@ -238,6 +191,7 @@ class ical {
 		// zjisteni TZID
 		$temp = explode(";", $key);
 
+		$data = null;
 		if (empty($temp[1])) // neni TZID
 		{
 			$data = str_replace('T', '', $data);
@@ -266,25 +220,16 @@ class ical {
 	public function get_sort_event_list() {
 		$temp = $this->get_event_list();
 		if (!empty($temp)) {
-			usort($temp, array(&$this, "ical_dtstart_compare"));
+			usort(
+				$temp, function ($a, $b) {
+					return strnatcasecmp($a['DTSTART']['unixtime'], $b['DTSTART']['unixtime']);
+				}
+			);
 			return $temp;
 		} else {
 			return false;
 		}
 	}
-
-
-	/**
-	 * Compare two unix timestamp
-	 *
-	 * @param array $a
-	 * @param array $b
-	 * @return integer
-	 */
-	private function ical_dtstart_compare($a, $b) {
-		return strnatcasecmp($a['DTSTART']['unixtime'], $b['DTSTART']['unixtime']);
-	}
-
 
 	/**
 	 * Return eventlist array (not sort eventlist array)
@@ -297,8 +242,6 @@ class ical {
 
 
 	/**
-	 * Return todo arry (not sort todo array)
-	 *
 	 * @return array
 	 */
 	public function get_todo_list() {
@@ -314,7 +257,6 @@ class ical {
 	public function get_calender_data() {
 		return $this->cal['VCALENDAR'];
 	}
-
 
 	/**
 	 * Return array with all data
