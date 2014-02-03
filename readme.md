@@ -4,3 +4,9 @@
 
 Internet Calendaring Parser (http://www.ietf.org/rfc/rfc2445.txt) or iCal parser is simple PHP 5 class under for parsing format into array.
 
+
+
+
+## TODO
+
+- add ATTENDEE support http://www.kanzaki.com/docs/ical/attendee.html
