@@ -31,7 +31,6 @@ class IcalParser {
 			throw new \InvalidArgumentException('Invalid ICAL data format');
 		}
 
-
 		$counters = array();
 		$section = 'VCALENDAR';
 
@@ -64,11 +63,12 @@ class IcalParser {
 					break;
 			}
 
-			list($key, $value) = $this->parseRow($row);
+			list($key, $middle, $value) = $this->parseRow($row);
+
 
 			if ($callback) {
 				// call user function for processing line
-				call_user_func($callback, $row, $key, $value, $section, $counters[$section]);
+				call_user_func($callback, $row, $key, $middle, $value, $section, $counters[$section]);
 			} else {
 				if ($section === 'VCALENDAR') {
 					$this->data[$key] = $value;
@@ -84,115 +84,94 @@ class IcalParser {
 	}
 
 	private function parseRow($row) {
-		preg_match('#^([A-Z\-]+)(.*?):([^:]*)$#i', $row, $matches);
+		preg_match('#^([\w-]+);?(.*?):(.*)$#i', $row, $matches);
 
 		$key = false;
-		$value = $row;
+		$middle = null;
+		$value = null;
 
 		if ($matches) {
 			$key = $matches[1];
 			$middle = $matches[2];
 			$value = $matches[3];
+			$timezone = null;
 
 			if ($key === 'X-WR-TIMEZONE') {
-				if ($date = \DateTime::createFromFormat('e', $value)) {
-					$this->timezone = $value = $date->getTimezone();
+				$this->timezone = new \DateTimeZone($value);
+			}
+
+			// have some middle part ?
+			if ($middle && preg_match_all('#(?<key>[^=;]+)=(?<value>[^;]+)#', $middle, $matches, PREG_SET_ORDER)) {
+				$middle = array();
+
+				foreach ($matches as $match) {
+					if ($match['key'] === 'TZID' && $timezone = new \DateTimeZone($match['value'])) {
+						$middle[$match['key']] = $timezone;
+					} else {
+						$middle[$match['key']] = $match['value'];
+					}
 				}
 			}
+		}
 
-			// process simple dates
-			if (($key === 'DTSTAMP') || ($key === 'LAST-MODIFIED') || ($key === 'CREATED')) {
-				$value = new \DateTime($value, $this->timezone);
-			}
+		// process simple dates with timezone
+		if ($key === 'DTSTAMP' || $key === 'LAST-MODIFIED' || $key === 'CREATED' || $key === 'DTSTART' || $key === 'DTEND') {
+			$value = new \DateTime($value, ($timezone ? : $this->timezone));
+		}
 
-			// process RRULE
-			if ($key === 'RRULE') {
-				$value = $this->icalRrule($value);
-			}
-
-			if ($key === 'CATEGORIES') {
-				$value = explode(',', $value);
-			}
-
-			//
-			// process ical date values like
-			//
-			// [DTSTART;VALUE=DATE] => 20121224
-			// [DTEND;VALUE=DATE] => 20121225
-			if (strpos($key, 'DTSTART') !== false || strpos($key, 'DTEND') !== false) {
-				list($key, $value) = $this->icalDtDate($key, $value);
+		if ($key === 'RRULE' && preg_match_all('#(?<key>[^=;]+)=(?<value>[^;]+)#', $value, $matches, PREG_SET_ORDER)) {
+			$middle = null;
+			$value = array();
+			foreach ($matches as $match) {
+				$value[$match['key']] = $match['value'];
 			}
 		}
 
-		return array($key, $value);
-	}
+		if ($key === 'CATEGORIES') {
+			$value = explode(',', $value);
 
-
-	/**
-	 * Parse RRULE  return array
-	 *
-	 * @param unknown_type $value
-	 * @return unknown
-	 */
-	private function icalRrule($value) {
-		$rrule = explode(';', $value);
-		foreach ($rrule as $line) {
-			$rcontent = explode('=', $line);
-			$result[$rcontent[0]] = $rcontent[1];
 		}
-		return $result;
+		return array($key, $middle, $value);
 	}
 
-	/**
-	 * Return unix date from iCal date format
-	 *
-	 * @param string $key
-	 * @param string $value
-	 * @return array
-	 */
-	private function icalDtDate($key, $value) {
-		$value = strtotime($value);
-
-		// zjisteni TZID
-		$temp = explode(";", $key);
-
-		$data = null;
-		if (empty($temp[1])) // neni TZID
-		{
-			$data = str_replace('T', '', $data);
-			return array($key, $value);
-		}
-		// pridani $value a $tzid do pole
-		$key = $temp[0];
-		$temp = explode("=", $temp[1]);
-		$return_value[$temp[0]] = $temp[1];
-		$return_value['unixtime'] = $value;
-
-		return array($key, $return_value);
+	public function getEvents() {
+		return isset($this->data['VEVENT']) ? $this->data['VEVENT'] : array();
 	}
 
+	public function getAlarms() {
+		return isset($this->data['VALARM']) ? $this->data['VALARM'] : array();
+	}
 
-	/* --------------------------------------------------------------------------
-	 * List of public getters
-	 * -------------------------------------------------------------------------- */
-
+	public function getTimezones() {
+		return isset($this->data['VTIMEZONE']) ? $this->data['VTIMEZONE'] : array();
+	}
 
 	/**
 	 * Return sorted eventlist as array or false if calenar is empty
 	 *
 	 * @return array|boolean
 	 */
-	public function getSortEventList() {
-		$temp = $this->getEventList();
-		if (!empty($temp)) {
+	public function getSortedEvents() {
+		if ($events = $this->getEvents()) {
 			usort(
-				$temp, function ($a, $b) {
-					return strnatcasecmp($a['DTSTART']['unixtime'], $b['DTSTART']['unixtime']);
+				$events, function ($a, $b) {
+					return $a['DTSTART'] > $b['DTSTART'];
 				}
 			);
-			return $temp;
-		} else {
-			return false;
+			return $events;
 		}
+		return array();
+	}
+
+	public function getReverseSortedEvents() {
+		if ($events = $this->getEvents()) {
+			usort(
+				$events, function ($a, $b) {
+					return $a['DTSTART'] < $b['DTSTART'];
+				}
+			);
+			return $events;
+		}
+		return array();
 	}
 }
