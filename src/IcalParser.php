@@ -46,7 +46,13 @@ class IcalParser {
 		$counters = array();
 		$section = 'VCALENDAR';
 
-		foreach(preg_split('/[\n\r\t\x0B\0]+/', $string, null, PREG_SPLIT_NO_EMPTY) as $row) {
+		// Replace \r\n with \n
+		$string = str_replace("\r\n", "\n", $string);
+
+		// Unfold multi-line strings
+		$string = str_replace("\n ", "", $string);
+
+		foreach(explode("\n", $string) as $row) {
 
 			switch ($row) {
 				case 'BEGIN:DAYLIGHT':
@@ -139,8 +145,13 @@ class IcalParser {
 
 		if ($key === 'CATEGORIES') {
 			$value = explode(',', $value);
-
 		}
+
+		if ($key === 'DESCRIPTION') {
+			// Replace literal \n with newlines
+			$value = str_replace('\n', "\n", $value);
+		}
+
 		return array($key, $middle, $value);
 	}
 
