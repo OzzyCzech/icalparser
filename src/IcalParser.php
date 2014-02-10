@@ -21,21 +21,32 @@ class IcalParser {
 	 * @throws \InvalidArgumentException
 	 */
 	public function parseFile($file, $callback = null) {
-		$this->data = array();
-
 		if (!$handle = fopen($file, 'r')) {
 			throw new \RuntimeException('Can\'t open file' . $file . ' for reading');
 		}
+		fclose($handle);
 
-		if (!preg_match('/BEGIN:VCALENDAR/', fgets($handle, 4096))) {
+		return $this->parseString(file_get_contents($file), $callback);
+	}
+
+	/**
+	 * @param $file
+	 * @param null $callback
+	 * @return array|null
+	 * @throws \RuntimeException
+	 * @throws \InvalidArgumentException
+	 */
+	public function parseString($string, $callback = null) {
+		$this->data = array();
+
+		if (!preg_match('/BEGIN:VCALENDAR/', $string)) {
 			throw new \InvalidArgumentException('Invalid ICAL data format');
 		}
 
 		$counters = array();
 		$section = 'VCALENDAR';
 
-		while (!feof($handle)) {
-			$row = trim(fgets($handle, 4096), "\n\r\t\x0B\0"); // read line from file
+		foreach(preg_split('/[\n\r\t\x0B\0]+/', $string, null, PREG_SPLIT_NO_EMPTY) as $row) {
 
 			switch ($row) {
 				case 'BEGIN:DAYLIGHT':
@@ -79,7 +90,6 @@ class IcalParser {
 			}
 		}
 
-		fclose($handle);
 		return ($callback) ? null : $this->data;
 	}
 
