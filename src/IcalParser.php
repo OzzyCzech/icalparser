@@ -123,7 +123,7 @@ class IcalParser {
 				foreach ($matches as $match) {
 					if ($match['key'] === 'TZID') {
 						try {
-							$middle[$match['key']] = new \DateTimeZone($match['value']);
+							$middle[$match['key']] = $timezone = new \DateTimeZone($match['value']);
 						} catch (\Exception $e) {
 							$middle[$match['key']] = $match['value'];
 						}
