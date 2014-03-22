@@ -145,8 +145,9 @@ class IcalParser {
 			}
 		}
 
+		//split by comma, escape \,
 		if ($key === 'CATEGORIES') {
-			$value = explode(',', $value);
+			$value = preg_split('/(?<![^\\\\]\\\\),/', $value);
 		}
 
 		if ($key === 'DESCRIPTION') {
