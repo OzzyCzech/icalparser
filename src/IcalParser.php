@@ -150,9 +150,18 @@ class IcalParser {
 			$value = preg_split('/(?<![^\\\\]\\\\),/', $value);
 		}
 
-		if ($key === 'DESCRIPTION') {
-			// Replace literal \n with newlines
-			$value = str_replace('\n', "\n", $value);
+		//implement 4.3.11 Text ESCAPED-CHAR
+		$text_properties = array('CALSCALE', 'METHOD', 'PRODID', 'VERSION', 'CATEGORIES', 'CLASS', 'COMMENT', 'DESCRIPTION'
+			, 'LOCATION', 'RESOURCES', 'STATUS', 'SUMMARY', 'TRANSP', 'TZID', 'TZNAME', 'CONTACT', 'RELATED-TO', 'UID'
+			, 'ACTION', 'REQUEST-STATUS');
+		if (in_array($key, $text_properties)) {
+			if (is_array($value)) {
+				foreach ($value as &$var) {
+					$var = strtr($var, array('\\\\' => '\\', '\\N' => "\n", '\\n' => "\n", '\\;' => ';', '\\,' => ','));
+				}
+			} else {
+				$value = strtr($value, array('\\\\' => '\\', '\\N' => "\n", '\\n' => "\n", '\\;' => ';', '\\,' => ','));
+			}
 		}
 
 		return array($key, $middle, $value);
