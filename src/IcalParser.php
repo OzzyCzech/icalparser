@@ -13,6 +13,108 @@ class IcalParser {
 	/** @var array */
 	public $data;
 
+	public $windows_timezones = array (
+		'Dateline Standard Time' => 'Etc/GMT+12',
+		'UTC-11' => 'Etc/GMT+11',
+		'Hawaiian Standard Time' => 'Pacific/Honolulu',
+		'Alaskan Standard Time' => 'America/Anchorage',
+		'Pacific Standard Time (Mexico)' => 'America/Santa_Isabel',
+		'Pacific Standard Time' => 'America/Los_Angeles',
+		'US Mountain Standard Time' => 'America/Phoenix',
+		'Mountain Standard Time (Mexico)' => 'America/Chihuahua',
+		'Mountain Standard Time' => 'America/Denver',
+		'Central America Standard Time' => 'America/Guatemala',
+		'Central Standard Time' => 'America/Chicago',
+		'Central Standard Time (Mexico)' => 'America/Mexico_City',
+		'Canada Central Standard Time' => 'America/Regina',
+		'SA Pacific Standard Time' => 'America/Bogota',
+		'Eastern Standard Time' => 'America/New_York',
+		'US Eastern Standard Time' => 'America/Indianapolis',
+		'Venezuela Standard Time' => 'America/Caracas',
+		'Paraguay Standard Time' => 'America/Asuncion',
+		'Atlantic Standard Time' => 'America/Halifax',
+		'Central Brazilian Standard Time' => 'America/Cuiaba',
+		'SA Western Standard Time' => 'America/La_Paz',
+		'Pacific SA Standard Time' => 'America/Santiago',
+		'Newfoundland Standard Time' => 'America/St_Johns',
+		'E. South America Standard Time' => 'America/Sao_Paulo',
+		'Argentina Standard Time' => 'America/Buenos_Aires',
+		'SA Eastern Standard Time' => 'America/Cayenne',
+		'Greenland Standard Time' => 'America/Godthab',
+		'Montevideo Standard Time' => 'America/Montevideo',
+		'Bahia Standard Time' => 'America/Bahia',
+		'UTC-02' => 'Etc/GMT+2',
+		'Azores Standard Time' => 'Atlantic/Azores',
+		'Cape Verde Standard Time' => 'Atlantic/Cape_Verde',
+		'Morocco Standard Time' => 'Africa/Casablanca',
+		'UTC' => 'Etc/GMT',
+		'GMT Standard Time' => 'Europe/London',
+		'Greenwich Standard Time' => 'Atlantic/Reykjavik',
+		'W. Europe Standard Time' => 'Europe/Berlin',
+		'Central Europe Standard Time' => 'Europe/Budapest',
+		'Romance Standard Time' => 'Europe/Paris',
+		'Central European Standard Time' => 'Europe/Warsaw',
+		'W. Central Africa Standard Time' => 'Africa/Lagos',
+		'Namibia Standard Time' => 'Africa/Windhoek',
+		'GTB Standard Time' => 'Europe/Bucharest',
+		'Middle East Standard Time' => 'Asia/Beirut',
+		'Egypt Standard Time' => 'Africa/Cairo',
+		'Syria Standard Time' => 'Asia/Damascus',
+		'South Africa Standard Time' => 'Africa/Johannesburg',
+		'FLE Standard Time' => 'Europe/Kiev',
+		'Turkey Standard Time' => 'Europe/Istanbul',
+		'Israel Standard Time' => 'Asia/Jerusalem',
+		'Libya Standard Time' => 'Africa/Tripoli',
+		'Jordan Standard Time' => 'Asia/Amman',
+		'Arabic Standard Time' => 'Asia/Baghdad',
+		'Kaliningrad Standard Time' => 'Europe/Kaliningrad',
+		'Arab Standard Time' => 'Asia/Riyadh',
+		'E. Africa Standard Time' => 'Africa/Nairobi',
+		'Iran Standard Time' => 'Asia/Tehran',
+		'Arabian Standard Time' => 'Asia/Dubai',
+		'Azerbaijan Standard Time' => 'Asia/Baku',
+		'Russian Standard Time' => 'Europe/Moscow',
+		'Mauritius Standard Time' => 'Indian/Mauritius',
+		'Georgian Standard Time' => 'Asia/Tbilisi',
+		'Caucasus Standard Time' => 'Asia/Yerevan',
+		'Afghanistan Standard Time' => 'Asia/Kabul',
+		'West Asia Standard Time' => 'Asia/Tashkent',
+		'Pakistan Standard Time' => 'Asia/Karachi',
+		'India Standard Time' => 'Asia/Calcutta',
+		'Sri Lanka Standard Time' => 'Asia/Colombo',
+		'Nepal Standard Time' => 'Asia/Katmandu',
+		'Central Asia Standard Time' => 'Asia/Almaty',
+		'Bangladesh Standard Time' => 'Asia/Dhaka',
+		'Ekaterinburg Standard Time' => 'Asia/Yekaterinburg',
+		'Myanmar Standard Time' => 'Asia/Rangoon',
+		'SE Asia Standard Time' => 'Asia/Bangkok',
+		'N. Central Asia Standard Time' => 'Asia/Novosibirsk',
+		'China Standard Time' => 'Asia/Shanghai',
+		'North Asia Standard Time' => 'Asia/Krasnoyarsk',
+		'Singapore Standard Time' => 'Asia/Singapore',
+		'W. Australia Standard Time' => 'Australia/Perth',
+		'Taipei Standard Time' => 'Asia/Taipei',
+		'Ulaanbaatar Standard Time' => 'Asia/Ulaanbaatar',
+		'North Asia East Standard Time' => 'Asia/Irkutsk',
+		'Tokyo Standard Time' => 'Asia/Tokyo',
+		'Korea Standard Time' => 'Asia/Seoul',
+		'Cen. Australia Standard Time' => 'Australia/Adelaide',
+		'AUS Central Standard Time' => 'Australia/Darwin',
+		'E. Australia Standard Time' => 'Australia/Brisbane',
+		'AUS Eastern Standard Time' => 'Australia/Sydney',
+		'West Pacific Standard Time' => 'Pacific/Port_Moresby',
+		'Tasmania Standard Time' => 'Australia/Hobart',
+		'Yakutsk Standard Time' => 'Asia/Yakutsk',
+		'Central Pacific Standard Time' => 'Pacific/Guadalcanal',
+		'Vladivostok Standard Time' => 'Asia/Vladivostok',
+		'New Zealand Standard Time' => 'Pacific/Auckland',
+		'UTC+12' => 'Etc/GMT-12',
+		'Fiji Standard Time' => 'Pacific/Fiji',
+		'Magadan Standard Time' => 'Asia/Magadan',
+		'Tonga Standard Time' => 'Pacific/Tongatapu',
+		'Samoa Standard Time' => 'Pacific/Apia',
+	);
+
 	/**
 	 * @param $file
 	 * @param null $callback
@@ -112,16 +214,21 @@ class IcalParser {
 			$value = $matches[3];
 			$timezone = null;
 
-			if ($key === 'X-WR-TIMEZONE') {
+			if ($key === 'X-WR-TIMEZONE' || $key === 'TZID') {
+				if (isset($this->windows_timezones[$value])) {
+					$value = $this->windows_timezones[$value];
+				}
 				$this->timezone = new \DateTimeZone($value);
 			}
 
 			// have some middle part ?
 			if ($middle && preg_match_all('#(?<key>[^=;]+)=(?<value>[^;]+)#', $middle, $matches, PREG_SET_ORDER)) {
 				$middle = array();
-
 				foreach ($matches as $match) {
 					if ($match['key'] === 'TZID') {
+						if (isset($this->windows_timezones[$match['value']])) {
+							$match['value'] = $this->windows_timezones[$match['value']];
+						}
 						try {
 							$middle[$match['key']] = $timezone = new \DateTimeZone($match['value']);
 						} catch (\Exception $e) {
