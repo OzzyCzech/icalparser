@@ -13,7 +13,7 @@ class IcalParser {
 	/** @var array */
 	public $data;
 
-	public $windows_timezones = array (
+	public $windows_timezones = array(
 		'Dateline Standard Time' => 'Etc/GMT+12',
 		'UTC-11' => 'Etc/GMT+11',
 		'Hawaiian Standard Time' => 'Pacific/Honolulu',
@@ -154,7 +154,7 @@ class IcalParser {
 		// Unfold multi-line strings
 		$string = str_replace("\n ", "", $string);
 
-		foreach(explode("\n", $string) as $row) {
+		foreach (explode("\n", $string) as $row) {
 
 			switch ($row) {
 				case 'BEGIN:DAYLIGHT':
@@ -215,13 +215,13 @@ class IcalParser {
 			$timezone = null;
 
 			if ($key === 'X-WR-TIMEZONE' || $key === 'TZID') {
-                if (preg_match('#(\w+/\w+)$#i', $value, $matches)) {
-                    $value = $matches[1];
-                }
+				if (preg_match('#(\w+/\w+)$#i', $value, $matches)) {
+					$value = $matches[1];
+				}
 				if (isset($this->windows_timezones[$value])) {
 					$value = $this->windows_timezones[$value];
 				}
-                $this->timezone = new \DateTimeZone($value);
+				$this->timezone = new \DateTimeZone($value);
 			}
 
 			// have some middle part ?
@@ -244,7 +244,7 @@ class IcalParser {
 
 		// process simple dates with timezone
 		if ($key === 'DTSTAMP' || $key === 'LAST-MODIFIED' || $key === 'CREATED' || $key === 'DTSTART' || $key === 'DTEND') {
-			$value = new \DateTime($value, ($timezone ? : $this->timezone));
+			$value = new \DateTime($value, ($timezone ?: $this->timezone));
 		}
 
 		if ($key === 'RRULE' && preg_match_all('#(?<key>[^=;]+)=(?<value>[^;]+)#', $value, $matches, PREG_SET_ORDER)) {
@@ -261,9 +261,11 @@ class IcalParser {
 		}
 
 		//implement 4.3.11 Text ESCAPED-CHAR
-		$text_properties = array('CALSCALE', 'METHOD', 'PRODID', 'VERSION', 'CATEGORIES', 'CLASS', 'COMMENT', 'DESCRIPTION'
-			, 'LOCATION', 'RESOURCES', 'STATUS', 'SUMMARY', 'TRANSP', 'TZID', 'TZNAME', 'CONTACT', 'RELATED-TO', 'UID'
-			, 'ACTION', 'REQUEST-STATUS');
+		$text_properties = array(
+			'CALSCALE', 'METHOD', 'PRODID', 'VERSION', 'CATEGORIES', 'CLASS', 'COMMENT', 'DESCRIPTION'
+		, 'LOCATION', 'RESOURCES', 'STATUS', 'SUMMARY', 'TRANSP', 'TZID', 'TZNAME', 'CONTACT', 'RELATED-TO', 'UID'
+		, 'ACTION', 'REQUEST-STATUS'
+		);
 		if (in_array($key, $text_properties) || strpos($key, 'X-') === 0) {
 			if (is_array($value)) {
 				foreach ($value as &$var) {
