@@ -1,23 +1,34 @@
 language: php
-
 php:
-  - 5.4
-  - 5.5
-  - 5.6
-  - 7.0
-  - hhvm
-  - nightly
+    - 5.4
+    - 5.5
+    - 5.6
+    - 7.0
+    - hhvm
+
+env:
+    - PHP_BIN=php
+    - PHP_BIN=php-cgi
 
 matrix:
-    fast_finish: true
     allow_failures:
         - php: 7.0
         - php: hhvm
 
-before_script:
-  - composer self-update
-  - composer install --prefer-source --dev --no-interaction
-  - phpenv rehash
+    exclude:
+        - php: hhvm
+          env: PHP_BIN=php-cgi
+
+    include:
+        - php: 5.6
+          env: dependencies="--prefer-lowest --prefer-stable" PHP_BIN=php
 
 script:
-  - "vendor/bin/tester tests/"
+    - vendor/bin/tester -p $PHP_BIN tests -s
+
+after_failure:
+    # Print *.actual content
+    - for i in $(find tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done
+
+before_script:
+    - composer update --no-interaction --prefer-source $dependencies
