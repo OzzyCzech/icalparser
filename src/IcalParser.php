@@ -244,7 +244,11 @@ class IcalParser {
 
 		// process simple dates with timezone
 		if ($key === 'DTSTAMP' || $key === 'LAST-MODIFIED' || $key === 'CREATED' || $key === 'DTSTART' || $key === 'DTEND') {
-			$value = new \DateTime($value, ($timezone ?: $this->timezone));
+			try {
+                $value = new \DateTime($value, ($timezone ?: $this->timezone));
+            } catch (\Exception $e) {
+                $value = null;
+            }
 		}
 
 		if ($key === 'RRULE' && preg_match_all('#(?<key>[^=;]+)=(?<value>[^;]+)#', $value, $matches, PREG_SET_ORDER)) {
@@ -298,7 +302,7 @@ class IcalParser {
 	 */
 	public function getSortedEvents() {
 		if ($events = $this->getEvents()) {
-			usort(
+        	usort(
 				$events, function ($a, $b) {
 					return $a['DTSTART'] > $b['DTSTART'];
 				}
