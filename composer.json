@@ -16,6 +16,6 @@
 		"classmap": ["src/"]
 	},
   "require-dev": {
-    "nette/tester": "*"
+    "nette/tester": "v1.4.0"
   }
 }

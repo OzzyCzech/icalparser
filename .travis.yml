@@ -17,7 +17,6 @@ matrix:
 
 script:
     - vendor/bin/tester tests -s -p php
-    - php temp/code-checker/src/code-checker.php --short-arrays
 
 after_failure:
     - for i in $(find tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done
