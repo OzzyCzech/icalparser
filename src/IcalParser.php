@@ -192,6 +192,13 @@ class IcalParser {
 				if ($section === 'VCALENDAR') {
 					$this->data[$key] = $value;
 				} else {
+					if($key === 'ATTACH') {
+						// use an array since there can be multiple attachments.  This does not
+						// break the current implementation--it leaves the ATTACH key alone.
+						$newKey = 'ATTACHMENTS';
+						$this->data[$section][$counters[$section]][$newKey][] = $value;
+					}
+
 					$this->data[$section][$counters[$section]][$key] = $value;
 				}
 
