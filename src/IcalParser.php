@@ -136,7 +136,6 @@ class IcalParser {
 	 * @param string $string
 	 * @param null $callback
 	 * @return array|null
-	 * @internal param $file
 	 */
 	public function parseString($string, $callback = null) {
 		$this->data = [];
