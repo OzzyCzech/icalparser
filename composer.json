@@ -1,7 +1,11 @@
 {
 	"name": "om/icalparser",
 	"description": "Simple ical parser",
-	"keywords": ["ical", "calendar", "parser"],
+	"keywords": [
+		"ical",
+		"calendar",
+		"parser"
+	],
 	"license": ["BSD-3-Clause"],
 	"authors": [
 		{
@@ -15,7 +19,10 @@
 	"autoload": {
 		"classmap": ["src/"]
 	},
-  "require-dev": {
-    "nette/tester": "v1.4.0"
-  }
+	"require-dev": {
+		"nette/tester": "v1.4.0"
+	},
+	"scripts": {
+		"tests": ["./vendor/bin/tester tests -s -p php"]
+	}
 }
