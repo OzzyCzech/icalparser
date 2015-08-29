@@ -28,6 +28,14 @@ Assert::equal('6.11.2012 10:00:00', $recurrences[2]->format('j.n.Y H:i:s'));
 Assert::equal('10.11.2012 10:00:00', $recurrences[3]->format('j.n.Y H:i:s'));
 Assert::equal('4.12.2012 10:00:00', $recurrences[4]->format('j.n.Y H:i:s'));
 
+$eventsWithRecurring = $cal->getSortedEvents(true);
+Assert::equal(5, sizeof($eventsWithRecurring));
+Assert::equal($eventsWithRecurring[0]['DTSTART'], $recurrences[0]);
+Assert::equal($eventsWithRecurring[1]['DTSTART'], $recurrences[1]);
+Assert::equal($eventsWithRecurring[2]['DTSTART'], $recurrences[2]);
+Assert::equal($eventsWithRecurring[3]['DTSTART'], $recurrences[3]);
+Assert::equal($eventsWithRecurring[4]['DTSTART'], $recurrences[4]);
+
 $results = $cal->parseFile(__DIR__ . '/cal/recur_instances.ics');
 $events = $cal->getSortedEvents();
 
