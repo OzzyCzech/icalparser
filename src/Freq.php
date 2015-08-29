@@ -99,7 +99,7 @@ class Freq
             }
             //RDATE
             if (!empty($added)) {
-                $cache = $cache + $added;
+                $cache = array_unique(array_merge(array_values($cache), $added));
                 asort($cache);
             }
 
@@ -124,7 +124,7 @@ class Freq
                 $next = $this->findNext($next);
             }
             if (!empty($this->added)) {
-                $cache = $cache + $this->added;
+                $cache = array_unique(array_merge($cache, $this->added));
                 asort($cache);
             }
             $this->cache = $cache;

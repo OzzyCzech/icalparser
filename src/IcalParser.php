@@ -271,11 +271,25 @@ class IcalParser {
 		}
 
 		// process simple dates with timezone
-		if (in_array($key, array('DTSTAMP', 'LAST-MODIFIED', 'CREATED', 'DTSTART', 'DTEND', 'EXDATE', 'RDATE'))) {
+		if (in_array($key, array('DTSTAMP', 'LAST-MODIFIED', 'CREATED', 'DTSTART', 'DTEND'))) {
 			try {
 				$value = new \DateTime($value, ($timezone ?: $this->timezone));
 			} catch (\Exception $e) {
 				$value = null;
+			}
+		} else if (in_array($key, array('EXDATE', 'RDATE'))) {
+			$values = [];
+			foreach(explode(',', $value) as $singleValue) {
+				try {
+					$values[] = new \DateTime($singleValue, ($timezone ?: $this->timezone));
+				} catch (\Exception $e) {
+					// pass
+				}
+			}
+			if(count($values) == 1) {
+				$value = $values[0];
+			} else {
+				$value = $values;
 			}
 		}
 
@@ -322,19 +336,30 @@ class IcalParser {
 
 	public function parseRecurrences($event) {
 		$recurring = new Recurrence($event['RRULE']);
-		$excluding = array();
+		$exclusions = array();
 		$additions = array();
 
 		if(!empty($event['EXDATES'])) {
 			foreach ($event['EXDATES'] as $exDate) {
-				$excluding[] = $exDate->getTimestamp();
+				if(is_array($exDate)) {
+					foreach($exDate as $singleExDate) {
+						$exclusions[] = $singleExDate->getTimestamp();
+					}
+				} else {
+					$exclusions[] = $exDate->getTimestamp();
+				}
 			}
 		}
 
 		if(!empty($event['RDATES'])) {
-			var_dump($event['RDATES']);
 			foreach ($event['RDATES'] as $rDate) {
-				$additions[] = $rDate->getTimestamp();
+				if(is_array($rDate)) {
+					foreach($rDate as $singleRDate) {
+						$additions[] = $singleRDate->getTimestamp();
+					}
+				} else {
+					$additions[] = $rDate->getTimestamp();
+				}
 			}
 		}
 
@@ -348,7 +373,7 @@ class IcalParser {
 		}
 
 		date_default_timezone_set($event['DTSTART']->getTimezone()->getName());
-		$frequency = new Freq($recurring->rrule, $event['DTSTART']->getTimestamp(), $excluding, $additions);
+		$frequency = new Freq($recurring->rrule, $event['DTSTART']->getTimestamp(), $exclusions, $additions);
 		$recurrenceTimestamps = $frequency->getAllOccurrences();
 		$recurrences = array();
 		foreach($recurrenceTimestamps as $recurrenceTimestamp) {
