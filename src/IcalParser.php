@@ -386,10 +386,36 @@ class IcalParser {
 	}
 
 	/**
+	 * @param boolean $includeRecurring  include recurring events as individual events
 	 * @return array
 	 */
-	public function getEvents() {
-		return isset($this->data['VEVENT']) ? $this->data['VEVENT'] : [];
+	public function getEvents($includeRecurring=false) {
+		$events = [];
+		if(isset($this->data['VEVENT'])) {
+			if($includeRecurring === true) {
+				foreach($this->data['VEVENT'] as $event) {
+					if(empty($event['RECURRENCES'])) {
+						$events[] = $event;
+					} else {
+						$recurrences = $event['RECURRENCES'];
+						unset($event['RECURRENCES']);
+						$event['RECURRING'] = true;
+						$eventInterval = $event['DTSTART']->diff($event['DTEND']);
+
+						foreach($recurrences as $recurDate) {
+							$newEvent = $event;
+							$newEvent['DTSTART'] = $recurDate;
+							$newEvent['DTEND'] = clone($recurDate);
+							$newEvent['DTEND']->add($eventInterval);
+							$events[] = $newEvent;
+						}
+					}
+				}
+			} else {
+				$events = $this->data['VEVENT'];
+			}
+		}
+		return $events;
 	}
 
 	/**
@@ -409,10 +435,11 @@ class IcalParser {
 	/**
 	 * Return sorted eventlist as array or false if calenar is empty
 	 *
+	 * @param boolean $includeRecurring  include recurring events as individual events
 	 * @return array|boolean
 	 */
-	public function getSortedEvents() {
-		if ($events = $this->getEvents()) {
+	public function getSortedEvents($includeRecurring=false) {
+		if ($events = $this->getEvents($includeRecurring)) {
 			usort(
 				$events, function ($a, $b) {
 				return $a['DTSTART'] > $b['DTSTART'];
@@ -424,10 +451,11 @@ class IcalParser {
 	}
 
 	/**
+	 * @param boolean $includeRecurring  include recurring events as individual events
 	 * @return array
 	 */
-	public function getReverseSortedEvents() {
-		if ($events = $this->getEvents()) {
+	public function getReverseSortedEvents($includeRecurring=false) {
+		if ($events = $this->getEvents($includeRecurring)) {
 			usort(
 				$events, function ($a, $b) {
 				return $a['DTSTART'] < $b['DTSTART'];
