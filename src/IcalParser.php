@@ -398,16 +398,21 @@ class IcalParser {
 						$events[] = $event;
 					} else {
 						$recurrences = $event['RECURRENCES'];
-						unset($event['RECURRENCES']);
 						$event['RECURRING'] = true;
 						$eventInterval = $event['DTSTART']->diff($event['DTEND']);
 
+						$firstEvent = true;
 						foreach($recurrences as $recurDate) {
 							$newEvent = $event;
-							$newEvent['DTSTART'] = $recurDate;
-							$newEvent['DTEND'] = clone($recurDate);
-							$newEvent['DTEND']->add($eventInterval);
+							if(!$firstEvent) {
+								unset($event['RECURRENCES']);
+								$newEvent['DTSTART'] = $recurDate;
+								$newEvent['DTEND'] = clone($recurDate);
+								$newEvent['DTEND']->add($eventInterval);
+							}
+
 							$events[] = $newEvent;
+							$firstEvent = false;
 						}
 					}
 				}
