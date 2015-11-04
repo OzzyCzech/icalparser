@@ -117,6 +117,8 @@ class Freq
     public function getAllOccurrences()
     {
         if (empty($this->cache)) {
+            $cache = array();
+
             //build cache
             $next = $this->firstOccurrence();
             while ($next) {
