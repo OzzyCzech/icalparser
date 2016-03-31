@@ -4,8 +4,22 @@
 
 Internet Calendaring Parser [rfc2445](http://www.ietf.org/rfc/rfc2445.txt) or iCal parser is simple PHP 5.4+ class for parsing format into array.
 
-## Usage 
+## How to install
 
+	composer require om/icalparser
+    
+##  Usage
+```
+	<?php
+	require_once '../vendor/autoload.php';
+	$cal = new \om\IcalParser();
+	$results = $cal->parseFile(
+		'https://www.google.com/calendar/ical/cs.czech%23holiday%40group.v.calendar.google.com/public/basic.ics'
+	);
+	
+	foreach ($cal->getSortedEvents() as $r) {
+		echo sprintf('	<li>%s - %s</li>' . PHP_EOL, $r['DTSTART']->format('j.n.Y'), $r['SUMMARY']);
+	}
 
 ## Requirements
 
