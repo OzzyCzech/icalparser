@@ -9,7 +9,7 @@ Internet Calendaring Parser [rfc2445](http://www.ietf.org/rfc/rfc2445.txt) or iC
 	composer require om/icalparser
     
 ##  Usage
-```
+
 	<?php
 	require_once '../vendor/autoload.php';
 	$cal = new \om\IcalParser();
