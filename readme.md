@@ -6,20 +6,24 @@ Internet Calendaring Parser [rfc2445](http://www.ietf.org/rfc/rfc2445.txt) or iC
 
 ## How to install
 
-	composer require om/icalparser
-    
+```bash
+composer require om/icalparser
+```
+
 ##  Usage
 
-	<?php
-	require_once '../vendor/autoload.php';
-	$cal = new \om\IcalParser();
-	$results = $cal->parseFile(
-		'https://www.google.com/calendar/ical/cs.czech%23holiday%40group.v.calendar.google.com/public/basic.ics'
-	);
-	
-	foreach ($cal->getSortedEvents() as $r) {
-		echo sprintf('	<li>%s - %s</li>' . PHP_EOL, $r['DTSTART']->format('j.n.Y'), $r['SUMMARY']);
-	}
+```php
+<?php
+require_once '../vendor/autoload.php';
+$cal = new \om\IcalParser();
+$results = $cal->parseFile(
+	'https://www.google.com/calendar/ical/cs.czech%23holiday%40group.v.calendar.google.com/public/basic.ics'
+);
+
+foreach ($cal->getSortedEvents() as $r) {
+	echo sprintf('	<li>%s - %s</li>' . PHP_EOL, $r['DTSTART']->format('j.n.Y'), $r['SUMMARY']);
+}
+```
 
 ## Requirements
 
@@ -30,8 +34,10 @@ Internet Calendaring Parser [rfc2445](http://www.ietf.org/rfc/rfc2445.txt) or iC
 iCal parser using [Nette Tester](https://github.com/nette/tester).
 The tests can be invoked via [composer](https://getcomposer.org/).
 
-	composer update
-	composer tests
+```bash
+composer update
+composer tests
+```
  
 ## TODO
 
