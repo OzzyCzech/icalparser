@@ -281,7 +281,7 @@ class Freq
                             break;
                         }
                         if($debug) echo strtoupper($rule) . ': ' . date('r', $imm) . ' A: ' . ((int) ($imm > $offset && $imm < $eop)) . "\n";
-                        if ( $imm > $offset && $imm < $eop && ($_t == null || $imm < $_t) ) {
+                        if ( $imm > $offset && $imm <= $eop && ($_t == null || $imm < $_t) ) {
                             $_t = $imm;
                         }
                     }
