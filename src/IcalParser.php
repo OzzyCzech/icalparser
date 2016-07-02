@@ -116,6 +116,12 @@ class IcalParser {
 		'Samoa Standard Time' => 'Pacific/Apia',
 	];
 
+	protected $arrayKeyMappings = [
+		'ATTACH'=>'ATTACHMENTS',
+		'EXDATE'=>'EXDATES',
+		'RDATE'=>'RDATES',
+	];
+
 	/**
 	 * @param string $file
 	 * @param null $callback
@@ -168,13 +174,24 @@ class IcalParser {
 					$counters[$section] = isset($counters[$section]) ? $counters[$section] + 1 : 0;
 					continue 2; // while
 					break;
+				case 'END:VEVENT':
+					$section = substr($row, 4);
+					$currCounter = $counters[$section];
+					$event = $this->data[$section][$currCounter];
+					if(!empty($event['RRULE']) || !empty($event['RDATE'])) {
+						$recurrences = $this->parseRecurrences($event);
+						if(!empty($recurrences)) {
+							$this->data[$section][$currCounter]['RECURRENCES'] = $recurrences;
+						}
+					}
+					continue 2; // while
+					break;
 				case 'END:DAYLIGHT':
 				case 'END:VALARM':
 				case 'END:VTIMEZONE':
 				case 'END:VFREEBUSY':
 				case 'END:VJOURNAL':
 				case 'END:STANDARD':
-				case 'END:VEVENT':
 				case 'END:VTODO':
 				case 'END:VCALENDAR':
 					continue 2; // while
@@ -191,11 +208,12 @@ class IcalParser {
 				if ($section === 'VCALENDAR') {
 					$this->data[$key] = $value;
 				} else {
-					if($key === 'ATTACH') {
-						// use an array since there can be multiple attachments.  This does not
-						// break the current implementation--it leaves the ATTACH key alone.
-						$newKey = 'ATTACHMENTS';
-						$this->data[$section][$counters[$section]][$newKey][] = $value;
+					if(isset($this->arrayKeyMappings[$key])) {
+						// use an array since there can be multiple entries for this key.  This does not
+						// break the current implementation--it leaves the original key alone and adds
+						// a new one specifically for the array of values.
+						$arrayKey = $this->arrayKeyMappings[$key];
+						$this->data[$section][$counters[$section]][$arrayKey][] = $value;
 					}
 
 					$this->data[$section][$counters[$section]][$key] = $value;
@@ -253,11 +271,25 @@ class IcalParser {
 		}
 
 		// process simple dates with timezone
-		if ($key === 'DTSTAMP' || $key === 'LAST-MODIFIED' || $key === 'CREATED' || $key === 'DTSTART' || $key === 'DTEND') {
+		if (in_array($key, array('DTSTAMP', 'LAST-MODIFIED', 'CREATED', 'DTSTART', 'DTEND'))) {
 			try {
 				$value = new \DateTime($value, ($timezone ?: $this->timezone));
 			} catch (\Exception $e) {
 				$value = null;
+			}
+		} else if (in_array($key, array('EXDATE', 'RDATE'))) {
+			$values = [];
+			foreach(explode(',', $value) as $singleValue) {
+				try {
+					$values[] = new \DateTime($singleValue, ($timezone ?: $this->timezone));
+				} catch (\Exception $e) {
+					// pass
+				}
+			}
+			if(count($values) == 1) {
+				$value = $values[0];
+			} else {
+				$value = $values;
 			}
 		}
 
@@ -265,7 +297,15 @@ class IcalParser {
 			$middle = null;
 			$value = [];
 			foreach ($matches as $match) {
-				$value[$match['key']] = $match['value'];
+				if (in_array($match['key'], array('UNTIL'))) {
+					try {
+						$value[$match['key']] = new \DateTime($match['value'], ($timezone ?: $this->timezone));
+					} catch (\Exception $e) {
+						$value[$match['key']] = $match['value'];
+					}
+				} else {
+					$value[$match['key']] = $match['value'];
+				}
 			}
 		}
 
@@ -293,11 +333,94 @@ class IcalParser {
 		return [$key, $middle, $value];
 	}
 
+
+	public function parseRecurrences($event) {
+		$recurring = new Recurrence($event['RRULE']);
+		$exclusions = array();
+		$additions = array();
+
+		if(!empty($event['EXDATES'])) {
+			foreach ($event['EXDATES'] as $exDate) {
+				if(is_array($exDate)) {
+					foreach($exDate as $singleExDate) {
+						$exclusions[] = $singleExDate->getTimestamp();
+					}
+				} else {
+					$exclusions[] = $exDate->getTimestamp();
+				}
+			}
+		}
+
+		if(!empty($event['RDATES'])) {
+			foreach ($event['RDATES'] as $rDate) {
+				if(is_array($rDate)) {
+					foreach($rDate as $singleRDate) {
+						$additions[] = $singleRDate->getTimestamp();
+					}
+				} else {
+					$additions[] = $rDate->getTimestamp();
+				}
+			}
+		}
+
+		$until = $recurring->getUntil();
+		if ($until === false) {
+			//forever... limit to 3 years
+			$end = clone($event['DTSTART']);
+			$end->add(new \DateInterval('P3Y')); // + 3 years
+			$recurring->setUntil($end);
+			$until = $recurring->getUntil();
+		}
+
+		date_default_timezone_set($event['DTSTART']->getTimezone()->getName());
+		$frequency = new Freq($recurring->rrule, $event['DTSTART']->getTimestamp(), $exclusions, $additions);
+		$recurrenceTimestamps = $frequency->getAllOccurrences();
+		$recurrences = array();
+		foreach($recurrenceTimestamps as $recurrenceTimestamp) {
+			$tmp = new \DateTime("now", $event['DTSTART']->getTimezone());
+			$tmp->setTimestamp($recurrenceTimestamp);
+			$recurrences[] = $tmp;
+		}
+
+		return $recurrences;
+	}
+
 	/**
+	 * @param boolean $includeRecurring  include recurring events as individual events
 	 * @return array
 	 */
-	public function getEvents() {
-		return isset($this->data['VEVENT']) ? $this->data['VEVENT'] : [];
+	public function getEvents($includeRecurring=false) {
+		$events = [];
+		if(isset($this->data['VEVENT'])) {
+			if($includeRecurring === true) {
+				foreach($this->data['VEVENT'] as $event) {
+					if(empty($event['RECURRENCES'])) {
+						$events[] = $event;
+					} else {
+						$recurrences = $event['RECURRENCES'];
+						$event['RECURRING'] = true;
+						$eventInterval = $event['DTSTART']->diff($event['DTEND']);
+
+						$firstEvent = true;
+						foreach($recurrences as $recurDate) {
+							$newEvent = $event;
+							if(!$firstEvent) {
+								unset($event['RECURRENCES']);
+								$newEvent['DTSTART'] = $recurDate;
+								$newEvent['DTEND'] = clone($recurDate);
+								$newEvent['DTEND']->add($eventInterval);
+							}
+
+							$events[] = $newEvent;
+							$firstEvent = false;
+						}
+					}
+				}
+			} else {
+				$events = $this->data['VEVENT'];
+			}
+		}
+		return $events;
 	}
 
 	/**
@@ -317,10 +440,11 @@ class IcalParser {
 	/**
 	 * Return sorted eventlist as array or false if calenar is empty
 	 *
+	 * @param boolean $includeRecurring  include recurring events as individual events
 	 * @return array|boolean
 	 */
-	public function getSortedEvents() {
-		if ($events = $this->getEvents()) {
+	public function getSortedEvents($includeRecurring=false) {
+		if ($events = $this->getEvents($includeRecurring)) {
 			usort(
 				$events, function ($a, $b) {
 				return $a['DTSTART'] > $b['DTSTART'];
@@ -332,10 +456,11 @@ class IcalParser {
 	}
 
 	/**
+	 * @param boolean $includeRecurring  include recurring events as individual events
 	 * @return array
 	 */
-	public function getReverseSortedEvents() {
-		if ($events = $this->getEvents()) {
+	public function getReverseSortedEvents($includeRecurring=false) {
+		if ($events = $this->getEvents($includeRecurring)) {
 			usort(
 				$events, function ($a, $b) {
 				return $a['DTSTART'] < $b['DTSTART'];
@@ -345,4 +470,5 @@ class IcalParser {
 		}
 		return [];
 	}
+
 }
