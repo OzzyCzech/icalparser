@@ -386,38 +386,33 @@ class IcalParser {
 	}
 
 	/**
-	 * @param boolean $includeRecurring  include recurring events as individual events
 	 * @return array
 	 */
-	public function getEvents($includeRecurring=false) {
+	public function getEvents() {
 		$events = [];
-		if(isset($this->data['VEVENT'])) {
-			if($includeRecurring === true) {
-				foreach($this->data['VEVENT'] as $event) {
-					if(empty($event['RECURRENCES'])) {
-						$events[] = $event;
-					} else {
-						$recurrences = $event['RECURRENCES'];
-						$event['RECURRING'] = true;
-						$eventInterval = $event['DTSTART']->diff($event['DTEND']);
+		if (isset($this->data['VEVENT'])) {
+			foreach ($this->data['VEVENT'] as $event) {
+				if (empty($event['RECURRENCES'])) {
+					$events[] = $event;
+				} else {
+					$recurrences = $event['RECURRENCES'];
+					$event['RECURRING'] = true;
+					$eventInterval = $event['DTSTART']->diff($event['DTEND']);
 
-						$firstEvent = true;
-						foreach($recurrences as $recurDate) {
-							$newEvent = $event;
-							if(!$firstEvent) {
-								unset($event['RECURRENCES']);
-								$newEvent['DTSTART'] = $recurDate;
-								$newEvent['DTEND'] = clone($recurDate);
-								$newEvent['DTEND']->add($eventInterval);
-							}
-
-							$events[] = $newEvent;
-							$firstEvent = false;
+					$firstEvent = true;
+					foreach ($recurrences as $recurDate) {
+						$newEvent = $event;
+						if (!$firstEvent) {
+							unset($event['RECURRENCES']);
+							$newEvent['DTSTART'] = $recurDate;
+							$newEvent['DTEND'] = clone($recurDate);
+							$newEvent['DTEND']->add($eventInterval);
 						}
+
+						$events[] = $newEvent;
+						$firstEvent = false;
 					}
 				}
-			} else {
-				$events = $this->data['VEVENT'];
 			}
 		}
 		return $events;
