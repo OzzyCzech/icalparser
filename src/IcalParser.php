@@ -117,9 +117,9 @@ class IcalParser {
 	];
 
 	protected $arrayKeyMappings = [
-		'ATTACH'=>'ATTACHMENTS',
-		'EXDATE'=>'EXDATES',
-		'RDATE'=>'RDATES',
+		'ATTACH' => 'ATTACHMENTS',
+		'EXDATE' => 'EXDATES',
+		'RDATE' => 'RDATES',
 	];
 
 	/**
@@ -178,9 +178,9 @@ class IcalParser {
 					$section = substr($row, 4);
 					$currCounter = $counters[$section];
 					$event = $this->data[$section][$currCounter];
-					if(!empty($event['RRULE']) || !empty($event['RDATE'])) {
+					if (!empty($event['RRULE']) || !empty($event['RDATE'])) {
 						$recurrences = $this->parseRecurrences($event);
-						if(!empty($recurrences)) {
+						if (!empty($recurrences)) {
 							$this->data[$section][$currCounter]['RECURRENCES'] = $recurrences;
 						}
 					}
@@ -208,7 +208,7 @@ class IcalParser {
 				if ($section === 'VCALENDAR') {
 					$this->data[$key] = $value;
 				} else {
-					if(isset($this->arrayKeyMappings[$key])) {
+					if (isset($this->arrayKeyMappings[$key])) {
 						// use an array since there can be multiple entries for this key.  This does not
 						// break the current implementation--it leaves the original key alone and adds
 						// a new one specifically for the array of values.
@@ -279,14 +279,14 @@ class IcalParser {
 			}
 		} else if (in_array($key, array('EXDATE', 'RDATE'))) {
 			$values = [];
-			foreach(explode(',', $value) as $singleValue) {
+			foreach (explode(',', $value) as $singleValue) {
 				try {
 					$values[] = new \DateTime($singleValue, ($timezone ?: $this->timezone));
 				} catch (\Exception $e) {
 					// pass
 				}
 			}
-			if(count($values) == 1) {
+			if (count($values) == 1) {
 				$value = $values[0];
 			} else {
 				$value = $values;
@@ -339,10 +339,10 @@ class IcalParser {
 		$exclusions = array();
 		$additions = array();
 
-		if(!empty($event['EXDATES'])) {
+		if (!empty($event['EXDATES'])) {
 			foreach ($event['EXDATES'] as $exDate) {
-				if(is_array($exDate)) {
-					foreach($exDate as $singleExDate) {
+				if (is_array($exDate)) {
+					foreach ($exDate as $singleExDate) {
 						$exclusions[] = $singleExDate->getTimestamp();
 					}
 				} else {
@@ -351,10 +351,10 @@ class IcalParser {
 			}
 		}
 
-		if(!empty($event['RDATES'])) {
+		if (!empty($event['RDATES'])) {
 			foreach ($event['RDATES'] as $rDate) {
-				if(is_array($rDate)) {
-					foreach($rDate as $singleRDate) {
+				if (is_array($rDate)) {
+					foreach ($rDate as $singleRDate) {
 						$additions[] = $singleRDate->getTimestamp();
 					}
 				} else {
@@ -376,7 +376,7 @@ class IcalParser {
 		$frequency = new Freq($recurring->rrule, $event['DTSTART']->getTimestamp(), $exclusions, $additions);
 		$recurrenceTimestamps = $frequency->getAllOccurrences();
 		$recurrences = array();
-		foreach($recurrenceTimestamps as $recurrenceTimestamp) {
+		foreach ($recurrenceTimestamps as $recurrenceTimestamp) {
 			$tmp = new \DateTime("now", $event['DTSTART']->getTimezone());
 			$tmp->setTimestamp($recurrenceTimestamp);
 			$recurrences[] = $tmp;
@@ -435,10 +435,10 @@ class IcalParser {
 	/**
 	 * Return sorted eventlist as array or false if calenar is empty
 	 *
-	 * @param boolean $includeRecurring  include recurring events as individual events
+	 * @param boolean $includeRecurring include recurring events as individual events
 	 * @return array|boolean
 	 */
-	public function getSortedEvents($includeRecurring=false) {
+	public function getSortedEvents($includeRecurring = false) {
 		if ($events = $this->getEvents($includeRecurring)) {
 			usort(
 				$events, function ($a, $b) {
@@ -451,10 +451,10 @@ class IcalParser {
 	}
 
 	/**
-	 * @param boolean $includeRecurring  include recurring events as individual events
+	 * @param boolean $includeRecurring include recurring events as individual events
 	 * @return array
 	 */
-	public function getReverseSortedEvents($includeRecurring=false) {
+	public function getReverseSortedEvents($includeRecurring = false) {
 		if ($events = $this->getEvents($includeRecurring)) {
 			usort(
 				$events, function ($a, $b) {
