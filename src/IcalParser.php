@@ -271,13 +271,13 @@ class IcalParser {
 		}
 
 		// process simple dates with timezone
-		if (in_array($key, array('DTSTAMP', 'LAST-MODIFIED', 'CREATED', 'DTSTART', 'DTEND'))) {
+		if (in_array($key, ['DTSTAMP', 'LAST-MODIFIED', 'CREATED', 'DTSTART', 'DTEND'])) {
 			try {
 				$value = new \DateTime($value, ($timezone ?: $this->timezone));
 			} catch (\Exception $e) {
 				$value = null;
 			}
-		} else if (in_array($key, array('EXDATE', 'RDATE'))) {
+		} else if (in_array($key, ['EXDATE', 'RDATE'])) {
 			$values = [];
 			foreach (explode(',', $value) as $singleValue) {
 				try {
@@ -297,7 +297,7 @@ class IcalParser {
 			$middle = null;
 			$value = [];
 			foreach ($matches as $match) {
-				if (in_array($match['key'], array('UNTIL'))) {
+				if (in_array($match['key'], ['UNTIL'])) {
 					try {
 						$value[$match['key']] = new \DateTime($match['value'], ($timezone ?: $this->timezone));
 					} catch (\Exception $e) {
@@ -315,11 +315,11 @@ class IcalParser {
 		}
 
 		//implement 4.3.11 Text ESCAPED-CHAR
-		$text_properties = array(
+		$text_properties = [
 			'CALSCALE', 'METHOD', 'PRODID', 'VERSION', 'CATEGORIES', 'CLASS', 'COMMENT', 'DESCRIPTION'
 		, 'LOCATION', 'RESOURCES', 'STATUS', 'SUMMARY', 'TRANSP', 'TZID', 'TZNAME', 'CONTACT', 'RELATED-TO', 'UID'
 		, 'ACTION', 'REQUEST-STATUS'
-		);
+		];
 		if (in_array($key, $text_properties) || strpos($key, 'X-') === 0) {
 			if (is_array($value)) {
 				foreach ($value as &$var) {
@@ -336,8 +336,8 @@ class IcalParser {
 
 	public function parseRecurrences($event) {
 		$recurring = new Recurrence($event['RRULE']);
-		$exclusions = array();
-		$additions = array();
+		$exclusions = [];
+		$additions = [];
 
 		if (!empty($event['EXDATES'])) {
 			foreach ($event['EXDATES'] as $exDate) {
@@ -375,7 +375,7 @@ class IcalParser {
 		date_default_timezone_set($event['DTSTART']->getTimezone()->getName());
 		$frequency = new Freq($recurring->rrule, $event['DTSTART']->getTimestamp(), $exclusions, $additions);
 		$recurrenceTimestamps = $frequency->getAllOccurrences();
-		$recurrences = array();
+		$recurrences = [];
 		foreach ($recurrenceTimestamps as $recurrenceTimestamp) {
 			$tmp = new \DateTime("now", $event['DTSTART']->getTimezone());
 			$tmp->setTimestamp($recurrenceTimestamp);

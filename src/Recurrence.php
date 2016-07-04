@@ -39,10 +39,10 @@ class Recurrence {
 	 *
 	 * @var array
 	 */
-	protected $listProperties = array(
+	protected $listProperties = [
 		'bysecond', 'byminute', 'byhour', 'byday', 'bymonthday',
 		'byyearday', 'byweekno', 'bymonth', 'bysetpos'
-	);
+	];
 
 	/**
 	 * Creates an recurrence object with a passed in line.  Parses the line.

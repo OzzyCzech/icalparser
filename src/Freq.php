@@ -29,17 +29,17 @@ namespace om;
  * @license http://creativecommons.org/licenses/by-sa/2.5/dk/deed.en_GB CC-BY-SA-DK
  */
 class Freq {
-	protected $weekdays = array(
+	protected $weekdays = [
 		'MO' => 'monday', 'TU' => 'tuesday', 'WE' => 'wednesday', 'TH' => 'thursday', 'FR' => 'friday', 'SA' => 'saturday',
 		'SU' => 'sunday'
-	);
-	protected $knownRules = array(
+	];
+	protected $knownRules = [
 		'month', 'weekno', 'day', 'monthday', 'yearday', 'hour', 'minute'
-	); //others : 'setpos', 'second'
-	protected $ruleModifiers = array('wkst');
+	]; //others : 'setpos', 'second'
+	protected $ruleModifiers = ['wkst'];
 	protected $simpleMode = true;
 
-	protected $rules = array('freq' => 'yearly', 'interval' => 1);
+	protected $rules = ['freq' => 'yearly', 'interval' => 1];
 	protected $start = 0;
 	protected $freq = '';
 
@@ -56,11 +56,11 @@ class Freq {
 	 * @param $excluded array of int (timestamps), see EXDATE documentation
 	 * @param $added array of int (timestamps), see RDATE documentation
 	 */
-	public function __construct($rule, $start, $excluded = array(), $added = array()) {
+	public function __construct($rule, $start, $excluded = [], $added = []) {
 		$this->start = $start;
-		$this->excluded = array();
+		$this->excluded = [];
 
-		$rules = array();
+		$rules = [];
 		foreach ($rule AS $k => $v) {
 			$this->rules[strtolower($k)] = $v;
 		}
@@ -122,7 +122,7 @@ class Freq {
 	 */
 	public function getAllOccurrences() {
 		if (empty($this->cache)) {
-			$cache = array();
+			$cache = [];
 
 			//build cache
 			$next = $this->firstOccurrence();
@@ -251,7 +251,7 @@ class Freq {
 		//set the timestamp of the offset (ignoring hours and minutes unless we want them to be
 		//part of the calculations.
 		if ($debug) echo 'O: ' . date('r', $offset) . "\n";
-		$hour = (in_array($this->freq, array('hourly', 'minutely')) && $offset > $this->start) ? date('H', $offset) : date(
+		$hour = (in_array($this->freq, ['hourly', 'minutely']) && $offset > $this->start) ? date('H', $offset) : date(
 			'H', $this->start
 		);
 		$minute = (($this->freq == 'minutely' || isset($this->rules['byminute'])) && $offset > $this->start) ? date(
@@ -284,7 +284,7 @@ class Freq {
 					$subrules = explode(',', $this->rules['by' . $rule]);
 					$_t = null;
 					foreach ($subrules AS $subrule) {
-						$imm = call_user_func_array(array($this, 'ruleBy' . $rule), array($subrule, $t));
+						$imm = call_user_func_array([$this, 'ruleBy' . $rule], [$subrule, $t]);
 						if ($imm === false) {
 							break;
 						}
@@ -422,7 +422,7 @@ class Freq {
 
 			$_t = strtotime($s, $t);
 
-			if ($_t == $t && in_array($this->freq, array('monthly', 'yearly'))) {
+			if ($_t == $t && in_array($this->freq, ['monthly', 'yearly'])) {
 				// Yes. This is not a great idea.. but hey, it works.. for now
 				$s = 'next ' . $d . ' ' . date('H:i:s', $t);
 				$_t = strtotime($s, $_t);
@@ -574,7 +574,7 @@ class Freq {
 		if ($rule == 'month' && $freq == 'yearly')
 
 			return true;
-		if ($rule == 'monthday' && in_array($freq, array('yearly', 'monthly')) && !isset($this->rules['byday']))
+		if ($rule == 'monthday' && in_array($freq, ['yearly', 'monthly']) && !isset($this->rules['byday']))
 
 			return true;
 		// TODO: is it faster to do monthday first, and ignore day if monthday exists? - prolly by a factor of 4..
@@ -584,10 +584,10 @@ class Freq {
 		if ($rule == 'weekno' && $freq == 'yearly')
 
 			return true;
-		if ($rule == 'day' && in_array($freq, array('yearly', 'monthly', 'weekly')))
+		if ($rule == 'day' && in_array($freq, ['yearly', 'monthly', 'weekly']))
 
 			return true;
-		if ($rule == 'hour' && in_array($freq, array('yearly', 'monthly', 'weekly', 'daily')))
+		if ($rule == 'hour' && in_array($freq, ['yearly', 'monthly', 'weekly', 'daily']))
 
 			return true;
 		if ($rule == 'minute')
