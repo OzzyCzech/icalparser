@@ -317,8 +317,8 @@ class IcalParser {
 		//implement 4.3.11 Text ESCAPED-CHAR
 		$text_properties = [
 			'CALSCALE', 'METHOD', 'PRODID', 'VERSION', 'CATEGORIES', 'CLASS', 'COMMENT', 'DESCRIPTION'
-		, 'LOCATION', 'RESOURCES', 'STATUS', 'SUMMARY', 'TRANSP', 'TZID', 'TZNAME', 'CONTACT', 'RELATED-TO', 'UID'
-		, 'ACTION', 'REQUEST-STATUS'
+			, 'LOCATION', 'RESOURCES', 'STATUS', 'SUMMARY', 'TRANSP', 'TZID', 'TZNAME', 'CONTACT', 'RELATED-TO', 'UID'
+			, 'ACTION', 'REQUEST-STATUS'
 		];
 		if (in_array($key, $text_properties) || strpos($key, 'X-') === 0) {
 			if (is_array($value)) {
@@ -435,11 +435,10 @@ class IcalParser {
 	/**
 	 * Return sorted eventlist as array or false if calenar is empty
 	 *
-	 * @param boolean $includeRecurring include recurring events as individual events
 	 * @return array|boolean
 	 */
-	public function getSortedEvents($includeRecurring = false) {
-		if ($events = $this->getEvents($includeRecurring)) {
+	public function getSortedEvents() {
+		if ($events = $this->getEvents()) {
 			usort(
 				$events, function ($a, $b) {
 				return $a['DTSTART'] > $b['DTSTART'];
@@ -451,11 +450,10 @@ class IcalParser {
 	}
 
 	/**
-	 * @param boolean $includeRecurring include recurring events as individual events
 	 * @return array
 	 */
-	public function getReverseSortedEvents($includeRecurring = false) {
-		if ($events = $this->getEvents($includeRecurring)) {
+	public function getReverseSortedEvents() {
+		if ($events = $this->getEvents()) {
 			usort(
 				$events, function ($a, $b) {
 				return $a['DTSTART'] < $b['DTSTART'];
