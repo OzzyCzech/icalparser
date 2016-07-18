@@ -191,6 +191,10 @@ class IcalParser {
 						if (!empty($recurrences)) {
 							$this->data[$section][$currCounter]['RECURRENCES'] = $recurrences;
 						}
+
+						if(!empty($event['UID'])) {
+                            $this->data["_RECURRENCE_COUNTERS_BY_UID"][$event['UID']] = $currCounter;
+                        }
 					}
 					continue 2; // while
 					break;
@@ -407,10 +411,43 @@ class IcalParser {
 	public function getEvents() {
 		$events = [];
 		if (isset($this->data['VEVENT'])) {
-			foreach ($this->data['VEVENT'] as $event) {
-				if (empty($event['RECURRENCES'])) {
-					$events[] = $event;
-				} else {
+            for ($i = 0; $i < count($this->data['VEVENT']); $i++) {
+                $event = $this->data['VEVENT'][$i];
+
+                if (empty($event['RECURRENCES'])) {
+                    if(!empty($event['RECURRENCE-ID']) && !empty($event['UID']) && isset($event['SEQUENCE'])) {
+                        $modifiedEventUID = $event['UID'];
+                        $modifiedEventRecurID = $event['RECURRENCE-ID'];
+                        $modifiedEventSeq = intval($event['SEQUENCE'], 10);
+
+                        if(!empty($this->data["_RECURRENCE_COUNTERS_BY_UID"][$modifiedEventUID])) {
+                            $counter = $this->data[ "_RECURRENCE_COUNTERS_BY_UID" ][ $modifiedEventUID ];
+
+                            $originalEvent = $this->data[ "VEVENT" ][ $counter ];
+                            if(!empty($originalEvent[ 'RECURRENCES' ]) && isset($originalEvent[ 'SEQUENCE' ])) {
+                                $originalEventSeq = intval($originalEvent['SEQUENCE'], 10);
+                                if($modifiedEventSeq > $originalEventSeq) {
+                                    for ($j = 0; $j < count($originalEvent['RECURRENCES']); $j++) {
+                                        $recurDate = $originalEvent[ 'RECURRENCES' ][$j];
+                                        $formatedStartDate = $recurDate->format('Ymd\THis');
+                                        if($formatedStartDate === $modifiedEventRecurID) {
+                                            unset($this->data[ "VEVENT" ][ $counter ]['RECURRENCES'][$j]);
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    // don't save this event because the original, repeating event has a higher
+                                    // sequence number.  This is extremely unlikely
+                                    $event = null;
+                                }
+                            }
+                        }
+                    }
+
+                    if(!empty($event)) {
+                        $events[] = $event;
+                    }
+                } else {
 					$recurrences = $event['RECURRENCES'];
 					$event['RECURRING'] = true;
 					$event['DTEND'] = !empty($event['DTEND']) ? $event['DTEND'] : $event['DTSTART'];

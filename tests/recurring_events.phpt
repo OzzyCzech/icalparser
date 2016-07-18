@@ -95,3 +95,20 @@ Assert::equal('01.09.2015 10:00:00', $recurrences[35]->format('d.m.Y H:i:s'));
 foreach ($events[0]['EXDATES'] as $exDate) {
 	Assert::notContains($exDate, $recurrences);
 }
+
+
+$results = $cal->parseFile(__DIR__ . '/cal/recur_instances_with_modifications.ics');
+$events = $cal->getSortedEvents(true);
+
+Assert::false(empty($events[0]['RECURRENCES']));
+// the 12th entry is the modified event, related to the remaining recurring events
+Assert::true(empty($events[12]['RECURRENCES']));
+
+$recurrences = $events[0]['RECURRENCES'];
+$modifiedEvent = $events[12];
+
+// There should be 35 total recurrences because the modified event should've removed 1 recurrence
+Assert::equal(35, sizeof($recurrences));
+// There should be 36 total events because of the modified event + 35 recurrences
+Assert::equal(36, sizeof($events));
+Assert::notContains($modifiedEvent['DTSTART'], $recurrences);
