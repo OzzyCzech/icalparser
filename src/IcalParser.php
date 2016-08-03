@@ -397,6 +397,7 @@ class IcalParser {
 				} else {
 					$recurrences = $event['RECURRENCES'];
 					$event['RECURRING'] = true;
+					$event['DTEND'] = !empty($event['DTEND']) ? $event['DTEND'] : $event['DTSTART'];
 					$eventInterval = $event['DTSTART']->diff($event['DTEND']);
 
 					$firstEvent = true;
