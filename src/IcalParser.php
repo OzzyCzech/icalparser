@@ -454,7 +454,7 @@ class IcalParser {
 					$eventInterval = $event['DTSTART']->diff($event['DTEND']);
 
 					$firstEvent = true;
-					foreach ($recurrences as $i => $recurDate) {
+					foreach ($recurrences as $j => $recurDate) {
 						$newEvent = $event;
 						if (!$firstEvent) {
 							unset($newEvent['RECURRENCES']);
@@ -463,7 +463,7 @@ class IcalParser {
 							$newEvent['DTEND']->add($eventInterval);
 						}
 
-						$newEvent['RECURRENCE_INSTANCE'] = $i;
+						$newEvent['RECURRENCE_INSTANCE'] = $j;
 						$events[] = $newEvent;
 						$firstEvent = false;
 					}
