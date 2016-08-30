@@ -112,3 +112,43 @@ Assert::equal(35, sizeof($recurrences));
 // There should be 36 total events because of the modified event + 35 recurrences
 Assert::equal(36, sizeof($events));
 Assert::notContains($modifiedEvent['DTSTART'], $recurrences);
+
+$results = $cal->parseFile(__DIR__ . '/cal/recur_instances_with_modifications_and_interval.ics');
+
+// Build the cache of RECURRENCE-IDs and EXDATES first, so that we can properly determine the interval
+$eventCache = array();
+foreach($results['VEVENT'] as $event) {
+    $eventSequence = empty($event['SEQUENCE']) ? "0" : $event['SEQUENCE'];
+    $eventRecurrenceID = empty($event['RECURRENCE-ID']) ? "0" : $event['RECURRENCE-ID'];
+
+    $eventCache[$event['UID']][$eventRecurrenceID][$eventSequence] = $event;
+}
+$trueEvents = array();
+foreach($results['VEVENT'] as $event) {
+    if(empty($event['RECURRENCES'])) {
+        $trueEvents[] = $event;
+    } else {
+        $eventUID = $event['UID'];
+        foreach($event['RECURRENCES'] as $recurrence) {
+            $eventRecurrenceID = $recurrence->format("Ymd");
+            if(empty($eventCache[$eventUID][$eventRecurrenceID])) {
+                $trueEvents[$eventRecurrenceID] = array('DTSTART' => $recurrence);
+            } else {
+                krsort($eventCache[$eventUID][$eventRecurrenceID]);
+                $keys = array_keys($eventCache[$eventUID][$eventRecurrenceID]);
+                $trueEvents[$eventRecurrenceID] = $eventCache[$eventUID][$eventRecurrenceID][$keys[0]];
+            }
+        }
+    }
+}
+
+usort($trueEvents, function ($a, $b) {
+    return $a['DTSTART'] > $b['DTSTART'];
+});
+
+$events = $cal->getSortedEvents(true);
+Assert::false(empty($events[0]['RECURRENCES']));
+Assert::equal(count($trueEvents), count($events));
+foreach($trueEvents as $index => $trueEvent) {
+    Assert::equal($trueEvent['DTSTART']->format("Ymd"), $events[$index]['DTSTART']->format("Ymd"));
+}

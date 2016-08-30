@@ -186,16 +186,10 @@ class IcalParser {
 					$section = substr($row, 4);
 					$currCounter = $counters[$section];
 					$event = $this->data[$section][$currCounter];
-					if (!empty($event['RRULE']) || !empty($event['RDATE'])) {
-						$recurrences = $this->parseRecurrences($event);
-						if (!empty($recurrences)) {
-							$this->data[$section][$currCounter]['RECURRENCES'] = $recurrences;
-						}
-
-						if(!empty($event['UID'])) {
-                            $this->data["_RECURRENCE_COUNTERS_BY_UID"][$event['UID']] = $currCounter;
-                        }
+					if(!empty($event['RECURRENCE-ID'])) {
+						$this->data['_RECURRENCE_IDS'][$event['RECURRENCE-ID']] = $event;
 					}
+
 					continue 2; // while
 					break;
 				case 'END:DAYLIGHT':
@@ -205,9 +199,25 @@ class IcalParser {
 				case 'END:VJOURNAL':
 				case 'END:STANDARD':
 				case 'END:VTODO':
+                    continue 2; // while
+                    break;
+
 				case 'END:VCALENDAR':
-					continue 2; // while
-					break;
+				    $section = 'VEVENT';
+				    foreach($this->data[$section] as $currCounter => $event) {
+                        if(!empty($event[ 'RRULE' ]) || !empty($event[ 'RDATE' ])) {
+                            $recurrences = $this->parseRecurrences($event);
+                            if(!empty($recurrences)) {
+                                $this->data[ $section ][ $currCounter ][ 'RECURRENCES' ] = $recurrences;
+                            }
+
+                            if(!empty($event[ 'UID' ])) {
+                                $this->data[ "_RECURRENCE_COUNTERS_BY_UID" ][ $event[ 'UID' ] ] = $currCounter;
+                            }
+                        }
+                    }
+                    continue 2; // while
+                    break;
 			}
 
 			list($key, $middle, $value) = $this->parseRow($row);
@@ -399,7 +409,12 @@ class IcalParser {
 		foreach ($recurrenceTimestamps as $recurrenceTimestamp) {
 			$tmp = new \DateTime('now', $event['DTSTART']->getTimezone());
 			$tmp->setTimestamp($recurrenceTimestamp);
-			$recurrences[] = $tmp;
+
+            $recurrenceIDDate = $tmp->format('Ymd');
+            $recurrenceIDDateTime = $tmp->format('Ymd\THis\Z');
+            if(empty($this->data['_RECURRENCE_IDS'][$recurrenceIDDate]) && empty($this->data['_RECURRENCE_IDS'][$recurrenceIDDateTime])) {
+                $recurrences[] = $tmp;
+            }
 		}
 
 		return $recurrences;
