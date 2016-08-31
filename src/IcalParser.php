@@ -204,15 +204,17 @@ class IcalParser {
 
 				case 'END:VCALENDAR':
 				    $section = 'VEVENT';
-				    foreach($this->data[$section] as $currCounter => $event) {
-                        if(!empty($event[ 'RRULE' ]) || !empty($event[ 'RDATE' ])) {
-                            $recurrences = $this->parseRecurrences($event);
-                            if(!empty($recurrences)) {
-                                $this->data[ $section ][ $currCounter ][ 'RECURRENCES' ] = $recurrences;
-                            }
+                    if(!empty($this->data[$section])) {
+                        foreach($this->data[ $section ] as $currCounter => $event) {
+                            if(!empty($event[ 'RRULE' ]) || !empty($event[ 'RDATE' ])) {
+                                $recurrences = $this->parseRecurrences($event);
+                                if(!empty($recurrences)) {
+                                    $this->data[ $section ][ $currCounter ][ 'RECURRENCES' ] = $recurrences;
+                                }
 
-                            if(!empty($event[ 'UID' ])) {
-                                $this->data[ "_RECURRENCE_COUNTERS_BY_UID" ][ $event[ 'UID' ] ] = $currCounter;
+                                if(!empty($event[ 'UID' ])) {
+                                    $this->data[ "_RECURRENCE_COUNTERS_BY_UID" ][ $event[ 'UID' ] ] = $currCounter;
+                                }
                             }
                         }
                     }
