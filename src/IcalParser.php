@@ -354,7 +354,7 @@ class IcalParser {
 	 * @return array
 	 */
 	private function parseRow($row) {
-		preg_match('#^([\w-]+);?(.*?):(.*)$#i', $row, $matches);
+        preg_match('#^([\w-]+);?([\w-]+="[^"]*"|.*?):(.*)$#i', $row, $matches);
 
 		$key = false;
 		$middle = null;
@@ -381,6 +381,7 @@ class IcalParser {
 				$middle = [];
 				foreach ($matches as $match) {
 					if ($match['key'] === 'TZID') {
+					    $match['value'] = trim($match['value'], "'\"");
 						if (isset($this->windows_timezones[$match['value']])) {
 							$match['value'] = $this->windows_timezones[$match['value']];
 						}
@@ -513,9 +514,15 @@ class IcalParser {
 			$tmp->setTimestamp($recurrenceTimestamp);
 
             $recurrenceIDDate = $tmp->format('Ymd');
-            $recurrenceIDDateTime = $tmp->format('Ymd\THis\Z');
-            if(empty($this->data['_RECURRENCE_IDS'][$recurrenceIDDate]) && empty($this->data['_RECURRENCE_IDS'][$recurrenceIDDateTime])) {
-                $recurrences[] = $tmp;
+            $recurrenceIDDateTime = $tmp->format('Ymd\THis');
+            if(empty($this->data['_RECURRENCE_IDS'][$recurrenceIDDate]) &&
+                empty($this->data['_RECURRENCE_IDS'][$recurrenceIDDateTime])) {
+                $gmtCheck = new \DateTime("now", new \DateTimeZone('UTC'));
+                $gmtCheck->setTimestamp($recurrenceTimestamp);
+                $recurrenceIDDateTimeZ = $gmtCheck->format('Ymd\THis\Z');
+                if(empty($this->data['_RECURRENCE_IDS'][$recurrenceIDDateTimeZ])) {
+                    $recurrences[] = $tmp;
+                }
             }
 		}
 

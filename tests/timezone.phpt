@@ -22,3 +22,7 @@ Assert::same('Etc/GMT', $cal->timezone->getName());
 $cal = new \om\IcalParser();
 $results = $cal->parseFile(__DIR__ . '/cal/FrenchHolidays.ics');
 Assert::same('Europe/Paris', $cal->timezone->getName());
+
+$cal = new \om\IcalParser();
+$results = $cal->parseFile(__DIR__ . '/cal/weird_windows_timezones.ics');
+$events = $cal->getSortedEvents();
