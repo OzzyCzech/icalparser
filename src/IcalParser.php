@@ -265,6 +265,10 @@ class IcalParser {
 						} catch (\Exception $e) {
 							$middle[$match['key']] = $match['value'];
 						}
+					} else if ($match['key'] === 'ENCODING') {
+						if ($match['value'] === 'QUOTED-PRINTABLE'){
+							$value = quoted_printable_decode($value);
+						}
 					}
 				}
 			}
