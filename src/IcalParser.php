@@ -86,6 +86,7 @@ class IcalParser {
 		'Morocco Standard Time' => 'Africa/Casablanca',
         '(UTC) Casablanca' => 'Africa/Casablanca',
 		'UTC' => 'Etc/GMT',
+        'Microsoft/Utc' => 'Etc/GMT',
 		'GMT Standard Time' => 'Europe/London',
         '(UTC) Dublin, Edinburgh, Lisbon, London' => 'Europe/London',
 		'Greenwich Standard Time' => 'Atlantic/Reykjavik',
