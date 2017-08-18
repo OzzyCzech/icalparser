@@ -161,3 +161,14 @@ Assert::true(empty($events[0]['RECURRENCES'])); // edited event
 Assert::true(empty($events[1]['RECURRENCES'])); // recurring event base with no recurrences
 Assert::equal(1, count($events));
 */
+
+$results = $cal->parseFile(__DIR__ . '/cal/daily_recur.ics');
+$events = $cal->getSortedEvents();
+
+Assert::false(empty($events[1]['RECURRENCES']));
+$recurrences = $events[1]['RECURRENCES'];
+Assert::equal(4, sizeof($recurrences));
+Assert::equal($events[1]['DTSTART'], $recurrences[0]);
+Assert::equal('28.8.2017 00:00:00', $recurrences[1]->format('j.n.Y H:i:s'));
+Assert::equal('4.9.2017 00:00:00', $recurrences[2]->format('j.n.Y H:i:s'));
+Assert::equal('11.9.2017 00:00:00', $recurrences[3]->format('j.n.Y H:i:s'));
