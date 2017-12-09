@@ -254,7 +254,7 @@ class Freq {
 		$hour = (in_array($this->freq, ['hourly', 'minutely']) && $offset > $this->start) ? date('H', $offset) : date(
 			'H', $this->start
 		);
-		$minute = (($this->freq == 'minutely' || isset($this->rules['byminute'])) && $offset > $this->start) ? date(
+		$minute = (($this->freq === 'minutely' || isset($this->rules['byminute'])) && $offset > $this->start) ? date(
 			'i', $offset
 		) : date('i', $this->start);
 		$t = mktime($hour, $minute, date('s', $this->start), date('m', $offset), date('d', $offset), date('Y', $offset));
@@ -334,9 +334,9 @@ class Freq {
 	 * @return int
 	 */
 	private function findStartingPoint($offset, $interval, $truncate = true) {
-		$_freq = ($this->freq == 'daily') ? 'day__' : $this->freq;
+		$_freq = ($this->freq === 'daily') ? 'day__' : $this->freq;
 		$t = '+' . $interval . ' ' . substr($_freq, 0, -2) . 's';
-		if ($_freq == 'monthly' && $truncate) {
+		if ($_freq === 'monthly' && $truncate) {
 			if ($interval > 1) {
 				$offset = strtotime('+' . ($interval - 1) . ' months ', $offset);
 			}
@@ -375,24 +375,24 @@ class Freq {
 	private function truncateToPeriod($time, $freq) {
 		$date = getdate($time);
 		switch ($freq) {
-			case "yearly":
+			case 'yearly':
 				$date['mon'] = 1;
-			case "monthly":
+			case 'monthly':
 				$date['mday'] = 1;
-			case "daily":
+			case 'daily':
 				$date['hours'] = 0;
 			case 'hourly':
 				$date['minutes'] = 0;
-			case "minutely":
+			case 'minutely':
 				$date['seconds'] = 0;
 				break;
-			case "weekly":
+			case 'weekly':
 				if (date('N', $time) == 1) {
 					$date['hours'] = 0;
 					$date['minutes'] = 0;
 					$date['seconds'] = 0;
 				} else {
-					$date = getdate(strtotime("last monday 0:00", $time));
+					$date = getdate(strtotime('last monday 0:00', $time));
 				}
 				break;
 		}
@@ -431,7 +431,7 @@ class Freq {
 			return $_t;
 		} else {
 			$_f = $this->freq;
-			if (isset($this->rules['bymonth']) && $this->freq == 'yearly') {
+			if (isset($this->rules['bymonth']) && $this->freq === 'yearly') {
 				$this->freq = 'monthly';
 			}
 			if ($dir == -1) {
@@ -568,29 +568,29 @@ class Freq {
 	}
 
 	private function isPrerule($rule, $freq) {
-		if ($rule == 'year')
+		if ($rule === 'year')
 
 			return false;
-		if ($rule == 'month' && $freq == 'yearly')
+		if ($rule === 'month' && $freq === 'yearly')
 
 			return true;
-		if ($rule == 'monthday' && in_array($freq, ['yearly', 'monthly']) && !isset($this->rules['byday']))
+		if ($rule === 'monthday' && in_array($freq, ['yearly', 'monthly']) && !isset($this->rules['byday']))
 
 			return true;
 		// TODO: is it faster to do monthday first, and ignore day if monthday exists? - prolly by a factor of 4..
-		if ($rule == 'yearday' && $freq == 'yearly')
+		if ($rule === 'yearday' && $freq === 'yearly')
 
 			return true;
-		if ($rule == 'weekno' && $freq == 'yearly')
+		if ($rule === 'weekno' && $freq === 'yearly')
 
 			return true;
-		if ($rule == 'day' && in_array($freq, ['yearly', 'monthly', 'weekly']))
+		if ($rule === 'day' && in_array($freq, ['yearly', 'monthly', 'weekly']))
 
 			return true;
-		if ($rule == 'hour' && in_array($freq, ['yearly', 'monthly', 'weekly', 'daily']))
+		if ($rule === 'hour' && in_array($freq, ['yearly', 'monthly', 'weekly', 'daily']))
 
 			return true;
-		if ($rule == 'minute')
+		if ($rule === 'minute')
 
 			return true;
 
