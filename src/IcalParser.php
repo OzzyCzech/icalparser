@@ -337,10 +337,10 @@ class IcalParser {
 		return [$key, $middle, $value];
 	}
 
-    /**
-     * @param $event
-     * @return array
-     */
+	/**
+	 * @param $event
+	 * @return array
+	*/
 	public function parseRecurrences($event) {
 		$recurring = new Recurrence($event['RRULE']);
 		$exclusions = [];
