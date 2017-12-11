@@ -141,10 +141,14 @@ class IcalParser {
 	/**
 	 * @param string $string
 	 * @param null $callback
+	 * @param boolean $add if true the parsed string is added to existing data
 	 * @return array|null
 	 */
-	public function parseString($string, $callback = null) {
-		$this->data = [];
+	public function parseString($string, $callback = null, $add = false) {
+		if ($add === false) {
+			// delete old data
+			$this->data = [];
+		}
 
 		if (!preg_match('/BEGIN:VCALENDAR/', $string)) {
 			throw new \InvalidArgumentException('Invalid ICAL data format');
