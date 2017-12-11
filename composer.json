@@ -20,7 +20,7 @@
 		"classmap": ["src/"]
 	},
 	"require-dev": {
-		"nette/tester": "v1.7.1"
+		"nette/tester": "v2.0.0"
 	},
 	"scripts": {
 		"tests": ["./vendor/bin/tester tests -s -p php"]
