@@ -58,7 +58,7 @@ class Recurrence {
 	 * Parses an 'RRULE' array and sets the member variables of this object.
 	 * Expects a string that looks like this:  'FREQ=WEEKLY;INTERVAL=2;BYDAY=SU,TU,WE'
 	 *
-	 * @param string $line the line to be parsed
+	 * @param $rrule
 	 */
 	protected function parseRrule($rrule) {
 		$this->rrule = $rrule;

@@ -337,7 +337,10 @@ class IcalParser {
 		return [$key, $middle, $value];
 	}
 
-
+	/**
+	 * @param $event
+	 * @return array
+	*/
 	public function parseRecurrences($event) {
 		$recurring = new Recurrence($event['RRULE']);
 		$exclusions = [];
@@ -438,9 +441,9 @@ class IcalParser {
 	}
 
 	/**
-	 * Return sorted eventlist as array or false if calenar is empty
+	 * Return sorted event list as array
 	 *
-	 * @return array|boolean
+	 * @return array
 	 */
 	public function getSortedEvents() {
 		if ($events = $this->getEvents()) {
