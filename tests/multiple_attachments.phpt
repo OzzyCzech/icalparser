@@ -2,6 +2,7 @@
 /**
  * @author PC Drew <pc@soprisapps.com>
  */
+
 use Tester\Assert;
 
 require_once __DIR__ . '/../vendor/autoload.php';

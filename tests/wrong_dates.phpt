@@ -2,10 +2,12 @@
 /**
  * @author Roman Ozana <ozana@omdesign.cz>
  */
+
 use Tester\Assert;
+use Tester\Environment;
 
 require_once __DIR__ . '/../vendor/autoload.php';
-\Tester\Environment::setup();
+Environment::setup();
 
 $cal = new \om\IcalParser();
 $results = $cal->parseFile(__DIR__ . '/cal/wrong_dates.ics');

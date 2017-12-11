@@ -2,10 +2,12 @@
 /**
  * @author Marc Vachette <marc.vachette@gmail.com>
  */
+
 use Tester\Assert;
+use Tester\Environment;
 
 require_once __DIR__ . '/../vendor/autoload.php';
-\Tester\Environment::setup();
+Environment::setup();
 date_default_timezone_set('Europe/Paris');
 
 //some clean timezone

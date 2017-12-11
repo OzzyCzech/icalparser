@@ -2,10 +2,12 @@
 /**
  * @author PC Drew <pc@schoolblocks.com>
  */
+
 use Tester\Assert;
+use Tester\Environment;
 
 require_once __DIR__ . '/../vendor/autoload.php';
-\Tester\Environment::setup();
+Environment::setup();
 
 $cal = new \om\IcalParser();
 
@@ -90,6 +92,6 @@ Assert::equal('07.07.2015 10:00:00', $recurrences[33]->format('d.m.Y H:i:s'));
 Assert::equal('04.08.2015 10:00:00', $recurrences[34]->format('d.m.Y H:i:s'));
 Assert::equal('01.09.2015 10:00:00', $recurrences[35]->format('d.m.Y H:i:s'));
 
-foreach($events[0]['EXDATES'] as $exDate) {
-    Assert::notContains($exDate, $recurrences);
+foreach ($events[0]['EXDATES'] as $exDate) {
+	Assert::notContains($exDate, $recurrences);
 }
