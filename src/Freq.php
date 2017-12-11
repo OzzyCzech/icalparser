@@ -1,10 +1,11 @@
 <?php
+
 namespace om;
-	/**
-	 * Class taken from https://github.com/coopTilleuls/intouch-iCalendar.git (Freq.php)
-	 *
-	 * @author PC Drew <pc@schoolblocks.com>
-	 */
+/**
+ * Class taken from https://github.com/coopTilleuls/intouch-iCalendar.git (Freq.php)
+ *
+ * @author PC Drew <pc@schoolblocks.com>
+ */
 
 /**
  * A class to store Frequency-rules in. Will allow a easy way to find the

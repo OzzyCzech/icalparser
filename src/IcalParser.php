@@ -1,4 +1,5 @@
 <?php
+
 namespace om;
 /**
  * Copyright (c) 2004-2015 Roman Ožana (http://www.omdesign.cz)
@@ -270,7 +271,7 @@ class IcalParser {
 							$middle[$match['key']] = $match['value'];
 						}
 					} else if ($match['key'] === 'ENCODING') {
-						if ($match['value'] === 'QUOTED-PRINTABLE'){
+						if ($match['value'] === 'QUOTED-PRINTABLE') {
 							$value = quoted_printable_decode($value);
 						}
 					}
@@ -344,7 +345,7 @@ class IcalParser {
 	/**
 	 * @param $event
 	 * @return array
-	*/
+	 */
 	public function parseRecurrences($event) {
 		$recurring = new Recurrence($event['RRULE']);
 		$exclusions = [];
