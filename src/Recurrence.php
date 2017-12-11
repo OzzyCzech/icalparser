@@ -68,7 +68,7 @@ class Recurrence {
 			//need the lower-case name for setting the member variable
 			$propertyName = strtolower($propertyName);
 			//split up the list of values into an array (if it's a list)
-			if (in_array($propertyName, $this->listProperties)) {
+			if (in_array($propertyName, $this->listProperties, true)) {
 				$propertyValue = explode(',', $propertyValue);
 			}
 			$this->$propertyName = $propertyValue;

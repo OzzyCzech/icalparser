@@ -157,7 +157,7 @@ class IcalParser {
 		$string = str_replace("\r\n", "\n", $string);
 
 		// Unfold multi-line strings
-		$string = str_replace("\n ", "", $string);
+		$string = str_replace("\n ", '', $string);
 
 		foreach (explode("\n", $string) as $row) {
 
@@ -275,7 +275,7 @@ class IcalParser {
 		}
 
 		// process simple dates with timezone
-		if (in_array($key, ['DTSTAMP', 'LAST-MODIFIED', 'CREATED', 'DTSTART', 'DTEND'])) {
+		if (in_array($key, ['DTSTAMP', 'LAST-MODIFIED', 'CREATED', 'DTSTART', 'DTEND'], true)) {
 			try {
 				$value = new \DateTime($value, ($timezone ?: $this->timezone));
 			} catch (\Exception $e) {
@@ -290,7 +290,7 @@ class IcalParser {
 					// pass
 				}
 			}
-			if (count($values) == 1) {
+			if (count($values) === 1) {
 				$value = $values[0];
 			} else {
 				$value = $values;
@@ -381,7 +381,7 @@ class IcalParser {
 		$recurrenceTimestamps = $frequency->getAllOccurrences();
 		$recurrences = [];
 		foreach ($recurrenceTimestamps as $recurrenceTimestamp) {
-			$tmp = new \DateTime("now", $event['DTSTART']->getTimezone());
+			$tmp = new \DateTime('now', $event['DTSTART']->getTimezone());
 			$tmp->setTimestamp($recurrenceTimestamp);
 			$recurrences[] = $tmp;
 		}
