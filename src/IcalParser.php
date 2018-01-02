@@ -129,6 +129,7 @@ class IcalParser {
 	 * @return array|null
 	 * @throws \RuntimeException
 	 * @throws \InvalidArgumentException
+	 * @throws \Exception
 	 */
 	public function parseFile($file, $callback = null) {
 		if (!$handle = fopen($file, 'r')) {
@@ -144,6 +145,8 @@ class IcalParser {
 	 * @param null $callback
 	 * @param boolean $add if true the parsed string is added to existing data
 	 * @return array|null
+	 * @throws \InvalidArgumentException
+	 * @throws \Exception
 	 */
 	public function parseString($string, $callback = null, $add = false) {
 		if ($add === false) {
@@ -345,6 +348,7 @@ class IcalParser {
 	/**
 	 * @param $event
 	 * @return array
+	 * @throws \Exception
 	 */
 	public function parseRecurrences($event) {
 		$recurring = new Recurrence($event['RRULE']);
