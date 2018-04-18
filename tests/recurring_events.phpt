@@ -155,7 +155,6 @@ Assert::equal(1, count($events));
 
 $results = $cal->parseFile(__DIR__ . '/cal/daily_recur.ics');
 $events = $cal->getSortedEvents();
-print("num events: " . count($events) . "\n");
 $period = new DatePeriod(new DateTime('20120801T050000'), new DateInterval('P1D'), 365 * 3);
 foreach($period as $i => $day) {
 	Assert::equal($day->format('j.n.Y H:i:s'), $events[$i]['DTSTART']->format('j.n.Y H:i:s'));
