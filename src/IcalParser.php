@@ -549,25 +549,36 @@ class IcalParser {
 						$modifiedEventRecurID = $event['RECURRENCE-ID'];
 						$modifiedEventSeq = intval($event['SEQUENCE'], 10);
 
-						if(!empty($this->data["_RECURRENCE_COUNTERS_BY_UID"][$modifiedEventUID])) {
+						if(isset($this->data["_RECURRENCE_COUNTERS_BY_UID"][$modifiedEventUID])) {
 							$counter = $this->data[ "_RECURRENCE_COUNTERS_BY_UID" ][ $modifiedEventUID ];
 
 							$originalEvent = $this->data[ "VEVENT" ][ $counter ];
-							if(!empty($originalEvent[ 'RECURRENCES' ]) && isset($originalEvent[ 'SEQUENCE' ])) {
+							if(isset($originalEvent[ 'SEQUENCE' ])) {
 								$originalEventSeq = intval($originalEvent['SEQUENCE'], 10);
-								if($modifiedEventSeq > $originalEventSeq) {
-									for ($j = 0; $j < count($originalEvent['RECURRENCES']); $j++) {
-										$recurDate = $originalEvent[ 'RECURRENCES' ][$j];
-										$formatedStartDate = $recurDate->format('Ymd\THis');
-										if($formatedStartDate === $modifiedEventRecurID) {
-											unset($this->data[ "VEVENT" ][ $counter ]['RECURRENCES'][$j]);
-											$this->data["VEVENT"][$counter]['RECURRENCES'] = array_values($this->data["VEVENT"][$counter]['RECURRENCES']);break;
+								$originalEventFormattedStartDate = $originalEvent['DTSTART']->format('Ymd\THis');
+								if ($modifiedEventRecurID === $originalEventFormattedStartDate && $modifiedEventSeq > $originalEventSeq) {
+									// this modifies the original event
+									$modifiedEvent = array_replace_recursive($originalEvent, $event);
+									$this->data[ "VEVENT" ][ $counter ] = $modifiedEvent;
+									foreach($events as $z => $event) {
+										if ($events[$z]['UID'] === $originalEvent['UID'] &&
+											$events[$z]['SEQUENCE'] === $originalEvent['SEQUENCE']) {
+											// replace the original event with the modified event
+											$events[$z] = $modifiedEvent;
+											break;
 										}
 									}
-								} else {
-									// don't save this event because the original, repeating event has a higher
-									// sequence number.  This is extremely unlikely
-									$event = null;
+									$event = null; // don't add this to the $events[] array again
+								} else if (!empty($originalEvent[ 'RECURRENCES' ])) {
+									for($j = 0; $j < count($originalEvent[ 'RECURRENCES' ]); $j++) {
+										$recurDate = $originalEvent[ 'RECURRENCES' ][ $j ];
+										$formattedStartDate = $recurDate->format('Ymd\THis');
+										if($formattedStartDate === $modifiedEventRecurID) {
+											unset($this->data[ "VEVENT" ][ $counter ][ 'RECURRENCES' ][ $j ]);
+											$this->data[ "VEVENT" ][ $counter ][ 'RECURRENCES' ] = array_values($this->data[ "VEVENT" ][ $counter ][ 'RECURRENCES' ]);
+											break;
+										}
+									}
 								}
 							}
 						}
