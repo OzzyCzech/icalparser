@@ -423,7 +423,7 @@ class Freq {
 
 			$_t = strtotime($s, $t);
 
-			if ($_t == $t && in_array($this->freq, ['monthly', 'yearly'])) {
+			if ($_t == $t && in_array($this->freq, ['weekly', 'monthly', 'yearly'])) {
 				// Yes. This is not a great idea.. but hey, it works.. for now
 				$s = 'next ' . $d . ' ' . date('H:i:s', $t);
 				$_t = strtotime($s, $_t);
