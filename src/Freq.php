@@ -276,7 +276,16 @@ class Freq {
 			return $ts;
 		}
 
+		//EOP needs to have the same TIME as START ($t)
+		$tO = new \DateTime('@'.$t, new \DateTimeZone('UTC'));
+
 		$eop = $this->findEndOfPeriod($offset);
+		$eopO = new \DateTime('@'.$eop, new \DateTimeZone('UTC'));
+		$eopO->setTime($tO->format('H'),$tO->format('i'),$tO->format('s'));
+		$eop = $eopO->getTimestamp();
+		unset($eopO);
+		unset($tO);
+
 		if ($debug) echo 'EOP: ' . date('r', $eop) . "\n";
 
 		foreach ($this->knownRules AS $rule) {
