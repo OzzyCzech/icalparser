@@ -168,3 +168,40 @@ Assert::equal('21.8.2017 00:00:00', $events[0]['DTSTART']->format('j.n.Y H:i:s')
 Assert::equal('28.8.2017 00:00:00', $events[1]['DTSTART']->format('j.n.Y H:i:s'));
 Assert::equal('4.9.2017 00:00:00', $events[2]['DTSTART']->format('j.n.Y H:i:s'));
 Assert::equal('11.9.2017 00:00:00', $events[3]['DTSTART']->format('j.n.Y H:i:s'));
+
+//https://github.com/OzzyCzech/icalparser/issues/38
+$results = $cal->parseFile(__DIR__ . '/cal/38_weekly_recurring_event_missing_day.ics');
+$events = $cal->getSortedEvents();
+
+//first monday
+Assert::equal('25.2.2019 09:00:00', $events[0]['DTSTART']->format('j.n.Y H:i:s'));
+//rest of week
+Assert::equal('26.2.2019 09:00:00', $events[1]['DTSTART']->format('j.n.Y H:i:s'));
+Assert::equal('27.2.2019 09:00:00', $events[2]['DTSTART']->format('j.n.Y H:i:s'));
+Assert::equal('28.2.2019 09:00:00', $events[3]['DTSTART']->format('j.n.Y H:i:s'));
+Assert::equal('1.3.2019 09:00:00', $events[4]['DTSTART']->format('j.n.Y H:i:s'));
+//now check the next 4 mondays to make sure they exist as well
+Assert::equal('4.3.2019 09:00:00', $events[5]['DTSTART']->format('j.n.Y H:i:s'));
+Assert::equal('11.3.2019 09:00:00', $events[10]['DTSTART']->format('j.n.Y H:i:s'));
+Assert::equal('18.3.2019 09:00:00', $events[15]['DTSTART']->format('j.n.Y H:i:s'));
+Assert::equal('25.3.2019 09:00:00', $events[20]['DTSTART']->format('j.n.Y H:i:s'));
+
+//Last week that works correctly
+Assert::equal('1.4.2019 09:00:00', $events[25]['DTSTART']->format('j.n.Y H:i:s'));
+Assert::equal('2.4.2019 09:00:00', $events[26]['DTSTART']->format('j.n.Y H:i:s'));
+Assert::equal('3.4.2019 09:00:00', $events[27]['DTSTART']->format('j.n.Y H:i:s'));
+Assert::equal('4.4.2019 09:00:00', $events[28]['DTSTART']->format('j.n.Y H:i:s'));
+Assert::equal('5.4.2019 09:00:00', $events[29]['DTSTART']->format('j.n.Y H:i:s'));
+
+//This week starts failing
+Assert::equal('8.4.2019 09:00:00', $events[30]['DTSTART']->format('j.n.Y H:i:s'));
+Assert::equal('9.4.2019 09:00:00', $events[31]['DTSTART']->format('j.n.Y H:i:s'));
+Assert::equal('10.4.2019 09:00:00', $events[32]['DTSTART']->format('j.n.Y H:i:s'));
+Assert::equal('11.4.2019 09:00:00', $events[33]['DTSTART']->format('j.n.Y H:i:s'));
+Assert::equal('12.4.2019 09:00:00', $events[34]['DTSTART']->format('j.n.Y H:i:s'));
+
+Assert::equal('15.4.2019 09:00:00', $events[35]['DTSTART']->format('j.n.Y H:i:s'));
+Assert::equal('16.4.2019 09:00:00', $events[36]['DTSTART']->format('j.n.Y H:i:s'));
+Assert::equal('17.4.2019 09:00:00', $events[37]['DTSTART']->format('j.n.Y H:i:s'));
+Assert::equal('18.4.2019 09:00:00', $events[38]['DTSTART']->format('j.n.Y H:i:s'));
+Assert::equal('19.4.2019 09:00:00', $events[39]['DTSTART']->format('j.n.Y H:i:s'));
