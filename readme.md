@@ -27,7 +27,7 @@ foreach ($cal->getSortedEvents() as $r) {
 
 ## Requirements
 
-- PHP 5.6+
+- PHP 7.0+
 
 ## Run tests
 

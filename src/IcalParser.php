@@ -1,6 +1,7 @@
 <?php
 
 namespace om;
+
 /**
  * Copyright (c) 2004-2015 Roman Ožana (http://www.omdesign.cz)
  *
@@ -131,7 +132,6 @@ class IcalParser {
 
 			list($key, $middle, $value) = $this->parseRow($row);
 
-
 			if ($callback) {
 				// call user function for processing line
 				call_user_func($callback, $row, $key, $middle, $value, $section, $this->counters[$section]);
@@ -193,7 +193,7 @@ class IcalParser {
 						} catch (\Exception $e) {
 							$middle[$match['key']] = $match['value'];
 						}
-					} else if ($match['key'] === 'ENCODING') {
+					} elseif ($match['key'] === 'ENCODING') {
 						if ($match['value'] === 'QUOTED-PRINTABLE') {
 							$value = quoted_printable_decode($value);
 						}
@@ -209,7 +209,7 @@ class IcalParser {
 			} catch (\Exception $e) {
 				$value = null;
 			}
-		} else if (in_array($key, ['EXDATE', 'RDATE'])) {
+		} elseif (in_array($key, ['EXDATE', 'RDATE'])) {
 			$values = [];
 			foreach (explode(',', $value) as $singleValue) {
 				try {
@@ -250,7 +250,7 @@ class IcalParser {
 		$text_properties = [
 			'CALSCALE', 'METHOD', 'PRODID', 'VERSION', 'CATEGORIES', 'CLASS', 'COMMENT', 'DESCRIPTION'
 			, 'LOCATION', 'RESOURCES', 'STATUS', 'SUMMARY', 'TRANSP', 'TZID', 'TZNAME', 'CONTACT', 'RELATED-TO', 'UID'
-			, 'ACTION', 'REQUEST-STATUS'
+			, 'ACTION', 'REQUEST-STATUS',
 		];
 		if (in_array($key, $text_properties) || strpos($key, 'X-') === 0) {
 			if (is_array($value)) {
@@ -367,7 +367,7 @@ class IcalParser {
 										}
 									}
 									$event = null; // don't add this to the $events[] array again
-								} else if (!empty($originalEvent['RECURRENCES'])) {
+								} elseif (!empty($originalEvent['RECURRENCES'])) {
 									for ($j = 0; $j < count($originalEvent['RECURRENCES']); $j++) {
 										$recurDate = $originalEvent['RECURRENCES'][$j];
 										$formattedStartDate = $recurDate->format('Ymd\THis');
@@ -410,7 +410,6 @@ class IcalParser {
 		}
 		return $events;
 	}
-
 
 	/**
 	 * Process timezone and return correct one...

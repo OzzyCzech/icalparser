@@ -2,7 +2,7 @@
 
 namespace om;
 
-use \DateTime;
+use DateTime;
 
 /**
  * Class taken from https://github.com/coopTilleuls/intouch-iCalendar.git (Recurrence.php)
@@ -19,6 +19,7 @@ use \DateTime;
  * @license http://creativecommons.org/licenses/by-sa/2.5/dk/deed.en_GB CC-BY-SA-DK
  */
 class Recurrence {
+
 	public $rrule;
 	protected $freq;
 	protected $until;
@@ -41,7 +42,7 @@ class Recurrence {
 	 */
 	protected $listProperties = [
 		'bysecond', 'byminute', 'byhour', 'byday', 'bymonthday',
-		'byyearday', 'byweekno', 'bymonth', 'bysetpos'
+		'byyearday', 'byweekno', 'bymonth', 'bysetpos',
 	];
 
 	/**
@@ -83,7 +84,7 @@ class Recurrence {
 	public function setUntil($ts) {
 		if ($ts instanceof DateTime) {
 			$dt = $ts;
-		} else if (is_int($ts)) {
+		} elseif (is_int($ts)) {
 			$dt = new DateTime('@' . $ts);
 		} else {
 			$dt = new DateTime($ts);
@@ -95,7 +96,7 @@ class Recurrence {
 	/**
 	 * Retrieves the desired member variable and returns it (if it's set)
 	 *
-	 * @param  string $member name of the member variable
+	 * @param string $member name of the member variable
 	 * @return mixed  the variable value (if set), false otherwise
 	 */
 	protected function getMember($member) {

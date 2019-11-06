@@ -1,28 +1,32 @@
 {
 	"name": "om/icalparser",
+	"license": "BSD-3-Clause",
 	"description": "Simple ical parser",
 	"keywords": [
 		"ical",
 		"calendar",
 		"parser"
 	],
-	"license": ["BSD-3-Clause"],
 	"authors": [
 		{
 			"name": "Roman Ožana",
-			"email": "ozana@omdesign.cz"
+			"email": "roman@omdesign.cz"
 		}
 	],
 	"require": {
-		"php": ">=5.6.0"
+		"php": ">=7.0.0"
 	},
 	"autoload": {
-		"classmap": ["src/"]
+		"classmap": [
+			"src/"
+		]
 	},
 	"require-dev": {
-		"nette/tester": "v2.0.1"
+		"nette/tester": "v2.3.*"
 	},
 	"scripts": {
-		"tests": ["./vendor/bin/tester tests -s -p php"]
+		"tests": [
+			"./vendor/bin/tester tests -s -p php"
+		]
 	}
 }

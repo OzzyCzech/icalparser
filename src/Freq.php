@@ -1,6 +1,7 @@
 <?php
 
 namespace om;
+
 /**
  * Class taken from https://github.com/coopTilleuls/intouch-iCalendar.git (Freq.php)
  *
@@ -30,12 +31,13 @@ namespace om;
  * @license http://creativecommons.org/licenses/by-sa/2.5/dk/deed.en_GB CC-BY-SA-DK
  */
 class Freq {
+
 	protected $weekdays = [
 		'MO' => 'monday', 'TU' => 'tuesday', 'WE' => 'wednesday', 'TH' => 'thursday', 'FR' => 'friday', 'SA' => 'saturday',
-		'SU' => 'sunday'
+		'SU' => 'sunday',
 	];
 	protected $knownRules = [
-		'month', 'weekno', 'day', 'monthday', 'yearday', 'hour', 'minute'
+		'month', 'weekno', 'day', 'monthday', 'yearday', 'hour', 'minute',
 	]; //others : 'setpos', 'second'
 	protected $ruleModifiers = ['wkst'];
 	protected $simpleMode = true;
@@ -68,7 +70,7 @@ class Freq {
 
 		if (isset($this->rules['until']) && is_string($this->rules['until'])) {
 			$this->rules['until'] = strtotime($this->rules['until']);
-		} else if ($this->rules['until'] instanceof \DateTime) {
+		} elseif ($this->rules['until'] instanceof \DateTime) {
 			$this->rules['until'] = $this->rules['until']->getTimestamp();
 		}
 		$this->freq = strtolower($this->rules['freq']);
@@ -145,7 +147,7 @@ class Freq {
 	 * Returns the previous (most recent) occurrence of the rule from the
 	 * given offset
 	 *
-	 * @param  int $offset
+	 * @param int $offset
 	 * @return int
 	 */
 	public function previousOccurrence($offset) {
@@ -172,7 +174,7 @@ class Freq {
 	/**
 	 * Returns the next occurrence of this rule after the given offset
 	 *
-	 * @param  int $offset
+	 * @param int $offset
 	 * @return int
 	 */
 	public function nextOccurrence($offset) {
@@ -227,7 +229,7 @@ class Freq {
 	 * If no new timestamps were found in the period, we try in the
 	 * next period
 	 *
-	 * @param  int $offset
+	 * @param int $offset
 	 * @return int
 	 */
 	public function findNext($offset) {
@@ -277,11 +279,11 @@ class Freq {
 		}
 
 		//EOP needs to have the same TIME as START ($t)
-		$tO = new \DateTime('@'.$t, new \DateTimeZone('UTC'));
+		$tO = new \DateTime('@' . $t, new \DateTimeZone('UTC'));
 
 		$eop = $this->findEndOfPeriod($offset);
-		$eopO = new \DateTime('@'.$eop, new \DateTimeZone('UTC'));
-		$eopO->setTime($tO->format('H'),$tO->format('i'),$tO->format('s'));
+		$eopO = new \DateTime('@' . $eop, new \DateTimeZone('UTC'));
+		$eopO->setTime($tO->format('H'), $tO->format('i'), $tO->format('s'));
 		$eop = $eopO->getTimestamp();
 		unset($eopO);
 		unset($tO);
@@ -338,9 +340,9 @@ class Freq {
 	 * Finds the starting point for the next rule. It goes $interval
 	 * 'freq' forward in time since the given offset
 	 *
-	 * @param  int $offset
-	 * @param  int $interval
-	 * @param  boolean $truncate
+	 * @param int $offset
+	 * @param int $interval
+	 * @param boolean $truncate
 	 * @return int
 	 */
 	private function findStartingPoint($offset, $interval, $truncate = true) {
@@ -365,7 +367,7 @@ class Freq {
 	/**
 	 * Finds the earliest timestamp posible outside this perioid
 	 *
-	 * @param  int $offset
+	 * @param int $offset
 	 * @return int
 	 */
 	public function findEndOfPeriod($offset) {
@@ -378,8 +380,8 @@ class Freq {
 	 *
 	 * Yes - the fall-through is on purpose!
 	 *
-	 * @param  int $time
-	 * @param  int $freq
+	 * @param int $time
+	 * @param int $freq
 	 * @return int
 	 */
 	private function truncateToPeriod($time, $freq) {
@@ -414,8 +416,8 @@ class Freq {
 	/**
 	 * Applies the BYDAY rule to the given timestamp
 	 *
-	 * @param  string $rule
-	 * @param  int $t
+	 * @param string $rule
+	 * @param int $t
 	 * @return int
 	 */
 	private function ruleByday($rule, $t) {
