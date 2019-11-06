@@ -434,6 +434,13 @@ class IcalParser {
 	public function getTimezones() {
 		return isset($this->data['VTIMEZONE']) ? $this->data['VTIMEZONE'] : [];
 	}
+	
+	/**
+	 * @return array
+	 */
+	public function getTimezone() {
+		return $this->getTimezones();
+	}
 
 	/**
 	 * Return sorted event list as array
