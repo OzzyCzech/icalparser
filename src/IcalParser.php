@@ -248,9 +248,9 @@ class IcalParser {
 
 		//implement 4.3.11 Text ESCAPED-CHAR
 		$text_properties = [
-			'CALSCALE', 'METHOD', 'PRODID', 'VERSION', 'CATEGORIES', 'CLASS', 'COMMENT', 'DESCRIPTION'
-			, 'LOCATION', 'RESOURCES', 'STATUS', 'SUMMARY', 'TRANSP', 'TZID', 'TZNAME', 'CONTACT', 'RELATED-TO', 'UID'
-			, 'ACTION', 'REQUEST-STATUS',
+			'CALSCALE', 'METHOD', 'PRODID', 'VERSION', 'CATEGORIES', 'CLASS', 'COMMENT', 'DESCRIPTION',
+			'LOCATION', 'RESOURCES', 'STATUS', 'SUMMARY', 'TRANSP', 'TZID', 'TZNAME', 'CONTACT',
+			'RELATED-TO', 'UID', 'ACTION', 'REQUEST-STATUS', 'URL',
 		];
 		if (in_array($key, $text_properties) || strpos($key, 'X-') === 0) {
 			if (is_array($value)) {
@@ -434,7 +434,7 @@ class IcalParser {
 	public function getTimezones() {
 		return isset($this->data['VTIMEZONE']) ? $this->data['VTIMEZONE'] : [];
 	}
-	
+
 	/**
 	 * @return array
 	 */
