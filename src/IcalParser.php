@@ -301,9 +301,12 @@ class IcalParser {
 
 		$until = $recurring->getUntil();
 		if ($until === false) {
-			//forever... limit to 3 years
+			//forever not possibile => set fixed limit
+			$interval = 'P3Y';  // + 3 years
+			$offset = 'P1D';  // + 1 day
+      			$event['DTSTART'] = $this->findStart($event['DTSTART'], $interval, $offset);
 			$end = clone($event['DTSTART']);
-			$end->add(new \DateInterval('P3Y')); // + 3 years
+			$end->add(new \DateInterval($interval));
 			$recurring->setUntil($end);
 			$until = $recurring->getUntil();
 		}
@@ -331,6 +334,27 @@ class IcalParser {
 
 		return $recurrences;
 	}
+	
+	private function findStart($start, $interval, $offset = '', $limit = 9999)
+  	{
+    		$end = clone($start);
+    		$now = new \DateTime('now', $start->getTimezone());
+ 	   	
+    		$end = $end->add(new \DateInterval($interval));
+    		if (($limit > 0) && ($now > $end))
+		{
+      			if (!empty($offset))
+      			{
+        			$end->sub(new \DateInterval($offset));
+        			$offset = '';
+      			}
+      
+      			$start = $end;
+      			$start = $this->findStart($start, $interval, $offset, --$limit);
+    		}
+    
+    		return $start;
+  	}
 
 	/**
 	 * @return array
