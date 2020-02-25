@@ -399,7 +399,7 @@ class Freq {
 	}
 
 	/**
-	 * Finds the earliest timestamp posible outside this perioid
+	 * Finds the earliest timestamp possible outside this period.
 	 *
 	 * @param int $offset
 	 * @return int
