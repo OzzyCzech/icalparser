@@ -2,6 +2,8 @@
 
 namespace om;
 
+use DateTime;
+use DateTimeZone;
 use Exception;
 
 /**
@@ -73,7 +75,7 @@ class Freq {
 
 		if (isset($this->rules['until']) && is_string($this->rules['until'])) {
 			$this->rules['until'] = strtotime($this->rules['until']);
-		} elseif ($this->rules['until'] instanceof \DateTime) {
+		} elseif ($this->rules['until'] instanceof DateTime) {
 			$this->rules['until'] = $this->rules['until']->getTimestamp();
 		}
 		$this->freq = strtolower($this->rules['freq']);
@@ -224,10 +226,10 @@ class Freq {
 		}
 
 		//EOP needs to have the same TIME as START ($t)
-		$tO = new \DateTime('@' . $t, new \DateTimeZone('UTC'));
+		$tO = new DateTime('@' . $t, new DateTimeZone('UTC'));
 
 		$eop = $this->findEndOfPeriod($offset);
-		$eopO = new \DateTime('@' . $eop, new \DateTimeZone('UTC'));
+		$eopO = new DateTime('@' . $eop, new DateTimeZone('UTC'));
 		$eopO->setTime($tO->format('H'), $tO->format('i'), $tO->format('s'));
 		$eop = $eopO->getTimestamp();
 		unset($eopO);

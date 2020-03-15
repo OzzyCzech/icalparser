@@ -2,6 +2,9 @@
 
 namespace om;
 
+use DateInterval;
+use DateTime;
+use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
 use RuntimeException;
@@ -13,7 +16,7 @@ use RuntimeException;
  */
 class IcalParser {
 
-	/** @var \DateTimeZone */
+	/** @var DateTimeZone */
 	public $timezone;
 
 	/** @var array */
@@ -43,7 +46,7 @@ class IcalParser {
 	 */
 	public function parseFile($file, $callback = null) {
 		if (!$handle = fopen($file, 'r')) {
-			throw new \RuntimeException('Can\'t open file' . $file . ' for reading');
+			throw new RuntimeException('Can\'t open file' . $file . ' for reading');
 		}
 		fclose($handle);
 
@@ -196,7 +199,7 @@ class IcalParser {
 		if ($until === false) {
 			//forever... limit to 3 years
 			$end = clone($event['DTSTART']);
-			$end->add(new \DateInterval('P3Y')); // + 3 years
+			$end->add(new DateInterval('P3Y')); // + 3 years
 			$recurring->setUntil($end);
 			$until = $recurring->getUntil();
 		}
@@ -206,14 +209,14 @@ class IcalParser {
 		$recurrenceTimestamps = $frequency->getAllOccurrences();
 		$recurrences = [];
 		foreach ($recurrenceTimestamps as $recurrenceTimestamp) {
-			$tmp = new \DateTime('now', $event['DTSTART']->getTimezone());
+			$tmp = new DateTime('now', $event['DTSTART']->getTimezone());
 			$tmp->setTimestamp($recurrenceTimestamp);
 
 			$recurrenceIDDate = $tmp->format('Ymd');
 			$recurrenceIDDateTime = $tmp->format('Ymd\THis');
 			if (empty($this->data['_RECURRENCE_IDS'][$recurrenceIDDate]) &&
 				empty($this->data['_RECURRENCE_IDS'][$recurrenceIDDateTime])) {
-				$gmtCheck = new \DateTime("now", new \DateTimeZone('UTC'));
+				$gmtCheck = new DateTime("now", new DateTimeZone('UTC'));
 				$gmtCheck->setTimestamp($recurrenceTimestamp);
 				$recurrenceIDDateTimeZ = $gmtCheck->format('Ymd\THis\Z');
 				if (empty($this->data['_RECURRENCE_IDS'][$recurrenceIDDateTimeZ])) {
@@ -247,7 +250,7 @@ class IcalParser {
 					$value = $matches[1];
 				}
 				$value = $this->toTimezone($value);
-				$this->timezone = new \DateTimeZone($value);
+				$this->timezone = new DateTimeZone($value);
 			}
 
 			// have some middle part ?
@@ -258,7 +261,7 @@ class IcalParser {
 						$match['value'] = trim($match['value'], "'\"");
 						$match['value'] = $this->toTimezone($match['value']);
 						try {
-							$middle[$match['key']] = $timezone = new \DateTimeZone($match['value']);
+							$middle[$match['key']] = $timezone = new DateTimeZone($match['value']);
 						} catch (Exception $e) {
 							$middle[$match['key']] = $match['value'];
 						}
@@ -274,7 +277,7 @@ class IcalParser {
 		// process simple dates with timezone
 		if (in_array($key, ['DTSTAMP', 'LAST-MODIFIED', 'CREATED', 'DTSTART', 'DTEND'], true)) {
 			try {
-				$value = new \DateTime($value, ($timezone ?: $this->timezone));
+				$value = new DateTime($value, ($timezone ?: $this->timezone));
 			} catch (Exception $e) {
 				$value = null;
 			}
@@ -282,7 +285,7 @@ class IcalParser {
 			$values = [];
 			foreach (explode(',', $value) as $singleValue) {
 				try {
-					$values[] = new \DateTime($singleValue, ($timezone ?: $this->timezone));
+					$values[] = new DateTime($singleValue, ($timezone ?: $this->timezone));
 				} catch (Exception $e) {
 					// pass
 				}
@@ -300,7 +303,7 @@ class IcalParser {
 			foreach ($matches as $match) {
 				if (in_array($match['key'], ['UNTIL'])) {
 					try {
-						$value[$match['key']] = new \DateTime($match['value'], ($timezone ?: $this->timezone));
+						$value[$match['key']] = new DateTime($match['value'], ($timezone ?: $this->timezone));
 					} catch (Exception $e) {
 						$value[$match['key']] = $match['value'];
 					}
