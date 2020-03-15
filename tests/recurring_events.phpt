@@ -3,13 +3,14 @@
  * @author PC Drew <pc@schoolblocks.com>
  */
 
+use om\IcalParser;
 use Tester\Assert;
 use Tester\Environment;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 Environment::setup();
 
-$cal = new \om\IcalParser();
+$cal = new IcalParser();
 
 
 $results = $cal->parseFile(__DIR__ . '/cal/recur_instances_finite.ics');

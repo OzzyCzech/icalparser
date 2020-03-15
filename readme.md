@@ -14,8 +14,10 @@ composer require om/icalparser
 
 ```php
 <?php
+use om\IcalParser;
 require_once '../vendor/autoload.php';
-$cal = new \om\IcalParser();
+
+$cal = new IcalParser();
 $results = $cal->parseFile(
 	'https://www.google.com/calendar/ical/cs.czech%23holiday%40group.v.calendar.google.com/public/basic.ics'
 );

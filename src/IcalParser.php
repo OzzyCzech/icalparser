@@ -2,6 +2,10 @@
 
 namespace om;
 
+use Exception;
+use InvalidArgumentException;
+use RuntimeException;
+
 /**
  * Copyright (c) 2004-2015 Roman Ožana (http://www.omdesign.cz)
  *
@@ -33,9 +37,9 @@ class IcalParser {
 	 * @param string $file
 	 * @param null $callback
 	 * @return array|null
-	 * @throws \RuntimeException
-	 * @throws \InvalidArgumentException
-	 * @throws \Exception
+	 * @throws RuntimeException
+	 * @throws InvalidArgumentException
+	 * @throws Exception
 	 */
 	public function parseFile($file, $callback = null) {
 		if (!$handle = fopen($file, 'r')) {
@@ -51,8 +55,8 @@ class IcalParser {
 	 * @param null $callback
 	 * @param boolean $add if true the parsed string is added to existing data
 	 * @return array|null
-	 * @throws \InvalidArgumentException
-	 * @throws \Exception
+	 * @throws InvalidArgumentException
+	 * @throws Exception
 	 */
 	public function parseString($string, $callback = null, $add = false) {
 		if ($add === false) {
@@ -62,7 +66,7 @@ class IcalParser {
 		}
 
 		if (!preg_match('/BEGIN:VCALENDAR/', $string)) {
-			throw new \InvalidArgumentException('Invalid ICAL data format');
+			throw new InvalidArgumentException('Invalid ICAL data format');
 		}
 
 		$section = 'VCALENDAR';
@@ -157,7 +161,7 @@ class IcalParser {
 	/**
 	 * @param $event
 	 * @return array
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function parseRecurrences($event) {
 		$recurring = new Recurrence($event['RRULE']);
@@ -255,7 +259,7 @@ class IcalParser {
 						$match['value'] = $this->toTimezone($match['value']);
 						try {
 							$middle[$match['key']] = $timezone = new \DateTimeZone($match['value']);
-						} catch (\Exception $e) {
+						} catch (Exception $e) {
 							$middle[$match['key']] = $match['value'];
 						}
 					} elseif ($match['key'] === 'ENCODING') {
@@ -271,7 +275,7 @@ class IcalParser {
 		if (in_array($key, ['DTSTAMP', 'LAST-MODIFIED', 'CREATED', 'DTSTART', 'DTEND'], true)) {
 			try {
 				$value = new \DateTime($value, ($timezone ?: $this->timezone));
-			} catch (\Exception $e) {
+			} catch (Exception $e) {
 				$value = null;
 			}
 		} elseif (in_array($key, ['EXDATE', 'RDATE'])) {
@@ -279,7 +283,7 @@ class IcalParser {
 			foreach (explode(',', $value) as $singleValue) {
 				try {
 					$values[] = new \DateTime($singleValue, ($timezone ?: $this->timezone));
-				} catch (\Exception $e) {
+				} catch (Exception $e) {
 					// pass
 				}
 			}
@@ -297,7 +301,7 @@ class IcalParser {
 				if (in_array($match['key'], ['UNTIL'])) {
 					try {
 						$value[$match['key']] = new \DateTime($match['value'], ($timezone ?: $this->timezone));
-					} catch (\Exception $e) {
+					} catch (Exception $e) {
 						$value[$match['key']] = $match['value'];
 					}
 				} else {
