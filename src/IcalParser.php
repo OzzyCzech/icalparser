@@ -216,7 +216,7 @@ class IcalParser {
 			$recurrenceIDDateTime = $tmp->format('Ymd\THis');
 			if (empty($this->data['_RECURRENCE_IDS'][$recurrenceIDDate]) &&
 				empty($this->data['_RECURRENCE_IDS'][$recurrenceIDDateTime])) {
-				$gmtCheck = new DateTime("now", new DateTimeZone('UTC'));
+				$gmtCheck = new DateTime('now', new DateTimeZone('UTC'));
 				$gmtCheck->setTimestamp($recurrenceTimestamp);
 				$recurrenceIDDateTimeZ = $gmtCheck->format('Ymd\THis\Z');
 				if (empty($this->data['_RECURRENCE_IDS'][$recurrenceIDDateTimeZ])) {
@@ -400,17 +400,17 @@ class IcalParser {
 						$modifiedEventRecurID = $event['RECURRENCE-ID'];
 						$modifiedEventSeq = intval($event['SEQUENCE'], 10);
 
-						if (isset($this->data["_RECURRENCE_COUNTERS_BY_UID"][$modifiedEventUID])) {
-							$counter = $this->data["_RECURRENCE_COUNTERS_BY_UID"][$modifiedEventUID];
+						if (isset($this->data['_RECURRENCE_COUNTERS_BY_UID'][$modifiedEventUID])) {
+							$counter = $this->data['_RECURRENCE_COUNTERS_BY_UID'][$modifiedEventUID];
 
-							$originalEvent = $this->data["VEVENT"][$counter];
+							$originalEvent = $this->data['VEVENT'][$counter];
 							if (isset($originalEvent['SEQUENCE'])) {
 								$originalEventSeq = intval($originalEvent['SEQUENCE'], 10);
 								$originalEventFormattedStartDate = $originalEvent['DTSTART']->format('Ymd\THis');
 								if ($modifiedEventRecurID === $originalEventFormattedStartDate && $modifiedEventSeq > $originalEventSeq) {
 									// this modifies the original event
 									$modifiedEvent = array_replace_recursive($originalEvent, $event);
-									$this->data["VEVENT"][$counter] = $modifiedEvent;
+									$this->data['VEVENT'][$counter] = $modifiedEvent;
 									foreach ($events as $z => $event) {
 										if ($events[$z]['UID'] === $originalEvent['UID'] &&
 											$events[$z]['SEQUENCE'] === $originalEvent['SEQUENCE']) {
@@ -425,8 +425,8 @@ class IcalParser {
 										$recurDate = $originalEvent['RECURRENCES'][$j];
 										$formattedStartDate = $recurDate->format('Ymd\THis');
 										if ($formattedStartDate === $modifiedEventRecurID) {
-											unset($this->data["VEVENT"][$counter]['RECURRENCES'][$j]);
-											$this->data["VEVENT"][$counter]['RECURRENCES'] = array_values($this->data["VEVENT"][$counter]['RECURRENCES']);
+											unset($this->data['VEVENT'][$counter]['RECURRENCES'][$j]);
+											$this->data['VEVENT'][$counter]['RECURRENCES'] = array_values($this->data['VEVENT'][$counter]['RECURRENCES']);
 											break;
 										}
 									}
