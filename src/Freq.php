@@ -2,6 +2,8 @@
 
 namespace om;
 
+use Exception;
+
 /**
  * Class taken from https://github.com/coopTilleuls/intouch-iCalendar.git (Freq.php)
  *
@@ -58,6 +60,7 @@ class Freq {
 	 * @param $start int Unix-timestamp (important : Need to be the start of Event)
 	 * @param $excluded array of int (timestamps), see EXDATE documentation
 	 * @param $added array of int (timestamps), see RDATE documentation
+	 * @throws Exception
 	 */
 	public function __construct($rule, $start, $excluded = [], $added = []) {
 		$this->start = $start;
@@ -169,7 +172,8 @@ class Freq {
 	 * next period
 	 *
 	 * @param int $offset
-	 * @return int
+	 * @return int|bool
+	 * @throws Exception
 	 */
 	public function findNext($offset) {
 		if (!empty($this->cache)) {
@@ -414,6 +418,7 @@ class Freq {
 	 *
 	 * @param int $offset
 	 * @return int
+	 * @throws Exception
 	 */
 	public function previousOccurrence($offset) {
 		if (!empty($this->cache)) {
@@ -442,6 +447,7 @@ class Freq {
 	 *
 	 * @param int $offset
 	 * @return int
+	 * @throws Exception
 	 */
 	public function nextOccurrence($offset) {
 		if ($offset < $this->start) {
@@ -454,6 +460,7 @@ class Freq {
 	 * Finds the first occurrence of the rule.
 	 *
 	 * @return int timestamp
+	 * @throws Exception
 	 */
 	public function firstOccurrence() {
 		$t = $this->start;
@@ -469,6 +476,7 @@ class Freq {
 	 * Builds also the cache, if not set before...
 	 *
 	 * @return int timestamp
+	 * @throws Exception
 	 */
 	public function lastOccurrence() {
 		//build cache if not done
@@ -481,6 +489,7 @@ class Freq {
 	 * Returns all timestamps array(), build the cache if not made before
 	 *
 	 * @return array
+	 * @throws Exception
 	 */
 	public function getAllOccurrences() {
 		if (empty($this->cache)) {
