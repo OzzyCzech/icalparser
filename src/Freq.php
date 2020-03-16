@@ -410,7 +410,7 @@ class Freq {
 	 * @param int $offset
 	 * @return int
 	 */
-	public function findEndOfPeriod($offset) {
+	public function findEndOfPeriod($offset = 0) {
 		return $this->findStartingPoint($offset, 1, false);
 	}
 
