@@ -199,8 +199,8 @@ class IcalParser {
 
 		$until = $recurring->getUntil();
 		if ($until === false) {
-			//forever... limit to 3 years
-			$end = clone($event['DTSTART']);
+			//forever... limit to 3 years from now
+			$end = new \DateTime('now');
 			$end->add(new DateInterval('P3Y')); // + 3 years
 			$recurring->setUntil($end);
 			$until = $recurring->getUntil();
