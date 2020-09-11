@@ -63,7 +63,7 @@ class IcalParser {
 	 * @throws InvalidArgumentException
 	 * @throws Exception
 	 */
-	public function parseString($string, $callback = null, $add = false): array {
+	public function parseString($string, $callback = null, $add = false): ?array {
 		if ($add === false) {
 			// delete old data
 			$this->data = [];
@@ -200,7 +200,7 @@ class IcalParser {
 		$until = $recurring->getUntil();
 		if ($until === false) {
 			//forever... limit to 3 years from now
-			$end = new \DateTime('now');
+			$end = new DateTime('now');
 			$end->add(new DateInterval('P3Y')); // + 3 years
 			$recurring->setUntil($end);
 			$until = $recurring->getUntil();
