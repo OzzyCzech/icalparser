@@ -16,14 +16,6 @@ use RuntimeException;
  */
 class IcalParser {
 
-	const MULTIPLE_VALUES_KEY_MAPPING = [
-		'ATTACH' => 'ATTACHMENTS',
-		'EXDATE' => 'EXDATES',
-		'RDATE' => 'RDATES',
-		'CATEGORIES' => 'CATEGORIES',
-		'X-CATEGORIES' => 'X-CATEGORIES',
-	];
-
 	/** @var DateTimeZone */
 	public $timezone;
 
@@ -42,13 +34,11 @@ class IcalParser {
 
 	/**
 	 * @param string $file
-	 * @param null $callback
+	 * @param callable|null $callback
 	 * @return array|null
-	 * @throws RuntimeException
-	 * @throws InvalidArgumentException
 	 * @throws Exception
 	 */
-	public function parseFile($file, $callback = null): array {
+	public function parseFile(string $file, callable $callback = null): array {
 		if (!$handle = fopen($file, 'r')) {
 			throw new RuntimeException('Can\'t open file' . $file . ' for reading');
 		}
@@ -59,13 +49,12 @@ class IcalParser {
 
 	/**
 	 * @param string $string
-	 * @param null $callback
+	 * @param callable $callback
 	 * @param boolean $add if true the parsed string is added to existing data
 	 * @return array|null
-	 * @throws InvalidArgumentException
 	 * @throws Exception
 	 */
-	public function parseString($string, $callback = null, $add = false): ?array {
+	public function parseString(string $string, callable $callback = null, bool $add = false): ?array {
 		if ($add === false) {
 			// delete old data
 			$this->data = [];
@@ -154,14 +143,27 @@ class IcalParser {
 					// a new one specifically for the array of values.
 
 					if ($newKey = $this->isMultipleKey($key)) {
-						foreach ((array)$value as $v) {
-							$this->data[$section][$this->counters[$section]][$newKey][] = $v;
-						}
+						$this->data[$section][$this->counters[$section]][$newKey][] = $value;
 					}
 
-					if ($key !== $newKey) {
+					// CATEGORIES can be multiple also but there is special case that there are comma separated categories
+
+					if ($this->isMultipleKeyWithCommaSeparation($key)) {
+
+						if (strpos($value, ',') !== false) {
+							$values = array_map('trim', preg_split('/(?<![^\\\\]\\\\),/', $value));
+						} else {
+							$values = [$value];
+						}
+
+						foreach ($values as $value) {
+							$this->data[$section][$this->counters[$section]][$key][] = $value;
+						}
+
+					} else {
 						$this->data[$section][$this->counters[$section]][$key] = $value;
 					}
+
 				}
 
 			}
@@ -237,10 +239,6 @@ class IcalParser {
 		return $recurrences;
 	}
 
-	/**
-	 * @param $row
-	 * @return array
-	 */
 	private function parseRow($row): array {
 		preg_match('#^([\w-]+);?([\w-]+="[^"]*"|.*?):(.*)$#i', $row, $matches);
 
@@ -338,17 +336,6 @@ class IcalParser {
 			}
 		}
 
-		if ($key === 'CATEGORIES' || $key === 'X-CATEGORIES') {
-
-			// split comma separated CATEGORIES
-			if (strpos($value, ',') !== false) {
-				$value = array_map('trim', preg_split('/(?<![^\\\\]\\\\),/', $value));
-			}
-
-			// return categories array
-			$value = $value;
-		}
-
 		return [$key, $middle, $value];
 	}
 
@@ -358,43 +345,36 @@ class IcalParser {
 	 * @param string $zone
 	 * @return mixed|null
 	 */
-	private function toTimezone($zone) {
-		return isset($this->windowsTimezones[$zone]) ? $this->windowsTimezones[$zone] : $zone;
+	private function toTimezone(string $zone) {
+		return $this->windowsTimezones[$zone] ?? $zone;
+	}
+
+	public function isMultipleKey(string $key): ?string {
+		return (['ATTACH' => 'ATTACHMENTS', 'EXDATE' => 'EXDATES', 'RDATE' => 'RDATES'])[$key] ?? null;
 	}
 
 	/**
-	 * @param string $key
+	 * @param $key
 	 * @return string|null
 	 */
-	public function isMultipleKey($key) {
-		return isset(self::MULTIPLE_VALUES_KEY_MAPPING[$key]) ? self::MULTIPLE_VALUES_KEY_MAPPING[$key] : null;
+	public function isMultipleKeyWithCommaSeparation($key): ?string {
+		return (['X-CATEGORIES' => 'X-CATEGORIES', 'CATEGORIES' => 'CATEGORIES'])[$key] ?? null;
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getAlarms() {
-		return isset($this->data['VALARM']) ? $this->data['VALARM'] : [];
+	public function getAlarms(): array {
+		return $this->data['VALARM'] ?? [];
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getTimezone() {
+	public function getTimezone(): array {
 		return $this->getTimezones();
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getTimezones(): array {
-		return isset($this->data['VTIMEZONE']) ? $this->data['VTIMEZONE'] : [];
+		return $this->data['VTIMEZONE'] ?? [];
 	}
 
 	/**
 	 * Return sorted event list as array
-	 *
-	 * @return array
 	 */
 	public function getSortedEvents(): array {
 		if ($events = $this->getEvents()) {
@@ -408,9 +388,6 @@ class IcalParser {
 		return [];
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getEvents(): array {
 		$events = [];
 		if (isset($this->data['VEVENT'])) {
@@ -487,9 +464,6 @@ class IcalParser {
 		return $events;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getReverseSortedEvents(): array {
 		if ($events = $this->getEvents()) {
 			usort(

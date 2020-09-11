@@ -13,8 +13,6 @@ $results = $cal->parseFile(__DIR__ . '/cal/multiple_categories.ics');
 $events = $cal->getSortedEvents();
 
 foreach ($events as $event) {
-	var_dump($event['CATEGORIES']);
+	Assert::type('array', $event['CATEGORIES']);
+	Assert::same(['one', 'two', 'three'], $event['CATEGORIES']);
 }
-//var_dump($results);
-
-Assert::true(true);
