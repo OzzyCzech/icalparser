@@ -16,6 +16,14 @@ use RuntimeException;
  */
 class IcalParser {
 
+	const MULTIPLE_VALUES_KEY_MAPPING = [
+		'ATTACH' => 'ATTACHMENTS',
+		'EXDATE' => 'EXDATES',
+		'RDATE' => 'RDATES',
+		'CATEGORIES' => 'CATEGORIES',
+		'X-CATEGORIES' => 'X-CATEGORIES',
+	];
+
 	/** @var DateTimeZone */
 	public $timezone;
 
@@ -25,12 +33,6 @@ class IcalParser {
 	/** @var array */
 	protected $counters = [];
 
-	/** @var array */
-	protected $arrayKeyMappings = [
-		'ATTACH' => 'ATTACHMENTS',
-		'EXDATE' => 'EXDATES',
-		'RDATE' => 'RDATES',
-	];
 	/** @var array */
 	private $windowsTimezones;
 
@@ -146,15 +148,20 @@ class IcalParser {
 				if ($section === 'VCALENDAR') {
 					$this->data[$key] = $value;
 				} else {
-					if (isset($this->arrayKeyMappings[$key])) {
-						// use an array since there can be multiple entries for this key.  This does not
-						// break the current implementation--it leaves the original key alone and adds
-						// a new one specifically for the array of values.
-						$arrayKey = $this->arrayKeyMappings[$key];
-						$this->data[$section][$this->counters[$section]][$arrayKey][] = $value;
+
+					// use an array since there can be multiple entries for this key.  This does not
+					// break the current implementation--it leaves the original key alone and adds
+					// a new one specifically for the array of values.
+
+					if ($newKey = $this->isMultipleKey($key)) {
+						foreach ((array)$value as $v) {
+							$this->data[$section][$this->counters[$section]][$newKey][] = $v;
+						}
 					}
 
-					$this->data[$section][$this->counters[$section]][$key] = $value;
+					if ($key !== $newKey) {
+						$this->data[$section][$this->counters[$section]][$key] = $value;
+					}
 				}
 
 			}
@@ -315,11 +322,6 @@ class IcalParser {
 			}
 		}
 
-		//split by comma, escape \,
-		if ($key === 'CATEGORIES') {
-			$value = preg_split('/(?<![^\\\\]\\\\),/', $value);
-		}
-
 		//implement 4.3.11 Text ESCAPED-CHAR
 		$text_properties = [
 			'CALSCALE', 'METHOD', 'PRODID', 'VERSION', 'CATEGORIES', 'CLASS', 'COMMENT', 'DESCRIPTION',
@@ -336,6 +338,17 @@ class IcalParser {
 			}
 		}
 
+		if ($key === 'CATEGORIES' || $key === 'X-CATEGORIES') {
+
+			// split comma separated CATEGORIES
+			if (strpos($value, ',') !== false) {
+				$value = array_map('trim', preg_split('/(?<![^\\\\]\\\\),/', $value));
+			}
+
+			// return categories array
+			$value = $value;
+		}
+
 		return [$key, $middle, $value];
 	}
 
@@ -347,6 +360,14 @@ class IcalParser {
 	 */
 	private function toTimezone($zone) {
 		return isset($this->windowsTimezones[$zone]) ? $this->windowsTimezones[$zone] : $zone;
+	}
+
+	/**
+	 * @param string $key
+	 * @return string|null
+	 */
+	public function isMultipleKey($key) {
+		return isset(self::MULTIPLE_VALUES_KEY_MAPPING[$key]) ? self::MULTIPLE_VALUES_KEY_MAPPING[$key] : null;
 	}
 
 	/**
