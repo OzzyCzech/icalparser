@@ -379,9 +379,10 @@ class IcalParser {
 	public function getSortedEvents(): array {
 		if ($events = $this->getEvents()) {
 			usort(
-				$events, function ($a, $b) {
-				return $a['DTSTART'] > $b['DTSTART'];
-			}
+				$events,
+				static function ($a, $b): int {
+					return ($a['DTSTART'] > $b['DTSTART']) ? 1 : -1;
+				}
 			);
 			return $events;
 		}
@@ -467,9 +468,10 @@ class IcalParser {
 	public function getReverseSortedEvents(): array {
 		if ($events = $this->getEvents()) {
 			usort(
-				$events, function ($a, $b) {
-				return $a['DTSTART'] < $b['DTSTART'];
-			}
+				$events,
+				static function ($a, $b): int {
+					return ($a['DTSTART'] < $b['DTSTART']) ? 1 : -1;
+				}
 			);
 			return $events;
 		}
