@@ -134,9 +134,10 @@ foreach ($results['VEVENT'] as $event) {
 }
 
 usort(
-	$trueEvents, function ($a, $b) {
-	return $a['DTSTART'] > $b['DTSTART'];
-}
+	$trueEvents,
+	static function ($a, $b): int {
+		return ($a['DTSTART'] > $b['DTSTART']) ? 1 : -1;
+	}
 );
 
 $events = $cal->getSortedEvents();
