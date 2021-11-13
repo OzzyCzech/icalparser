@@ -20,7 +20,7 @@ $events = $cal->getSortedEvents();
 // RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=1TU;UNTIL=20121231T100000
 // RDATE;TZID=America/Los_Angeles:20121110T100000
 // RDATE;TZID=America/Los_Angeles:20121105T100000
-Assert::equal(5, sizeof($events));
+Assert::equal(5, count($events));
 Assert::equal('2.10.2012 10:00:00', $events[0]['DTSTART']->format('j.n.Y H:i:s'));
 Assert::equal('5.11.2012 10:00:00', $events[1]['DTSTART']->format('j.n.Y H:i:s'));
 Assert::equal('6.11.2012 10:00:00', $events[2]['DTSTART']->format('j.n.Y H:i:s'));
@@ -44,10 +44,10 @@ foreach ($events as $i => $event) {
 // EXDATE;TZID=America/Los_Angeles:20121204T100000
 // EXDATE;TZID=America/Los_Angeles:20130205T100000
 //      because there is no "UNTIL", we calculate until 3 years from now of repeating events
-$now = new \DateTime('now');
-$diff = $now->diff(new \DateTime('20121002T100000'));
+$now = new DateTime('now');
+$diff = $now->diff(new DateTime('20121002T100000'));
 $count = ($diff->y + 3) * 12 + $diff->m;
-Assert::equal($count, sizeof($recurrences));
+Assert::equal($count, count($recurrences));
 Assert::equal('02.10.2012 15:00:00', $recurrences[0]->format('d.m.Y H:i:s'));
 Assert::equal('06.11.2012 20:00:00', $recurrences[1]->format('d.m.Y H:i:s'));
 Assert::equal('10.11.2012 10:00:00', $recurrences[2]->format('d.m.Y H:i:s'));
@@ -99,9 +99,9 @@ $recurrences = $events[0]['RECURRENCES'];
 $modifiedEvent = $events[12];
 
 // There should be 35 total recurrences because the modified event should've removed 1 recurrence
-Assert::equal(35, sizeof($recurrences));
+Assert::equal(35, count($recurrences));
 // There should be 36 total events because of the modified event + 35 recurrences
-Assert::equal(36, sizeof($events));
+Assert::equal(36, count($events));
 Assert::notContains($modifiedEvent['DTSTART'], $recurrences);
 
 $results = $cal->parseFile(__DIR__ . '/cal/recur_instances_with_modifications_and_interval.ics');
@@ -158,7 +158,7 @@ Assert::equal(1, count($events));
 
 $results = $cal->parseFile(__DIR__ . '/cal/daily_recur.ics');
 $events = $cal->getSortedEvents();
-$period = new DatePeriod(new DateTime('20120801T050000'), new DateInterval('P1D'), 365 * 3);
+$period = new DatePeriod(new DateTime('20120801T050000'), new DateInterval('P1D'), new DateTime('20150801T050000'));
 foreach ($period as $i => $day) {
 	Assert::equal($day->format('j.n.Y H:i:s'), $events[$i]['DTSTART']->format('j.n.Y H:i:s'));
 }
@@ -166,7 +166,7 @@ foreach ($period as $i => $day) {
 $results = $cal->parseFile(__DIR__ . '/cal/daily_recur2.ics');
 $events = $cal->getSortedEvents();
 
-Assert::equal(4, sizeof($events));
+Assert::equal(4, count($events));
 Assert::equal('21.8.2017 00:00:00', $events[0]['DTSTART']->format('j.n.Y H:i:s'));
 Assert::equal('28.8.2017 00:00:00', $events[1]['DTSTART']->format('j.n.Y H:i:s'));
 Assert::equal('4.9.2017 00:00:00', $events[2]['DTSTART']->format('j.n.Y H:i:s'));

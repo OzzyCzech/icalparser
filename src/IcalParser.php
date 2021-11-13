@@ -17,13 +17,13 @@ use RuntimeException;
 class IcalParser {
 
 	/** @var DateTimeZone */
-	public $timezone;
+	public DateTimeZone $timezone;
 
 	/** @var array */
-	public $data = [];
+	public array $data = [];
 
 	/** @var array */
-	protected $counters = [];
+	protected array $counters = [];
 
 	/** @var array */
 	private $windowsTimezones;
@@ -39,7 +39,7 @@ class IcalParser {
 	 * @throws Exception
 	 */
 	public function parseFile(string $file, callable $callback = null): array {
-		if (!$handle = fopen($file, 'r')) {
+		if (!$handle = fopen($file, 'rb')) {
 			throw new RuntimeException('Can\'t open file' . $file . ' for reading');
 		}
 		fclose($handle);
@@ -49,7 +49,7 @@ class IcalParser {
 
 	/**
 	 * @param string $string
-	 * @param callable $callback
+	 * @param callable|null $callback
 	 * @param boolean $add if true the parsed string is added to existing data
 	 * @return array|null
 	 * @throws Exception
@@ -87,7 +87,6 @@ class IcalParser {
 					$section = substr($row, 6);
 					$this->counters[$section] = isset($this->counters[$section]) ? $this->counters[$section] + 1 : 0;
 					continue 2; // while
-					break;
 				case 'END:VEVENT':
 					$section = substr($row, 4);
 					$currCounter = $this->counters[$section];
@@ -97,7 +96,6 @@ class IcalParser {
 					}
 
 					continue 2; // while
-					break;
 				case 'END:DAYLIGHT':
 				case 'END:VALARM':
 				case 'END:VTIMEZONE':
@@ -106,7 +104,6 @@ class IcalParser {
 				case 'END:STANDARD':
 				case 'END:VTODO':
 					continue 2; // while
-					break;
 
 				case 'END:VCALENDAR':
 					$veventSection = 'VEVENT';
@@ -125,7 +122,6 @@ class IcalParser {
 						}
 					}
 					continue 2; // while
-					break;
 			}
 
 			[$key, $middle, $value] = $this->parseRow($row);
@@ -326,7 +322,7 @@ class IcalParser {
 			'LOCATION', 'RESOURCES', 'STATUS', 'SUMMARY', 'TRANSP', 'TZID', 'TZNAME', 'CONTACT',
 			'RELATED-TO', 'UID', 'ACTION', 'REQUEST-STATUS', 'URL',
 		];
-		if (in_array($key, $text_properties) || strpos($key, 'X-') === 0) {
+		if (in_array($key, $text_properties, true) || strpos($key, 'X-') === 0) {
 			if (is_array($value)) {
 				foreach ($value as &$var) {
 					$var = strtr($var, ['\\\\' => '\\', '\\N' => "\n", '\\n' => "\n", '\\;' => ';', '\\,' => ',']);
@@ -377,36 +373,34 @@ class IcalParser {
 	 * Return sorted event list as array
 	 */
 	public function getSortedEvents(): array {
-		if ($events = $this->getEvents()) {
-			usort(
-				$events,
-				static function ($a, $b): int {
-					return ($a['DTSTART'] > $b['DTSTART']) ? 1 : -1;
-				}
-			);
-			return $events;
-		}
-		return [];
+		$events = $this->getEvents();
+		usort(
+			$events,
+			static function ($a, $b): int {
+				return ($a['DTSTART'] > $b['DTSTART']) ? 1 : -1;
+			}
+		);
+		return $events;
 	}
 
 	public function getEvents(): array {
 		$events = [];
 		if (isset($this->data['VEVENT'])) {
-			for ($i = 0; $i < count($this->data['VEVENT']); $i++) {
-				$event = $this->data['VEVENT'][$i];
+			foreach ($this->data['VEVENT'] as $iValue) {
+				$event = $iValue;
 
 				if (empty($event['RECURRENCES'])) {
 					if (!empty($event['RECURRENCE-ID']) && !empty($event['UID']) && isset($event['SEQUENCE'])) {
 						$modifiedEventUID = $event['UID'];
 						$modifiedEventRecurID = $event['RECURRENCE-ID'];
-						$modifiedEventSeq = intval($event['SEQUENCE'], 10);
+						$modifiedEventSeq = (int)$event['SEQUENCE'];
 
 						if (isset($this->data['_RECURRENCE_COUNTERS_BY_UID'][$modifiedEventUID])) {
 							$counter = $this->data['_RECURRENCE_COUNTERS_BY_UID'][$modifiedEventUID];
 
 							$originalEvent = $this->data['VEVENT'][$counter];
 							if (isset($originalEvent['SEQUENCE'])) {
-								$originalEventSeq = intval($originalEvent['SEQUENCE'], 10);
+								$originalEventSeq = (int)$originalEvent['SEQUENCE'];
 								$originalEventFormattedStartDate = $originalEvent['DTSTART']->format('Ymd\THis');
 								if ($modifiedEventRecurID === $originalEventFormattedStartDate && $modifiedEventSeq > $originalEventSeq) {
 									// this modifies the original event
@@ -466,16 +460,14 @@ class IcalParser {
 	}
 
 	public function getReverseSortedEvents(): array {
-		if ($events = $this->getEvents()) {
-			usort(
-				$events,
-				static function ($a, $b): int {
-					return ($a['DTSTART'] < $b['DTSTART']) ? 1 : -1;
-				}
-			);
-			return $events;
-		}
-		return [];
+		$events = $this->getEvents();
+		usort(
+			$events,
+			static function ($a, $b): int {
+				return ($a['DTSTART'] < $b['DTSTART']) ? 1 : -1;
+			}
+		);
+		return $events;
 	}
 
 }
