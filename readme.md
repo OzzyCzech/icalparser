@@ -6,7 +6,7 @@
 [![Latest Unstable Version](https://poser.pugx.org/om/icalparser/v/unstable.png)](https://packagist.org/packages/om/icalparser)
 [![License](https://poser.pugx.org/om/icalparser/license.png)](https://packagist.org/packages/om/icalparser)
 
-Internet Calendaring Parser [rfc2445](https://www.ietf.org/rfc/rfc2445.txt) or iCal parser is simple PHP 7.1+ class for parsing format into array.
+Internet Calendaring Parser [rfc2445](https://www.ietf.org/rfc/rfc2445.txt) or iCal parser is simple PHP 7.4+ class for parsing format into array.
 
 ## How to install
 
@@ -33,7 +33,7 @@ foreach ($cal->getSortedEvents() as $r) {
 
 ## Requirements
 
-- PHP 7.2+
+- PHP 7.4+
 
 ## Run tests
 
