@@ -41,7 +41,7 @@ class Recurrence {
 	 *
 	 * @var array
 	 */
-	protected $listProperties = [
+	protected array $listProperties = [
 		'bysecond', 'byminute', 'byhour', 'byday', 'bymonthday',
 		'byyearday', 'byweekno', 'bymonth', 'bysetpos',
 	];
@@ -52,7 +52,7 @@ class Recurrence {
 	 * @param array $rrule an om\icalparser row array which will be parsed to get the
 	 * desired information.
 	 */
-	public function __construct($rrule) {
+	public function __construct(array $rrule) {
 		$this->parseRrule($rrule);
 	}
 
@@ -62,7 +62,7 @@ class Recurrence {
 	 *
 	 * @param $rrule
 	 */
-	protected function parseRrule($rrule) {
+	protected function parseRrule($rrule): void	{
 		$this->rrule = $rrule;
 		//loop through the properties in the line and set their associated
 		//member variables
@@ -92,11 +92,8 @@ class Recurrence {
 	 * @param string $member name of the member variable
 	 * @return mixed  the variable value (if set), false otherwise
 	 */
-	protected function getMember($member) {
-		if (isset($this->$member)) {
-			return $this->$member;
-		}
-		return false;
+	protected function getMember(string $member) {
+		return $this->$member ?? false;
 	}
 
 	/**
@@ -111,10 +108,10 @@ class Recurrence {
 	/**
 	 * Set the $until member
 	 *
-	 * @param mixed timestamp (int) / Valid DateTime format (string)
+	 * @param mixed $ts timestamp (int) / Valid DateTime format (string)
 	 * @throws Exception
 	 */
-	public function setUntil($ts) {
+	public function setUntil($ts): void {
 		if ($ts instanceof DateTime) {
 			$dt = $ts;
 		} elseif (is_int($ts)) {

@@ -14,7 +14,7 @@
 		}
 	],
 	"require": {
-		"php": ">=7.2.0"
+		"php": ">=7.4.0"
 	},
 	"suggest": {
 		"ext-dom": "for timezone tool"
@@ -27,8 +27,7 @@
 	"scripts": {
 		"test": "tester tests -s -p php"
 	},
-
 	"require-dev": {
-		"nette/tester": "*"
+		"nette/tester": "^2.4.1"
 	}
 }
