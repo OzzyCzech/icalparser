@@ -1,0 +1,14 @@
+name: Typo Tests
+on: [ pull_request ]
+
+jobs:
+  misspell:
+    name: Check for typos / misspells
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run misspell with reviewdog
+        uses: reviewdog/action-misspell@v1
+        with:
+          github_token: ${{ secrets.github_token }}
