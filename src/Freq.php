@@ -56,7 +56,7 @@ class Freq {
 	protected $cache; // getAllOccurrences()
 
 	/**
-	 * Constructs a new Freqency-rule
+	 * Constructs a new Frequency-rule
 	 *
 	 * @param $rule string
 	 * @param $start int Unix-timestamp (important : Need to be the start of Event)
