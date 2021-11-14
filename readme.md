@@ -14,7 +14,7 @@ Internet Calendaring Parser [rfc2445](https://www.ietf.org/rfc/rfc2445.txt) or i
 composer require om/icalparser
 ```
 
-##  Usage
+## Usage
 
 ```php
 <?php
@@ -37,14 +37,13 @@ foreach ($cal->getSortedEvents() as $r) {
 
 ## Run tests
 
-iCal parser using [Nette Tester](https://github.com/nette/tester).
-The tests can be invoked via [composer](https://getcomposer.org/).
+iCal parser using [Nette Tester](https://github.com/nette/tester). The tests can be invoked via [composer](https://getcomposer.org/).
 
 ```shell script
 composer update
 composer test
 ```
- 
+
 ## TODO
 
 - add ATTENDEE support https://www.kanzaki.com/docs/ical/attendee.html

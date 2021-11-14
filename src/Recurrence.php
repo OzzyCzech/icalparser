@@ -62,7 +62,7 @@ class Recurrence {
 	 *
 	 * @param $rrule
 	 */
-	protected function parseRrule($rrule): void	{
+	protected function parseRrule($rrule): void {
 		$this->rrule = $rrule;
 		//loop through the properties in the line and set their associated
 		//member variables
