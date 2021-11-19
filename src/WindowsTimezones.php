@@ -85,6 +85,8 @@ return [
 	'(UTC) Monrovia, Reykjavik' => 'Atlantic/Reykjavik',
 	'W. Europe Standard Time' => 'Europe/Berlin',
 	'(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna' => 'Europe/Berlin',
+	'(UTC+01:00) Amsterdam\, Berlin\, Bern\, Rome\, Stockholm\, Vienna' => 'Europe/Berlin',
+	'(UTC+01:00) Amsterdam\, Berlin\, Bern\, Rom\, Stockholm\, Wien' => 'Europe/Berlin',
 	'Central Europe Standard Time' => 'Europe/Budapest',
 	'(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague' => 'Europe/Budapest',
 	'Romance Standard Time' => 'Europe/Paris',
