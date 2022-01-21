@@ -1,8 +1,10 @@
 <?php
 /**
- * @author Roman Ozana <ozana@omdesign.cz>
+ * Copyright (c) 2004-2022 Roman Ožana (https://ozana.cz)
+ *
+ * @license BSD-3-Clause
+ * @author Roman Ožana <roman@ozana.cz>
  */
-
 use om\IcalParser;
 use Tester\Assert;
 use Tester\Environment;

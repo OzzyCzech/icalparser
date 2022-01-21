@@ -10,9 +10,10 @@ use InvalidArgumentException;
 use RuntimeException;
 
 /**
- * Copyright (c) 2004-2020 Roman Ožana (https://www.omdesign.cz)
+ * Copyright (c) 2004-2022 Roman Ožana (https://ozana.cz)
  *
- * @author Roman Ožana <roman@omdesign.cz>
+ * @license BSD-3-Clause
+ * @author Roman Ožana <roman@ozana.cz>
  */
 class IcalParser {
 
