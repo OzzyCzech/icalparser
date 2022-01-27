@@ -531,7 +531,7 @@ class Freq {
 	 * @param int $t
 	 * @return int
 	 */
-	private function ruleByday(string $rule, int $t): int {
+	private function ruleByDay(string $rule, int $t): int {
 		$dir = ($rule[0] === '-') ? -1 : 1;
 		$dir_t = ($dir === 1) ? 'next' : 'last';
 
@@ -580,7 +580,7 @@ class Freq {
 		}
 	}
 
-	private function ruleBymonth($rule, int $t) {
+	private function ruleByMonth($rule, int $t) {
 		$_t = mktime(date('H', $t), date('i', $t), date('s', $t), $rule, date('d', $t), date('Y', $t));
 		if ($t == $_t && isset($this->rules['byday'])) {
 			// TODO: this should check if one of the by*day's exists, and have a multi-day value
@@ -590,7 +590,7 @@ class Freq {
 		}
 	}
 
-	private function ruleBymonthday($rule, int $t) {
+	private function ruleByMonthday($rule, int $t) {
 		if ($rule < 0) {
 			$rule = date('t', $t) + $rule + 1;
 		}
@@ -598,7 +598,7 @@ class Freq {
 		return mktime(date('H', $t), date('i', $t), date('s', $t), date('m', $t), $rule, date('Y', $t));
 	}
 
-	private function ruleByyearday($rule, int $t) {
+	private function ruleByYearday($rule, int $t) {
 		if ($rule < 0) {
 			$_t = $this->findEndOfPeriod();
 			$d = '-';
@@ -611,7 +611,7 @@ class Freq {
 		return strtotime($s, $_t);
 	}
 
-	private function ruleByweekno($rule, int $t) {
+	private function ruleByWeekno($rule, int $t) {
 		if ($rule < 0) {
 			$_t = $this->findEndOfPeriod();
 			$d = '-';
@@ -627,11 +627,11 @@ class Freq {
 		return $_t;
 	}
 
-	private function ruleByhour($rule, int $t) {
+	private function ruleByHour($rule, int $t) {
 		return mktime($rule, date('i', $t), date('s', $t), date('m', $t), date('d', $t), date('Y', $t));
 	}
 
-	private function ruleByminute($rule, int $t) {
+	private function ruleByMinute($rule, int $t) {
 		return mktime(date('h', $t), $rule, date('s', $t), date('m', $t), date('d', $t), date('Y', $t));
 	}
 }
