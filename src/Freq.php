@@ -202,8 +202,7 @@ class Freq {
 
 		//make sure the offset is valid
 		if ($offset === false || (isset($this->rules['until']) && $offset > $this->rules['until'])) {
-			if ($debug) echo 'STOP: ' . date('r', $offset) . "\n";
-
+			if ($debug) printf("STOP: %s\n", date('r', $offset));
 			return false;
 		}
 
@@ -211,7 +210,7 @@ class Freq {
 
 		//set the timestamp of the offset (ignoring hours and minutes unless we want them to be
 		//part of the calculations.
-		if ($debug) echo 'O: ' . date('r', $offset) . "\n";
+		if ($debug) printf("O: %s\n", date('r', $offset));
 		$hour = (in_array($this->freq, ['hourly', 'minutely']) && $offset > $this->start) ? date('H', $offset) : date(
 			'H', $this->start
 		);
@@ -219,7 +218,7 @@ class Freq {
 			'i', $offset
 		) : date('i', $this->start);
 		$t = mktime($hour, $minute, date('s', $this->start), date('m', $offset), date('d', $offset), date('Y', $offset));
-		if ($debug) echo 'START: ' . date('r', $t) . "\n";
+		if ($debug) printf("START: %s\n", date('r', $t));
 
 		if ($this->simpleMode) {
 			if ($offset < $t) {
@@ -261,9 +260,7 @@ class Freq {
 							break;
 						}
 						if ($debug) {
-							echo strtoupper($rule) . ': ' . date(
-									'r', $imm
-								) . ' A: ' . ((int)($imm > $offset && $imm < $eop)) . "\n";
+							printf("%s: %s A: %d\n", strtoupper($rule), date('r', $imm), intval($imm > $offset && $imm < $eop));
 						}
 						if ($imm > $offset && $imm <= $eop && ($_t == null || $imm < $_t)) {
 							$_t = $imm;
