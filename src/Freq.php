@@ -248,14 +248,13 @@ class Freq {
 		if ($debug) {
 			echo 'EOP: ' . date('r', $eop) . "\n";
 		}
-
 		foreach ($this->knownRules as $rule) {
 			if ($found && isset($this->rules['by' . $rule])) {
 				if ($this->isPrerule($rule, $this->freq)) {
-					$subrules = explode(',', $this->rules['by' . $rule]);
+					$subRules = explode(',', $this->rules['by' . $rule]);
 					$_t = null;
-					foreach ($subrules as $subrule) {
-						$imm = call_user_func_array([$this, 'ruleBy' . $rule], [$subrule, $t]);
+					foreach ($subRules as $subRule) {
+						$imm = call_user_func_array([$this, "ruleBy$rule"], [$subRule, $t]);
 						if ($imm === false) {
 							break;
 						}
