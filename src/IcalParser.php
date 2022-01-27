@@ -20,8 +20,8 @@ class IcalParser {
 	/** @var DateTimeZone */
 	public DateTimeZone $timezone;
 
-	/** @var array */
-	public array $data = [];
+	/** @var array|null */
+	public ?array $data = null;
 
 	/** @var array */
 	protected array $counters = [];
@@ -371,21 +371,16 @@ class IcalParser {
 	}
 
 	/**
-	 * Return sorted event list as array
+	 * Return sorted event list as ArrayObject
+	 *
+	 * @deprecated use IcalParser::getEvents()->sorted() instead
 	 */
-	public function getSortedEvents(): array {
-		$events = $this->getEvents();
-		usort(
-			$events,
-			static function ($a, $b): int {
-				return ($a['DTSTART'] > $b['DTSTART']) ? 1 : -1;
-			}
-		);
-		return $events;
+	public function getSortedEvents(): \ArrayObject {
+		return $this->getEvents()->sorted();
 	}
 
-	public function getEvents(): array {
-		$events = [];
+	public function getEvents(): EventsList {
+		$events = new EventsList();
 		if (isset($this->data['VEVENT'])) {
 			foreach ($this->data['VEVENT'] as $iValue) {
 				$event = $iValue;
@@ -432,7 +427,7 @@ class IcalParser {
 					}
 
 					if (!empty($event)) {
-						$events[] = $event;
+						$events->append($event);
 					}
 				} else {
 					$recurrences = $event['RECURRENCES'];
@@ -451,7 +446,7 @@ class IcalParser {
 						}
 
 						$newEvent['RECURRENCE_INSTANCE'] = $j;
-						$events[] = $newEvent;
+						$events->append($newEvent);
 						$firstEvent = false;
 					}
 				}
@@ -460,15 +455,12 @@ class IcalParser {
 		return $events;
 	}
 
-	public function getReverseSortedEvents(): array {
-		$events = $this->getEvents();
-		usort(
-			$events,
-			static function ($a, $b): int {
-				return ($a['DTSTART'] < $b['DTSTART']) ? 1 : -1;
-			}
-		);
-		return $events;
+	/**
+	 * @return \ArrayObject
+	 * @deprecated use IcalParser::getEvents->reversed();
+	 */
+	public function getReverseSortedEvents(): \ArrayObject {
+		return $this->getEvents()->reversed();
 	}
 
 }
