@@ -10,11 +10,13 @@ Internet Calendaring Parser [rfc2445](https://www.ietf.org/rfc/rfc2445.txt) or i
 
 ## How to install
 
+The recommended way to is via Composer:
+
 ```shell script
 composer require om/icalparser
 ```
 
-## Usage
+## Usage and example
 
 ```php
 <?php
@@ -26,9 +28,16 @@ $results = $cal->parseFile(
 	'https://www.google.com/calendar/ical/cs.czech%23holiday%40group.v.calendar.google.com/public/basic.ics'
 );
 
-foreach ($cal->getSortedEvents() as $r) {
-	echo sprintf('	<li>%s - %s</li>' . PHP_EOL, $r['DTSTART']->format('j.n.Y'), $r['SUMMARY']);
+foreach ($cal->getEvents()->sorted() as $event) {
+	printf('%s - %s' . PHP_EOL, $event['DTSTART']->format('j.n.Y'), $event['SUMMARY']);
+	
 }
+```
+
+You can run example with [PHP Built-in web server](https://www.php.net/manual/en/features.commandline.webserver.php) as follow:
+
+```shell
+php -S localhost:8000 -t example
 ```
 
 ## Requirements
