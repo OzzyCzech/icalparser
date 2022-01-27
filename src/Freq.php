@@ -37,12 +37,24 @@ use Exception;
 class Freq {
 
 	protected array $weekdays = [
-		'MO' => 'monday', 'TU' => 'tuesday', 'WE' => 'wednesday', 'TH' => 'thursday', 'FR' => 'friday', 'SA' => 'saturday',
+		'MO' => 'monday',
+		'TU' => 'tuesday',
+		'WE' => 'wednesday',
+		'TH' => 'thursday',
+		'FR' => 'friday',
+		'SA' => 'saturday',
 		'SU' => 'sunday',
 	];
 	protected array $knownRules = [
-		'month', 'weekno', 'day', 'monthday', 'yearday', 'hour', 'minute',
+		'month',
+		'weekno',
+		'day',
+		'monthday',
+		'yearday',
+		'hour',
+		'minute',
 	]; //others : 'setpos', 'second'
+
 	protected array $ruleModifiers = ['wkst'];
 	protected bool $simpleMode = true;
 
