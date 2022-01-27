@@ -14,7 +14,14 @@
 <div class="container">
 	<h1>Czech holidays</h1>
 
-	<ul>
+	<table class="table table-bordered">
+		<thead>
+		<tr>
+			<th class="text-end">Date</th>
+			<th>Summary</th>
+		</tr>
+		</thead>
+		<tbody>
 		<?php
 
 		use om\IcalParser;
@@ -22,15 +29,14 @@
 		require_once __DIR__ . '/../vendor/autoload.php';
 
 		$cal = new IcalParser();
-		$results = $cal->parseFile(
-			'https://www.google.com/calendar/ical/cs.czech%23holiday%40group.v.calendar.google.com/public/basic.ics'
-		);
+		$results = $cal->parseFile('https://www.google.com/calendar/ical/cs.czech%23holiday%40group.v.calendar.google.com/public/basic.ics');
 
-		foreach ($cal->getSortedEvents() as $r) {
-			echo sprintf('	<li>%s - %s</li>' . PHP_EOL, $r['DTSTART']->format('j.n.Y'), $r['SUMMARY']);
+		foreach ($cal->getEvents()->sorted() as $event) {
+			printf('<tr><th class="text-end">%s</th><td>%s</td></tr>', $event['DTSTART']->format('j.n.Y'), $event['SUMMARY']);
 		}
-
-		?></ul>
+		?>
+		</tbody>
+	</table>
 </div>
 </body>
 </html>
