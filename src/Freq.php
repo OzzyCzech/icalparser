@@ -76,7 +76,7 @@ class Freq {
 	 * @param array $added of int (timestamps), see RDATE documentation
 	 * @throws Exception
 	 */
-	public function __construct($rule, int $start, $excluded = [], $added = []) {
+	public function __construct($rule, int $start, array $excluded = [], array $added = []) {
 		$this->start = $start;
 		$this->excluded = [];
 
