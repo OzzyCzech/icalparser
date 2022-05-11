@@ -1,0 +1,47 @@
+BEGIN:VCALENDAR
+PRODID;X-RICAL-TZSOURCE=TZINFO:-//Airbnb Inc//Hosting Calendar 0.8.8//EN
+CALSCALE:GREGORIAN
+VERSION:2.0
+BEGIN:VEVENT
+DTEND;VALUE=DATE:20220520
+DTSTART;VALUE=DATE:20220412
+UID:1418fdfasfdasdfsad@airbnb.com
+DESCRIPTION:Reservation URL: https://www.airbnb.com/hosting/reservations/
+ details/HMQHSAR9SE\nPhone Number (Last 4 Digits): 0431
+SUMMARY:Reserved
+END:VEVENT
+BEGIN:VEVENT
+DTEND;VALUE=DATE:20220620
+DTSTART;VALUE=DATE:20220617
+UID:1418fb94e984-dfasdfasdfsdfsdfsd@airbnb.com
+DESCRIPTION:Reservation URL: https://www.airbnb.com/hosting/reservations/
+ details/HMWQXYQSM4\nPhone Number (Last 4 Digits): 2360
+SUMMARY:Reserved
+END:VEVENT
+BEGIN:VEVENT
+DTEND;VALUE=DATE:20220628
+DTSTART;VALUE=DATE:20220625
+UID:1418fb94e984-dafdfdfadfdfadsfasdafsd@airbnb.com
+DESCRIPTION:Reservation URL: https://www.airbnb.com/hosting/reservations/
+ details/HM49HZXKQT\nPhone Number (Last 4 Digits): 1537
+SUMMARY:Reserved
+END:VEVENT
+BEGIN:VEVENT
+DTEND;VALUE=DATE:20220724
+DTSTART;VALUE=DATE:20220723
+UID:6fec1092d3fa-afdfasdfdsfasdfasdfsdfasd@airbnb.com
+SUMMARY:Airbnb (Not available)
+END:VEVENT
+BEGIN:VEVENT
+DTEND;VALUE=DATE:20220807
+DTSTART;VALUE=DATE:20220725
+UID:6fec1092d3fa-afdfsdfsdfasdfadsfsfs@airbnb.com
+SUMMARY:Airbnb (Not available)
+END:VEVENT
+BEGIN:VEVENT
+DTEND;VALUE=DATE:20230512
+DTSTART;VALUE=DATE:20221107
+UID:6fec1092d3fa-afdafdsafsdfdfsdfsd@airbnb.com
+SUMMARY:Airbnb (Not available)
+END:VEVENT
+END:VCALENDAR

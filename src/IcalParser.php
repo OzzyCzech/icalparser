@@ -18,7 +18,7 @@ use RuntimeException;
 class IcalParser {
 
 	/** @var ?DateTimeZone */
-	public ?DateTimeZone $timezone;
+	public ?DateTimeZone $timezone = null;
 
 	/** @var array|null */
 	public ?array $data = null;
