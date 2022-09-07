@@ -1,6 +1,5 @@
 # PHP iCal Parser
 
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/ozzyczech)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/OzzyCzech/icalparser/PHP%20Tests)](https://github.com/OzzyCzech/icalparser/actions)
 [![Latest Stable Version](https://poser.pugx.org/om/icalparser/v/stable.png)](https://packagist.org/packages/om/icalparser)
 [![Total Downloads](https://poser.pugx.org/om/icalparser/downloads.png)](https://packagist.org/packages/om/icalparser)
@@ -8,6 +7,8 @@
 [![License](https://poser.pugx.org/om/icalparser/license.png)](https://packagist.org/packages/om/icalparser)
 
 Internet Calendaring Parser [rfc2445](https://www.ietf.org/rfc/rfc2445.txt) or iCal parser is simple PHP 7.4+ class for parsing format into array.
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/ozzyczech)
 
 ## How to install
 
