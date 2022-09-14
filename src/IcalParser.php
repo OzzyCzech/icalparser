@@ -158,6 +158,9 @@ class IcalParser {
 						}
 
 					} else {
+						if($key === 'ATTENDEE'){
+							$value = $value['VALUE'];		// backwards compatibility (leaves ATTENDEE entry as it was)
+						}
 						$this->data[$section][$this->counters[$section]][$key] = $value;
 					}
 
@@ -273,6 +276,8 @@ class IcalParser {
 						if ($match['value'] === 'QUOTED-PRINTABLE') {
 							$value = quoted_printable_decode($value);
 						}
+					} else {
+						$middle[$match['key']] = $match['value'];
 					}
 				}
 			}
@@ -332,6 +337,10 @@ class IcalParser {
 				$value = strtr($value, ['\\\\' => '\\', '\\N' => "\n", '\\n' => "\n", '\\;' => ';', '\\,' => ',']);
 			}
 		}
+		
+		if($key === 'ATTENDEE'){
+			$value = array_merge(is_array($middle) ? $middle : ['middle' => $middle], ['VALUE' => $value]);
+		}
 
 		return [$key, $middle, $value];
 	}
@@ -347,7 +356,7 @@ class IcalParser {
 	}
 
 	public function isMultipleKey(string $key): ?string {
-		return (['ATTACH' => 'ATTACHMENTS', 'EXDATE' => 'EXDATES', 'RDATE' => 'RDATES'])[$key] ?? null;
+		return (['ATTACH' => 'ATTACHMENTS', 'EXDATE' => 'EXDATES', 'RDATE' => 'RDATES', 'ATTENDEE' => 'ATTENDEES'])[$key] ?? null;
 	}
 
 	/**
