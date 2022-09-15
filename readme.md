@@ -36,6 +36,28 @@ foreach ($cal->getEvents()->sorted() as $event) {
 }
 ```
 
+Each property of each event is available using the property name (in capital letters) as a key. 
+There are some special cases:
+
+- multiple attendees with individual parameters: use `ATTENDEES` as key to get all attendees in the following scheme:
+```php
+[
+	[
+		'ROLE' => 'REQ-PARTICIPANT',
+		'PARTSTAT' => 'NEEDS-ACTION',
+		'CN' => 'John Doe',
+		'VALUE' => 'mailto:john.doe@example.org'
+	],
+	[
+		'ROLE' => 'REQ-PARTICIPANT',
+		'PARTSTAT' => 'NEEDS-ACTION',
+		'CN' => 'Test Example',
+		'VALUE' => 'mailto:test@example.org'
+	]
+]
+```
+- organizer's name: the *CN* parameter of the organizer property can be retrieved using the key `ORGANIZER-CN`
+
 You can run example with [PHP Built-in web server](https://www.php.net/manual/en/features.commandline.webserver.php) as follow:
 
 ```shell
