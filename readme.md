@@ -55,6 +55,3 @@ composer update
 composer test
 ```
 
-## TODO
-
-- add ATTENDEE support https://www.kanzaki.com/docs/ical/attendee.html
