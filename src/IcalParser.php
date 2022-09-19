@@ -158,7 +158,12 @@ class IcalParser {
 						}
 
 					} else {
-						if($key === 'ATTENDEE'){
+						if(in_array($key, ['ORGANIZER'])){
+							foreach($middle as $midKey => $midVal){
+								$this->data[$section][$this->counters[$section]][$key.'-'.$midKey] = $midVal;
+							}
+						}
+						if(in_array($key, ['ATTENDEE', 'ORGANIZER'])){
 							$value = $value['VALUE'];		// backwards compatibility (leaves ATTENDEE entry as it was)
 						}
 						$this->data[$section][$this->counters[$section]][$key] = $value;
@@ -338,7 +343,7 @@ class IcalParser {
 			}
 		}
 		
-		if($key === 'ATTENDEE'){
+		if(in_array($key, ['ATTENDEE', 'ORGANIZER'])){
 			$value = array_merge(is_array($middle) ? $middle : ['middle' => $middle], ['VALUE' => $value]);
 		}
 
