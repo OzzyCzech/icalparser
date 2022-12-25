@@ -2,6 +2,7 @@
 
 namespace om;
 
+use ArrayObject;
 use DateInterval;
 use DateTime;
 use DateTimeZone;
@@ -389,7 +390,7 @@ class IcalParser {
 	 *
 	 * @deprecated use IcalParser::getEvents()->sorted() instead
 	 */
-	public function getSortedEvents(): \ArrayObject {
+	public function getSortedEvents(): ArrayObject {
 		return $this->getEvents()->sorted();
 	}
 
@@ -473,7 +474,7 @@ class IcalParser {
 	 * @return \ArrayObject
 	 * @deprecated use IcalParser::getEvents->reversed();
 	 */
-	public function getReverseSortedEvents(): \ArrayObject {
+	public function getReverseSortedEvents(): ArrayObject {
 		return $this->getEvents()->reversed();
 	}
 
