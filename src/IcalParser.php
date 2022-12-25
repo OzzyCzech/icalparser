@@ -28,7 +28,7 @@ class IcalParser {
 	protected array $counters = [];
 
 	/** @var array */
-	private $windowsTimezones;
+	private array $windowsTimezones;
 
 	public function __construct() {
 		$this->windowsTimezones = require __DIR__ . '/WindowsTimezones.php'; // load Windows timezones from separate file
@@ -40,9 +40,9 @@ class IcalParser {
 	 * @return array|null
 	 * @throws Exception
 	 */
-	public function parseFile(string $file, callable $callback = null): array {
+	public function parseFile(string $file, callable $callback = null): ?array {
 		if (!$handle = fopen($file, 'rb')) {
-			throw new RuntimeException('Can\'t open file' . $file . ' for reading');
+			throw new RuntimeException('Can\'t open file' . $file . ' for reading.');
 		}
 		fclose($handle);
 
@@ -357,7 +357,7 @@ class IcalParser {
 	 * @param string $zone
 	 * @return mixed|null
 	 */
-	private function toTimezone(string $zone) {
+	private function toTimezone(string $zone): mixed{
 		return $this->windowsTimezones[$zone] ?? $zone;
 	}
 
