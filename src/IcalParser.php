@@ -63,7 +63,7 @@ class IcalParser {
 			$this->counters = [];
 		}
 
-		if (!preg_match('/BEGIN:VCALENDAR/', $string)) {
+		if (!str_contains($string, 'BEGIN:VCALENDAR') ) {
 			throw new InvalidArgumentException('Invalid ICAL data format');
 		}
 
@@ -148,7 +148,7 @@ class IcalParser {
 
 					if ($this->isMultipleKeyWithCommaSeparation($key)) {
 
-						if (strpos($value, ',') !== false) {
+						if ( str_contains($value, ',') ) {
 							$values = array_map('trim', preg_split('/(?<![^\\\\]\\\\),/', $value));
 						} else {
 							$values = [$value];
@@ -334,7 +334,7 @@ class IcalParser {
 			'LOCATION', 'RESOURCES', 'STATUS', 'SUMMARY', 'TRANSP', 'TZID', 'TZNAME', 'CONTACT',
 			'RELATED-TO', 'UID', 'ACTION', 'REQUEST-STATUS', 'URL',
 		];
-		if (in_array($key, $text_properties, true) || strpos($key, 'X-') === 0) {
+		if ( in_array($key, $text_properties, true) || str_starts_with($key, 'X-') ) {
 			if (is_array($value)) {
 				foreach ($value as &$var) {
 					$var = strtr($var, ['\\\\' => '\\', '\\N' => "\n", '\\n' => "\n", '\\;' => ';', '\\,' => ',']);
