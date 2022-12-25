@@ -1,6 +1,6 @@
 # PHP iCal Parser
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/OzzyCzech/icalparser/PHP%20Tests)](https://github.com/OzzyCzech/icalparser/actions)
+[![PHP Tests](https://github.com/OzzyCzech/icalparser/actions/workflows/php.yml/badge.svg)](https://github.com/OzzyCzech/icalparser/actions/workflows/php.yml)
 [![Latest Stable Version](https://poser.pugx.org/om/icalparser/v/stable.png)](https://packagist.org/packages/om/icalparser)
 [![Total Downloads](https://poser.pugx.org/om/icalparser/downloads.png)](https://packagist.org/packages/om/icalparser)
 [![Latest Unstable Version](https://poser.pugx.org/om/icalparser/v/unstable.png)](https://packagist.org/packages/om/icalparser)
