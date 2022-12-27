@@ -63,7 +63,7 @@ class IcalParser {
 			$this->counters = [];
 		}
 
-		if (!str_contains($string, 'BEGIN:VCALENDAR') ) {
+		if (!str_contains($string, 'BEGIN:VCALENDAR')) {
 			throw new InvalidArgumentException('Invalid ICAL data format');
 		}
 
@@ -148,7 +148,7 @@ class IcalParser {
 
 					if ($this->isMultipleKeyWithCommaSeparation($key)) {
 
-						if ( str_contains($value, ',') ) {
+						if (str_contains($value, ',')) {
 							$values = array_map('trim', preg_split('/(?<![^\\\\]\\\\),/', $value));
 						} else {
 							$values = [$value];
@@ -159,13 +159,13 @@ class IcalParser {
 						}
 
 					} else {
-						if(in_array($key, ['ORGANIZER'])){
-							foreach($middle as $midKey => $midVal){
-								$this->data[$section][$this->counters[$section]][$key.'-'.$midKey] = $midVal;
+						if (in_array($key, ['ORGANIZER'])) {
+							foreach ($middle as $midKey => $midVal) {
+								$this->data[$section][$this->counters[$section]][$key . '-' . $midKey] = $midVal;
 							}
 						}
-						if(in_array($key, ['ATTENDEE', 'ORGANIZER'])){
-							$value = $value['VALUE'];		// backwards compatibility (leaves ATTENDEE entry as it was)
+						if (in_array($key, ['ATTENDEE', 'ORGANIZER'])) {
+							$value = $value['VALUE'];    // backwards compatibility (leaves ATTENDEE entry as it was)
 						}
 						$this->data[$section][$this->counters[$section]][$key] = $value;
 					}
@@ -334,7 +334,7 @@ class IcalParser {
 			'LOCATION', 'RESOURCES', 'STATUS', 'SUMMARY', 'TRANSP', 'TZID', 'TZNAME', 'CONTACT',
 			'RELATED-TO', 'UID', 'ACTION', 'REQUEST-STATUS', 'URL',
 		];
-		if ( in_array($key, $text_properties, true) || str_starts_with($key, 'X-') ) {
+		if (in_array($key, $text_properties, true) || str_starts_with($key, 'X-')) {
 			if (is_array($value)) {
 				foreach ($value as &$var) {
 					$var = strtr($var, ['\\\\' => '\\', '\\N' => "\n", '\\n' => "\n", '\\;' => ';', '\\,' => ',']);
@@ -343,8 +343,8 @@ class IcalParser {
 				$value = strtr($value, ['\\\\' => '\\', '\\N' => "\n", '\\n' => "\n", '\\;' => ';', '\\,' => ',']);
 			}
 		}
-		
-		if(in_array($key, ['ATTENDEE', 'ORGANIZER'])){
+
+		if (in_array($key, ['ATTENDEE', 'ORGANIZER'])) {
 			$value = array_merge(is_array($middle) ? $middle : ['middle' => $middle], ['VALUE' => $value]);
 		}
 
@@ -357,7 +357,7 @@ class IcalParser {
 	 * @param string $zone
 	 * @return mixed|null
 	 */
-	private function toTimezone(string $zone): mixed{
+	private function toTimezone(string $zone): mixed {
 		return $this->windowsTimezones[$zone] ?? $zone;
 	}
 
@@ -404,14 +404,14 @@ class IcalParser {
 					if (!empty($event['RECURRENCE-ID']) && !empty($event['UID']) && isset($event['SEQUENCE'])) {
 						$modifiedEventUID = $event['UID'];
 						$modifiedEventRecurID = $event['RECURRENCE-ID'];
-						$modifiedEventSeq = (int)$event['SEQUENCE'];
+						$modifiedEventSeq = (int) $event['SEQUENCE'];
 
 						if (isset($this->data['_RECURRENCE_COUNTERS_BY_UID'][$modifiedEventUID])) {
 							$counter = $this->data['_RECURRENCE_COUNTERS_BY_UID'][$modifiedEventUID];
 
 							$originalEvent = $this->data['VEVENT'][$counter];
 							if (isset($originalEvent['SEQUENCE'])) {
-								$originalEventSeq = (int)$originalEvent['SEQUENCE'];
+								$originalEventSeq = (int) $originalEvent['SEQUENCE'];
 								$originalEventFormattedStartDate = $originalEvent['DTSTART']->format('Ymd\THis');
 								if ($modifiedEventRecurID === $originalEventFormattedStartDate && $modifiedEventSeq > $originalEventSeq) {
 									// this modifies the original event
