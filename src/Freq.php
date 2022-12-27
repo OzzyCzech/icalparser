@@ -442,7 +442,7 @@ class Freq {
 		} else {
 			$ts = $this->start;
 			while (($t2 = $this->findNext($ts)) < $offset) {
-				if ($t2 == false) {
+				if (!$t2) {
 					break;
 				}
 				$ts = $t2;
@@ -469,8 +469,8 @@ class Freq {
 	/**
 	 * Finds the first occurrence of the rule.
 	 *
-	 * @return int timestamp
-	 * @throws Exception
+	 * @return bool|int timestamp
+	 * @throws \Exception
 	 */
 	public function firstOccurrence(): bool|int {
 		$t = $this->start;
