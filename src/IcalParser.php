@@ -2,6 +2,7 @@
 
 namespace om;
 
+use ArrayObject;
 use DateInterval;
 use DateTime;
 use DateTimeZone;
@@ -27,7 +28,7 @@ class IcalParser {
 	protected array $counters = [];
 
 	/** @var array */
-	private $windowsTimezones;
+	private array $windowsTimezones;
 
 	public function __construct() {
 		$this->windowsTimezones = require __DIR__ . '/WindowsTimezones.php'; // load Windows timezones from separate file
@@ -39,9 +40,9 @@ class IcalParser {
 	 * @return array|null
 	 * @throws Exception
 	 */
-	public function parseFile(string $file, callable $callback = null): array {
+	public function parseFile(string $file, callable $callback = null): ?array {
 		if (!$handle = fopen($file, 'rb')) {
-			throw new RuntimeException('Can\'t open file' . $file . ' for reading');
+			throw new RuntimeException('Can\'t open file' . $file . ' for reading.');
 		}
 		fclose($handle);
 
@@ -62,7 +63,7 @@ class IcalParser {
 			$this->counters = [];
 		}
 
-		if (!preg_match('/BEGIN:VCALENDAR/', $string)) {
+		if (!str_contains($string, 'BEGIN:VCALENDAR') ) {
 			throw new InvalidArgumentException('Invalid ICAL data format');
 		}
 
@@ -147,7 +148,7 @@ class IcalParser {
 
 					if ($this->isMultipleKeyWithCommaSeparation($key)) {
 
-						if (strpos($value, ',') !== false) {
+						if ( str_contains($value, ',') ) {
 							$values = array_map('trim', preg_split('/(?<![^\\\\]\\\\),/', $value));
 						} else {
 							$values = [$value];
@@ -333,7 +334,7 @@ class IcalParser {
 			'LOCATION', 'RESOURCES', 'STATUS', 'SUMMARY', 'TRANSP', 'TZID', 'TZNAME', 'CONTACT',
 			'RELATED-TO', 'UID', 'ACTION', 'REQUEST-STATUS', 'URL',
 		];
-		if (in_array($key, $text_properties, true) || strpos($key, 'X-') === 0) {
+		if ( in_array($key, $text_properties, true) || str_starts_with($key, 'X-') ) {
 			if (is_array($value)) {
 				foreach ($value as &$var) {
 					$var = strtr($var, ['\\\\' => '\\', '\\N' => "\n", '\\n' => "\n", '\\;' => ';', '\\,' => ',']);
@@ -356,7 +357,7 @@ class IcalParser {
 	 * @param string $zone
 	 * @return mixed|null
 	 */
-	private function toTimezone(string $zone) {
+	private function toTimezone(string $zone): mixed{
 		return $this->windowsTimezones[$zone] ?? $zone;
 	}
 
@@ -389,7 +390,7 @@ class IcalParser {
 	 *
 	 * @deprecated use IcalParser::getEvents()->sorted() instead
 	 */
-	public function getSortedEvents(): \ArrayObject {
+	public function getSortedEvents(): ArrayObject {
 		return $this->getEvents()->sorted();
 	}
 
@@ -473,7 +474,7 @@ class IcalParser {
 	 * @return \ArrayObject
 	 * @deprecated use IcalParser::getEvents->reversed();
 	 */
-	public function getReverseSortedEvents(): \ArrayObject {
+	public function getReverseSortedEvents(): ArrayObject {
 		return $this->getEvents()->reversed();
 	}
 

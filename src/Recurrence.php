@@ -21,21 +21,21 @@ use Exception;
  */
 class Recurrence {
 
-	public $rrule;
-	protected $freq;
-	protected $until;
-	protected $count;
-	protected $interval;
-	protected $bysecond;
-	protected $byminute;
-	protected $byhour;
-	protected $byday;
-	protected $bymonthday;
-	protected $byyearday;
-	protected $byweekno;
-	protected $bymonth;
-	protected $bysetpos;
-	protected $wkst;
+	public    array $rrule;
+	protected mixed $freq;
+	protected mixed $until;
+	protected mixed $count;
+	protected mixed $interval;
+	protected mixed $bysecond;
+	protected mixed $byminute;
+	protected mixed $byhour;
+	protected mixed $byday;
+	protected mixed $bymonthday;
+	protected mixed $byyearday;
+	protected mixed $byweekno;
+	protected mixed $bymonth;
+	protected mixed $bysetpos;
+	protected mixed $wkst;
 	/**
 	 * A list of the properties that can have comma-separated lists for values.
 	 *
@@ -47,7 +47,7 @@ class Recurrence {
 	];
 
 	/**
-	 * Creates an recurrence object with a passed in line.  Parses the line.
+	 * Creates a recurrence object with a passed in line.  Parses the line.
 	 *
 	 * @param array $rrule an om\icalparser row array which will be parsed to get the
 	 * desired information.
@@ -60,9 +60,9 @@ class Recurrence {
 	 * Parses an 'RRULE' array and sets the member variables of this object.
 	 * Expects a string that looks like this:  'FREQ=WEEKLY;INTERVAL=2;BYDAY=SU,TU,WE'
 	 *
-	 * @param $rrule
+	 * @param array $rrule
 	 */
-	protected function parseRrule($rrule): void {
+	protected function parseRrule(array $rrule): void {
 		$this->rrule = $rrule;
 		//loop through the properties in the line and set their associated
 		//member variables
@@ -82,7 +82,7 @@ class Recurrence {
 	 *
 	 * @return mixed string if the member has been set, false otherwise
 	 */
-	public function getFreq() {
+	public function getFreq(): mixed{
 		return $this->getMember('freq');
 	}
 
@@ -92,7 +92,7 @@ class Recurrence {
 	 * @param string $member name of the member variable
 	 * @return mixed  the variable value (if set), false otherwise
 	 */
-	protected function getMember(string $member) {
+	protected function getMember(string $member): mixed{
 		return $this->$member ?? false;
 	}
 
@@ -101,7 +101,7 @@ class Recurrence {
 	 *
 	 * @return mixed string if the member has been set, false otherwise
 	 */
-	public function getUntil() {
+	public function getUntil(): mixed{
 		return $this->getMember('until');
 	}
 
@@ -111,7 +111,7 @@ class Recurrence {
 	 * @param mixed $ts timestamp (int) / Valid DateTime format (string)
 	 * @throws Exception
 	 */
-	public function setUntil($ts): void {
+	public function setUntil(mixed $ts): void {
 		if ($ts instanceof DateTime) {
 			$dt = $ts;
 		} elseif (is_int($ts)) {
@@ -129,7 +129,7 @@ class Recurrence {
 	 *
 	 * @return mixed string if the member has been set, false otherwise
 	 */
-	public function getCount() {
+	public function getCount(): mixed{
 		return $this->getMember('count');
 	}
 
@@ -138,7 +138,7 @@ class Recurrence {
 	 *
 	 * @return mixed string if the member has been set, false otherwise
 	 */
-	public function getInterval() {
+	public function getInterval(): mixed{
 		return $this->getMember('interval');
 	}
 
@@ -147,7 +147,7 @@ class Recurrence {
 	 *
 	 * @return mixed string if the member has been set, false otherwise
 	 */
-	public function getBySecond() {
+	public function getBySecond(): mixed{
 		return $this->getMember('bysecond');
 	}
 
@@ -156,7 +156,7 @@ class Recurrence {
 	 *
 	 * @return mixed string if the member has been set, false otherwise
 	 */
-	public function getByMinute() {
+	public function getByMinute(): mixed{
 		return $this->getMember('byminute');
 	}
 
@@ -165,7 +165,7 @@ class Recurrence {
 	 *
 	 * @return mixed string if the member has been set, false otherwise
 	 */
-	public function getByHour() {
+	public function getByHour(): mixed{
 		return $this->getMember('byhour');
 	}
 
@@ -174,7 +174,7 @@ class Recurrence {
 	 *
 	 * @return mixed string if the member has been set, false otherwise
 	 */
-	public function getByDay() {
+	public function getByDay(): mixed{
 		return $this->getMember('byday');
 	}
 
@@ -183,7 +183,7 @@ class Recurrence {
 	 *
 	 * @return mixed string if the member has been set, false otherwise
 	 */
-	public function getByMonthDay() {
+	public function getByMonthDay(): mixed{
 		return $this->getMember('bymonthday');
 	}
 
@@ -192,7 +192,7 @@ class Recurrence {
 	 *
 	 * @return mixed string if the member has been set, false otherwise
 	 */
-	public function getByYearDay() {
+	public function getByYearDay(): mixed{
 		return $this->getMember('byyearday');
 	}
 
@@ -201,7 +201,7 @@ class Recurrence {
 	 *
 	 * @return mixed string if the member has been set, false otherwise
 	 */
-	public function getByWeekNo() {
+	public function getByWeekNo(): mixed{
 		return $this->getMember('byweekno');
 	}
 
@@ -210,7 +210,7 @@ class Recurrence {
 	 *
 	 * @return mixed string if the member has been set, false otherwise
 	 */
-	public function getByMonth() {
+	public function getByMonth(): mixed{
 		return $this->getMember('bymonth');
 	}
 
@@ -219,7 +219,7 @@ class Recurrence {
 	 *
 	 * @return mixed string if the member has been set, false otherwise
 	 */
-	public function getBySetPos() {
+	public function getBySetPos(): mixed{
 		return $this->getMember('bysetpos');
 	}
 
@@ -228,7 +228,7 @@ class Recurrence {
 	 *
 	 * @return mixed string if the member has been set, false otherwise
 	 */
-	public function getWkst() {
+	public function getWkst(): mixed{
 		return $this->getMember('wkst');
 	}
 }
