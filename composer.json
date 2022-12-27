@@ -1,9 +1,9 @@
 {
 	"name": "om/icalparser",
 	"license": "BSD-3-Clause",
-	"description": "Simple ical parser",
+	"description": "Simple iCal parser",
 	"keywords": [
-		"ical",
+		"iCal",
 		"calendar",
 		"parser"
 	],
