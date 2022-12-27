@@ -14,7 +14,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Closure;
 use Tester\Environment;
 
-function test($description, Closure $fn): void{
+function test($description, Closure $fn): void {
 	printf("• %s%s%s", $description, PHP_EOL, $fn());
 }
 
