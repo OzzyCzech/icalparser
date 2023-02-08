@@ -239,3 +239,22 @@ test('', function () {
 	Assert::equal('18.4.2019 09:00:00', $events[38]['DTSTART']->format('j.n.Y H:i:s'));
 	Assert::equal('19.4.2019 09:00:00', $events[39]['DTSTART']->format('j.n.Y H:i:s'));
 });
+
+test('Recurring instances bi-weekly', function () {
+// https://github.com/OzzyCzech/icalparser/issues/61
+	$cal = new IcalParser();
+
+	$cal->parseFile(__DIR__ . '/cal/rrule_interval.ics');
+	$events = $cal->getEvents()->sorted();
+
+	var_dump($events[0]['RECURRENCES']);
+
+// DTSTART;TZID=America/Los_Angeles:20230131T050000
+// DTEND;TZID=America/Los_Angeles:20230131T060000
+// RRULE:FREQ=WEEKLY;WKST=MO;UNTIL=20230228T090000;INTERVAL=2;BYDAY=TU
+	Assert::equal(3, count($events[0]['RECURRENCES']));
+	Assert::equal(3, $events->count());
+	Assert::equal('1.31.2023 5:00:00', $events[0]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('2.14.2023 5:00:00', $events[1]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('2.28.2023 5:00:00', $events[2]['DTSTART']->format('j.n.Y H:i:s'));
+});
