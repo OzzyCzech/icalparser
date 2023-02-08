@@ -254,7 +254,7 @@ test('Recurring instances bi-weekly', function () {
 // RRULE:FREQ=WEEKLY;WKST=MO;UNTIL=20230228T090000;INTERVAL=2;BYDAY=TU
 	Assert::equal(3, count($events[0]['RECURRENCES']));
 	Assert::equal(3, $events->count());
-	Assert::equal('1.31.2023 5:00:00', $events[0]['DTSTART']->format('j.n.Y H:i:s'));
-	Assert::equal('2.14.2023 5:00:00', $events[1]['DTSTART']->format('j.n.Y H:i:s'));
-	Assert::equal('2.28.2023 5:00:00', $events[2]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('31.1.2023 05:00:00', $events[0]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('14.2.2023 05:00:00', $events[1]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('28.2.2023 05:00:00', $events[2]['DTSTART']->format('j.n.Y H:i:s'));
 });
