@@ -224,6 +224,27 @@ class IcalParser {
 		date_default_timezone_set($event['DTSTART']->getTimezone()->getName());
 		$frequency = new Freq($recurring->rrule, $event['DTSTART']->getTimestamp(), $exclusions, $additions);
 		$recurrenceTimestamps = $frequency->getAllOccurrences();
+
+		// This should be fixed in the Freq class, but it's too messy to make sense of
+		// This guard only works on WEEKLY, because the others have no fixed time interval
+		// There may still be a bug with the others
+		if (isset($event['RRULE']['INTERVAL']) && $recurring->getFreq() === "WEEKLY") {
+			$replacementList = [];
+
+			foreach($recurrenceTimestamps as $timestamp) {
+				$tmp = new DateTime('now', $event['DTSTART']->getTimezone());
+				$tmp->setTimestamp($timestamp);
+
+				$dayCount = $event['DTSTART']->diff($tmp)->format('%a');
+
+				if ($dayCount % ($event['RRULE']['INTERVAL'] * 7) == 0) {
+					$replacementList[] = $timestamp;
+				}
+			}
+
+			$recurrenceTimestamps = $replacementList;
+		}
+
 		$recurrences = [];
 		foreach ($recurrenceTimestamps as $recurrenceTimestamp) {
 			$tmp = new DateTime('now', $event['DTSTART']->getTimezone());
