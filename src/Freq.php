@@ -212,12 +212,8 @@ class Freq {
 		//set the timestamp of the offset (ignoring hours and minutes unless we want them to be
 		//part of the calculations.
 		if (static::$debug) printf("O: %s\n", date('r', $offset));
-		$hour = (in_array($this->freq, ['hourly', 'minutely']) && $offset > $this->start) ? date('H', $offset) : date(
-			'H', $this->start
-		);
-		$minute = (($this->freq === 'minutely' || isset($this->rules['byminute'])) && $offset > $this->start) ? date(
-			'i', $offset
-		) : date('i', $this->start);
+		$hour = (in_array($this->freq, ['hourly', 'minutely']) && $offset>$this->start) ? date('H', $offset) : date('H', $this->start);
+		$minute = (($this->freq === 'minutely' || isset($this->rules['byminute'])) && $offset > $this->start) ? date('i', $offset) : date('i', $this->start);
 		$t = mktime($hour, $minute, date('s', $this->start), date('m', $offset), date('d', $offset), date('Y', $offset));
 		if (static::$debug) printf("START: %s\n", date('r', $t));
 
