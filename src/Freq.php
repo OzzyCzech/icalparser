@@ -37,7 +37,7 @@ use Exception;
 class Freq {
 
 	/** @var bool */
-	static bool $debug = false;
+	public static bool $debug = false;
 
 	protected array $weekdays = [
 		'MO' => 'monday',
