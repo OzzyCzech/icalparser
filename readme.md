@@ -1,10 +1,10 @@
-# PHP iCal Parser
+[![Packagist Version](https://img.shields.io/packagist/v/om/icalparser?style=for-the-badge)](https://packagist.org/packages/om/icalparser)
+[![Packagist Downloads](https://img.shields.io/packagist/dm/om/icalparser?style=for-the-badge)](https://packagist.org/packages/om/icalparser)
+[![Packagist License](https://img.shields.io/packagist/l/om/icalparser?style=for-the-badge)](https://packagist.org/packages/om/icalparser)
+[![Packagist PHP Version](https://img.shields.io/packagist/dependency-v/om/icalparser/php?style=for-the-badge)](https://packagist.org/packages/om/icalparser)
+[![PHP Tests](https://img.shields.io/github/actions/workflow/status/OzzyCzech/icalparser/php.yml?style=for-the-badge)](https://github.com/OzzyCzech/icalparser/actions/workflows/php.yml)
 
-[![PHP Tests](https://github.com/OzzyCzech/icalparser/actions/workflows/php.yml/badge.svg)](https://github.com/OzzyCzech/icalparser/actions/workflows/php.yml)
-[![Latest Stable Version](https://poser.pugx.org/om/icalparser/v/stable)](https://packagist.org/packages/om/icalparser)
-[![Total Downloads](https://poser.pugx.org/om/icalparser/downloads)](https://packagist.org/packages/om/icalparser)
-[![License](https://poser.pugx.org/om/icalparser/license)](https://packagist.org/packages/om/icalparser)
-[![PHP Version Require](http://poser.pugx.org/om/icalparser/require/php)](https://packagist.org/packages/om/icalparser)
+# PHP iCal Parser
 
 Internet Calendaring Parser [rfc2445](https://www.ietf.org/rfc/rfc2445.txt) or iCal parser is simple PHP class for parsing format into array.
 
