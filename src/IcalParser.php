@@ -17,17 +17,9 @@ use RuntimeException;
  * @author Roman Ožana <roman@ozana.cz>
  */
 class IcalParser {
-
-	/** @var ?DateTimeZone */
 	public ?DateTimeZone $timezone = null;
-
-	/** @var array|null */
 	public ?array $data = null;
-
-	/** @var array */
 	protected array $counters = [];
-
-	/** @var array */
 	private array $windowsTimezones;
 
 	public function __construct() {
@@ -35,12 +27,9 @@ class IcalParser {
 	}
 
 	/**
-	 * @param string $file
-	 * @param callable|null $callback
-	 * @return array|null
 	 * @throws Exception
 	 */
-	public function parseFile(string $file, callable $callback = null): ?array {
+	public function parseFile(string $file, ?callable $callback = null): ?array {
 		if (!$handle = fopen($file, 'rb')) {
 			throw new RuntimeException('Can\'t open file' . $file . ' for reading.');
 		}
@@ -50,13 +39,10 @@ class IcalParser {
 	}
 
 	/**
-	 * @param string $string
-	 * @param callable|null $callback
 	 * @param boolean $add if true the parsed string is added to existing data
-	 * @return array|null
 	 * @throws Exception
 	 */
-	public function parseString(string $string, callable $callback = null, bool $add = false): ?array {
+	public function parseString(string $string, ?callable $callback = null, bool $add = false): ?array {
 		if ($add === false) {
 			// delete old data
 			$this->data = [];

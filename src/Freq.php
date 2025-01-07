@@ -35,8 +35,6 @@ use Exception;
  * @license http://creativecommons.org/licenses/by-sa/2.5/dk/deed.en_GB CC-BY-SA-DK
  */
 class Freq {
-
-	/** @var bool */
 	public static bool $debug = false;
 
 	protected array $weekdays = [
@@ -56,7 +54,7 @@ class Freq {
 		'yearday',
 		'hour',
 		'minute',
-	]; //others : 'setpos', 'second'
+	]; // others: 'setpos', 'second'
 
 	protected array $ruleModifiers = ['wkst'];
 	protected bool $simpleMode = true;
@@ -73,8 +71,7 @@ class Freq {
 	/**
 	 * Constructs a new Frequency-rule
 	 *
-	 * @param array|string $rule
-	 * @param int $start Unix-timestamp (important : Need to be the start of Event)
+	 * @param int $start Unix-timestamp (important: Need to be the start of Event)
 	 * @param array $excluded of int (timestamps), see EXDATE documentation
 	 * @param array $added of int (timestamps), see RDATE documentation
 	 * @throws Exception
@@ -188,8 +185,6 @@ class Freq {
 	 * If no new timestamps were found in the period, we try in the
 	 * next period
 	 *
-	 * @param int $offset
-	 * @return int|bool
 	 * @throws Exception
 	 */
 	public function findNext(int $offset): bool|int {
@@ -295,11 +290,6 @@ class Freq {
 	/**
 	 * Finds the starting point for the next rule. It goes $interval
 	 * 'freq' forward in time since the given offset
-	 *
-	 * @param int $offset
-	 * @param int $interval
-	 * @param boolean $truncate
-	 * @return int
 	 */
 	private function findStartingPoint(int $offset, int $interval, bool $truncate = true): int {
 		$_freq = ($this->freq === 'daily') ? 'day__' : $this->freq;
@@ -325,10 +315,6 @@ class Freq {
 	 * period specified by freq
 	 *
 	 * Yes - the fall-through is on purpose!
-	 *
-	 * @param int $time
-	 * @param string $freq
-	 * @return int
 	 */
 	private function truncateToPeriod(int $time, string $freq): int {
 		$date = getdate($time);
@@ -410,9 +396,6 @@ class Freq {
 
 	/**
 	 * Finds the earliest timestamp possible outside this period.
-	 *
-	 * @param int $offset
-	 * @return int
 	 */
 	public function findEndOfPeriod(int $offset = 0): int {
 		return $this->findStartingPoint($offset, 1, false);
@@ -494,7 +477,6 @@ class Freq {
 	/**
 	 * Returns all timestamps array(), build the cache if not made before
 	 *
-	 * @return array
 	 * @throws Exception
 	 */
 	public function getAllOccurrences(): array {
@@ -519,10 +501,6 @@ class Freq {
 
 	/**
 	 * Applies the BYDAY rule to the given timestamp
-	 *
-	 * @param string $rule
-	 * @param int $t
-	 * @return int
 	 */
 	private function ruleByDay(string $rule, int $t): int {
 		$dir = ($rule[0] === '-') ? -1 : 1;
