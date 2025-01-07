@@ -38,8 +38,6 @@ class Recurrence {
 	protected mixed $wkst;
 	/**
 	 * A list of the properties that can have comma-separated lists for values.
-	 *
-	 * @var array
 	 */
 	protected array $listProperties = [
 		'bysecond', 'byminute', 'byhour', 'byday', 'bymonthday',
@@ -59,8 +57,6 @@ class Recurrence {
 	/**
 	 * Parses an 'RRULE' array and sets the member variables of this object.
 	 * Expects a string that looks like this:  'FREQ=WEEKLY;INTERVAL=2;BYDAY=SU,TU,WE'
-	 *
-	 * @param array $rrule
 	 */
 	protected function parseRrule(array $rrule): void {
 		$this->rrule = $rrule;

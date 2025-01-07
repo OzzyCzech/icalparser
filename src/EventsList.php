@@ -14,8 +14,6 @@ class EventsList extends ArrayObject {
 
 	/**
 	 * Return array of Events
-	 *
-	 * @return array
 	 */
 	public function getArrayCopy(): array {
 		return array_values(parent::getArrayCopy());
@@ -23,8 +21,6 @@ class EventsList extends ArrayObject {
 
 	/**
 	 * Return sorted EventList (the newest dates are first)
-	 *
-	 * @return $this
 	 */
 	public function sorted(): EventsList {
 		$this->uasort(static function ($a, $b): int {
@@ -39,8 +35,6 @@ class EventsList extends ArrayObject {
 
 	/**
 	 * Return reversed sorted EventList (the oldest dates are first)
-	 *
-	 * @return $this
 	 */
 	public function reversed(): EventsList {
 		$this->uasort(static function ($a, $b): int {
