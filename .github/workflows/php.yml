@@ -8,10 +8,10 @@ jobs:
     strategy:
       matrix:
         operating-system: [ ubuntu-latest ]
-        php-versions: [ '8.1', '8.2', '8.3' ]
+        php-versions: [ '8.1', '8.2', '8.3', '8.4' ]
         experimental: [ false ]
         include:
-          - php-versions: '8.4'
+          - php-versions: '8.5'
             operating-system: ubuntu-latest
             experimental: true
       fail-fast: false
