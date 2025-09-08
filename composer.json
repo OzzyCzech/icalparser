@@ -28,6 +28,6 @@
 		"test": "tester tests -s -p php"
 	},
 	"require-dev": {
-		"nette/tester": "^2.5.1"
+		"nette/tester": "^2.5.6"
 	}
 }
