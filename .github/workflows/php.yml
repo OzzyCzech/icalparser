@@ -8,17 +8,17 @@ jobs:
     strategy:
       matrix:
         operating-system: [ ubuntu-latest ]
-        php-versions: [ '8.1', '8.2', '8.3', '8.4' ]
+        php-versions: [ '8.1', '8.2', '8.3', '8.4', '8.5' ]
         experimental: [ false ]
         include:
-          - php-versions: '8.5'
+          - php-versions: '8.6'
             operating-system: ubuntu-latest
             experimental: true
       fail-fast: false
     runs-on: ${{ matrix.operating-system }}
     continue-on-error: ${{ matrix.experimental }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
