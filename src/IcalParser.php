@@ -148,7 +148,7 @@ class IcalParser {
 						}
 
 					} else {
-						if (in_array($key, ['ORGANIZER'])) {
+						if ($key == 'ORGANIZER') {
 							foreach ($middle as $midKey => $midVal) {
 								$this->data[$section][$this->counters[$section]][$key . '-' . $midKey] = $midVal;
 							}
@@ -305,7 +305,7 @@ class IcalParser {
 						$match['value'] = $this->toTimezone($match['value']);
 						try {
 							$middle[$match['key']] = $timezone = new DateTimeZone($match['value']);
-						} catch (Exception $e) {
+						} catch (Exception) {
 							$middle[$match['key']] = $match['value'];
 						}
 					} elseif ($match['key'] === 'ENCODING') {
@@ -322,7 +322,7 @@ class IcalParser {
 		// process simple dates with timezone
 		if (in_array($key, ['DTSTAMP', 'LAST-MODIFIED', 'CREATED', 'DTSTART', 'DTEND'], true)) {
 			try {
-				$value = new DateTime($value, ($timezone ?: $this->timezone));
+				$value = new DateTime($value, ($timezone ?? $this->timezone));
 			} catch (Exception $e) {
 				$value = null;
 			}
@@ -330,7 +330,7 @@ class IcalParser {
 			$values = [];
 			foreach (explode(',', $value) as $singleValue) {
 				try {
-					$values[] = new DateTime($singleValue, ($timezone ?: $this->timezone));
+					$values[] = new DateTime($singleValue, ($timezone ?? $this->timezone));
 				} catch (Exception $e) {
 					// pass
 				}
@@ -348,7 +348,7 @@ class IcalParser {
 			foreach ($matches as $match) {
 				if (in_array($match['key'], ['UNTIL'])) {
 					try {
-						$value[$match['key']] = new DateTime($match['value'], ($timezone ?: $this->timezone));
+						$value[$match['key']] = new DateTime($match['value'], ($timezone ?? $this->timezone));
 					} catch (Exception $e) {
 						$value[$match['key']] = $match['value'];
 					}
@@ -502,7 +502,7 @@ class IcalParser {
 	}
 
 	/**
-	 * @return \ArrayObject
+	 * @return ArrayObject
 	 * @deprecated use IcalParser::getEvents->reversed();
 	 */
 	public function getReverseSortedEvents(): ArrayObject {
