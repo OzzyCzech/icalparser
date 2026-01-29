@@ -11,7 +11,7 @@ use InvalidArgumentException;
 use RuntimeException;
 
 /**
- * Copyright (c) 2004-2022 Roman Ožana (https://ozana.cz)
+ * Copyright (c) Roman Ožana (https://ozana.cz)
  *
  * @license BSD-3-Clause
  * @author Roman Ožana <roman@ozana.cz>
@@ -166,8 +166,8 @@ class IcalParser {
 
 	/**
 	 * @param $event
-	 * @return array
 	 * @throws Exception
+	 * @return array
 	 */
 	public function parseRecurrences($event): array {
 		$recurring = new Recurrence($event['RRULE']);
@@ -211,24 +211,41 @@ class IcalParser {
 		$frequency = new Freq($recurring->rrule, $event['DTSTART']->getTimestamp(), $exclusions, $additions);
 		$recurrenceTimestamps = $frequency->getAllOccurrences();
 
-		// This should be fixed in the Freq class, but it's too messy to make sense of
 		// This guard only works on WEEKLY, because the others have no fixed time interval
 		// There may still be a bug with the others
 		if (isset($event['RRULE']['INTERVAL']) && $recurring->getFreq() === "WEEKLY") {
-			$replacementList = [];
+			$interval = (int) $event['RRULE']['INTERVAL'];
+			if ($interval > 1) {
+				$replacementList = [];
+				$wkst = $recurring->getWkst() ?: 'MO';
+				$wkstMap = ['SU' => 0, 'MO' => 1, 'TU' => 2, 'WE' => 3, 'TH' => 4, 'FR' => 5, 'SA' => 6];
+				$wkstIndex = $wkstMap[$wkst] ?? 1;
 
-			foreach($recurrenceTimestamps as $timestamp) {
-				$tmp = new DateTime('now', $event['DTSTART']->getTimezone());
-				$tmp->setTimestamp($timestamp);
+				$getStartOfWeek = function ($ts) use ($event, $wkstIndex) {
+					$dt = new DateTime('now', $event['DTSTART']->getTimezone());
+					$dt->setTimestamp($ts);
+					$dt->setTime(0, 0, 0);
+					$w = (int) $dt->format('w');
+					$diff = $w - $wkstIndex;
+					if ($diff < 0)
+						$diff += 7;
+					$dt->modify("-{$diff} days");
+					return $dt->getTimestamp();
+				};
 
-				$dayCount = $event['DTSTART']->diff($tmp)->format('%a');
+				$startOfWeekStart = $getStartOfWeek($event['DTSTART']->getTimestamp());
 
-				if ($dayCount % ($event['RRULE']['INTERVAL'] * 7) == 0) {
-					$replacementList[] = $timestamp;
+				foreach ($recurrenceTimestamps as $timestamp) {
+					$startOfWeekCurrent = $getStartOfWeek($timestamp);
+					$diffWeeks = (int) round(($startOfWeekCurrent - $startOfWeekStart) / 604800);
+
+					if ($diffWeeks % $interval == 0) {
+						$replacementList[] = $timestamp;
+					}
 				}
-			}
 
-			$recurrenceTimestamps = $replacementList;
+				$recurrenceTimestamps = $replacementList;
+			}
 		}
 
 		$recurrences = [];

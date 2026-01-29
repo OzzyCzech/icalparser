@@ -5,7 +5,7 @@ namespace om;
 use ArrayObject;
 
 /**
- * Copyright (c) 2004-2022 Roman Ožana (https://ozana.cz)
+ * Copyright (c) Roman Ožana (https://ozana.cz)
  *
  * @license BSD-3-Clause
  * @author Roman Ožana <roman@ozana.cz>

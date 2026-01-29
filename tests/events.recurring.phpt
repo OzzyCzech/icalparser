@@ -166,7 +166,7 @@ test('Recuring instances with modifications and interval', function () {
 
 });
 
-test('', function () {
+test('Modifications to first recurrence handled correctly', function () {
 	$cal = new IcalParser();
 // There is still an issue that needs to be resolved when modifications are made to the initial event that is the
 // base of the recurrences.  The below ICS file has a great edge case example: one event, no recurrences in the
@@ -178,7 +178,7 @@ test('', function () {
 	Assert::equal(1, count($events));
 });
 
-test('', function () {
+test('Daily recurring period matches expected days', function () {
 	$cal = new IcalParser();
 	$results = $cal->parseFile(__DIR__ . '/cal/daily_recur.ics');
 	$events = $cal->getEvents()->sorted()->getArrayCopy();
@@ -188,7 +188,7 @@ test('', function () {
 	}
 });
 
-test('', function () {
+test('Daily recurring with count', function () {
 	$cal = new IcalParser();
 	$results = $cal->parseFile(__DIR__ . '/cal/daily_recur2.ics');
 	$events = $cal->getEvents()->sorted()->getArrayCopy();
@@ -200,8 +200,53 @@ test('', function () {
 	Assert::equal('11.9.2017 00:00:00', $events[3]['DTSTART']->format('j.n.Y H:i:s'));
 });
 
-test('', function () {
-//https://github.com/OzzyCzech/icalparser/issues/38
+/**
+ * https://github.com/OzzyCzech/icalparser/issues/75
+ */
+test('Two times weekly events', function () {
+	$cal = new IcalParser();
+	$cal->parseFile(__DIR__ . '/cal/twice_weekly.ics');
+	$events = $cal->getEvents()->sorted()->getArrayCopy();
+
+	// repeat 9 times (thu + tue) within january 2026
+	Assert::equal(9, count($events));
+
+	// First event (thursday)
+	Assert::equal('1.1.2026 10:00:00', $events[0]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('1.1.2026 11:00:00', $events[0]['DTEND']->format('j.n.Y H:i:s'));
+
+	// Second event (tuesday)
+	Assert::equal('6.1.2026 10:00:00', $events[1]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('6.1.2026 11:00:00', $events[1]['DTEND']->format('j.n.Y H:i:s'));
+
+	// Third event (thursday)
+	Assert::equal('8.1.2026 10:00:00', $events[2]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('8.1.2026 11:00:00', $events[2]['DTEND']->format('j.n.Y H:i:s'));
+
+	// Remaining events
+	Assert::equal('13.1.2026 10:00:00', $events[3]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('13.1.2026 11:00:00', $events[3]['DTEND']->format('j.n.Y H:i:s'));
+
+	Assert::equal('15.1.2026 10:00:00', $events[4]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('15.1.2026 11:00:00', $events[4]['DTEND']->format('j.n.Y H:i:s'));
+
+	Assert::equal('20.1.2026 10:00:00', $events[5]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('20.1.2026 11:00:00', $events[5]['DTEND']->format('j.n.Y H:i:s'));
+
+	Assert::equal('22.1.2026 10:00:00', $events[6]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('22.1.2026 11:00:00', $events[6]['DTEND']->format('j.n.Y H:i:s'));
+
+	Assert::equal('27.1.2026 10:00:00', $events[7]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('27.1.2026 11:00:00', $events[7]['DTEND']->format('j.n.Y H:i:s'));
+
+	Assert::equal('29.1.2026 10:00:00', $events[8]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('29.1.2026 11:00:00', $events[8]['DTEND']->format('j.n.Y H:i:s'));
+});
+
+/**
+ * https://github.com/OzzyCzech/icalparser/issues/38
+ */
+test('Weekly recurring event missing day (issue #38)', function () {
 	$cal = new IcalParser();
 	$cal->parseFile(__DIR__ . '/cal/38_weekly_recurring_event_missing_day.ics');
 	$events = $cal->getEvents()->sorted()->getArrayCopy();
