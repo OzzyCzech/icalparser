@@ -11,7 +11,6 @@ use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
 use RuntimeException;
-use function var_dump;
 
 /**
  * Copyright (c) Roman Ožana (https://ozana.cz)
