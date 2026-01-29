@@ -214,27 +214,33 @@ class IcalParser {
 		// This should be fixed in the Freq class, but it's too messy to make sense of
 		// This guard only works on WEEKLY, because the others have no fixed time interval
 		// There may still be a bug with the others
-		// Skip this filter when BYDAY has multiple days (e.g., TU,TH) since events won't be exactly 7 days apart
 		if (isset($event['RRULE']['INTERVAL']) && $recurring->getFreq() === "WEEKLY") {
 			$byDay = $recurring->getByDay();
 			$hasMultipleDays = $byDay !== false && is_array($byDay) && count($byDay) > 1;
+			$replacementList = [];
 			
-			if (!$hasMultipleDays) {
-				$replacementList = [];
-
-				foreach($recurrenceTimestamps as $timestamp) {
-					$tmp = new DateTime('now', $event['DTSTART']->getTimezone());
-					$tmp->setTimestamp($timestamp);
-
-					$dayCount = $event['DTSTART']->diff($tmp)->format('%a');
-
+			foreach ($recurrenceTimestamps as $timestamp) {
+				$tmp = new DateTime('now', $event['DTSTART']->getTimezone());
+				$tmp->setTimestamp($timestamp);
+				
+				$dayCount = $event['DTSTART']->diff($tmp)->format('%a');
+				
+				if ($hasMultipleDays) {
+					// For multiple days in BYDAY, check if the occurrence is in a valid week
+					// A valid week is one where the week number from DTSTART is divisible by INTERVAL
+					$weekCount = intdiv($dayCount, 7);
+					if ($weekCount % $event['RRULE']['INTERVAL'] == 0) {
+						$replacementList[] = $timestamp;
+					}
+				} else {
+					// For single day in BYDAY, the day must be exactly INTERVAL*7 days from DTSTART
 					if ($dayCount % ($event['RRULE']['INTERVAL'] * 7) == 0) {
 						$replacementList[] = $timestamp;
 					}
 				}
-
-				$recurrenceTimestamps = $replacementList;
 			}
+			
+			$recurrenceTimestamps = $replacementList;
 		}
 
 		$recurrences = [];

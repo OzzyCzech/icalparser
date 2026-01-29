@@ -517,7 +517,7 @@ class Freq {
 			$_t = strtotime($s, $t);
 
 			// For FREQ=WEEKLY with BYDAY, if today matches, return it (don't skip to next week)
-			// For other frequencies (monthly, yearly), skip to next occurrence
+			// For FREQ=MONTHLY and FREQ=YEARLY, skip to next occurrence
 			if ($_t == $t && in_array($this->freq, ['monthly', 'yearly'])) {
 				$s = 'next ' . $d . ' ' . date('H:i:s', $t);
 				$_t = strtotime($s, $_t);
