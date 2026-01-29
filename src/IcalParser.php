@@ -214,21 +214,27 @@ class IcalParser {
 		// This should be fixed in the Freq class, but it's too messy to make sense of
 		// This guard only works on WEEKLY, because the others have no fixed time interval
 		// There may still be a bug with the others
+		// Skip this filter when BYDAY has multiple days (e.g., TU,TH) since events won't be exactly 7 days apart
 		if (isset($event['RRULE']['INTERVAL']) && $recurring->getFreq() === "WEEKLY") {
-			$replacementList = [];
+			$byDay = $recurring->getByDay();
+			$hasMultipleDays = $byDay !== false && is_array($byDay) && count($byDay) > 1;
+			
+			if (!$hasMultipleDays) {
+				$replacementList = [];
 
-			foreach($recurrenceTimestamps as $timestamp) {
-				$tmp = new DateTime('now', $event['DTSTART']->getTimezone());
-				$tmp->setTimestamp($timestamp);
+				foreach($recurrenceTimestamps as $timestamp) {
+					$tmp = new DateTime('now', $event['DTSTART']->getTimezone());
+					$tmp->setTimestamp($timestamp);
 
-				$dayCount = $event['DTSTART']->diff($tmp)->format('%a');
+					$dayCount = $event['DTSTART']->diff($tmp)->format('%a');
 
-				if ($dayCount % ($event['RRULE']['INTERVAL'] * 7) == 0) {
-					$replacementList[] = $timestamp;
+					if ($dayCount % ($event['RRULE']['INTERVAL'] * 7) == 0) {
+						$replacementList[] = $timestamp;
+					}
 				}
-			}
 
-			$recurrenceTimestamps = $replacementList;
+				$recurrenceTimestamps = $replacementList;
+			}
 		}
 
 		$recurrences = [];

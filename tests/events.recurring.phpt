@@ -258,3 +258,39 @@ test('Recurring instances bi-weekly', function () {
 	Assert::equal('14.2.2023 05:00:00', $events[1]['DTSTART']->format('j.n.Y H:i:s'));
 	Assert::equal('28.2.2023 05:00:00', $events[2]['DTSTART']->format('j.n.Y H:i:s'));
 });
+
+test('Weekly recurring with Tuesday and Thursday', function () {
+// https://github.com/OzzyCzech/icalparser/issues/75
+	$cal = new IcalParser();
+
+	$cal->parseFile(__DIR__ . '/cal/75_weekly_tuesday_thursday.ics');
+	$events = $cal->getEvents()->sorted();
+
+// DTSTART;VALUE=DATE:20240326 (Tuesday, March 26, 2024)
+// RRULE:FREQ=WEEKLY;UNTIL=20240430T220000Z;INTERVAL=1;BYDAY=TU,TH;WKST=MO
+// Should return both Tuesdays and Thursdays: 6 Tuesdays + 5 Thursdays = 11 events
+	Assert::equal(11, $events->count());
+	
+	// Week 1: Tue Mar 26, Thu Mar 28
+	Assert::equal('26.3.2024 00:00:00', $events[0]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('28.3.2024 00:00:00', $events[1]['DTSTART']->format('j.n.Y H:i:s'));
+	
+	// Week 2: Tue Apr 2, Thu Apr 4
+	Assert::equal('2.4.2024 00:00:00', $events[2]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('4.4.2024 00:00:00', $events[3]['DTSTART']->format('j.n.Y H:i:s'));
+	
+	// Week 3: Tue Apr 9, Thu Apr 11
+	Assert::equal('9.4.2024 00:00:00', $events[4]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('11.4.2024 00:00:00', $events[5]['DTSTART']->format('j.n.Y H:i:s'));
+	
+	// Week 4: Tue Apr 16, Thu Apr 18
+	Assert::equal('16.4.2024 00:00:00', $events[6]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('18.4.2024 00:00:00', $events[7]['DTSTART']->format('j.n.Y H:i:s'));
+	
+	// Week 5: Tue Apr 23, Thu Apr 25
+	Assert::equal('23.4.2024 00:00:00', $events[8]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('25.4.2024 00:00:00', $events[9]['DTSTART']->format('j.n.Y H:i:s'));
+	
+	// Week 6: Tue Apr 30 (last one before UNTIL)
+	Assert::equal('30.4.2024 00:00:00', $events[10]['DTSTART']->format('j.n.Y H:i:s'));
+});
