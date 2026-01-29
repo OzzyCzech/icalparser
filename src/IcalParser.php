@@ -1,14 +1,17 @@
 <?php
+declare(strict_types=1);
 
 namespace om;
 
 use ArrayObject;
 use DateInterval;
+use DateInvalidTimeZoneException;
 use DateTime;
 use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
 use RuntimeException;
+use function var_dump;
 
 /**
  * Copyright (c) Roman Ožana (https://ozana.cz)
@@ -126,7 +129,7 @@ class IcalParser {
 					// break the current implementation--it leaves the original key alone and adds
 					// a new one specifically for the array of values.
 
-					if ($newKey = $this->isMultipleKey($key)) {
+					if ($newKey = $this->isMultipleKey((string) $key)) {
 						$this->data[$section][$this->counters[$section]][$newKey][] = $value;
 					}
 
@@ -135,7 +138,8 @@ class IcalParser {
 					if ($this->isMultipleKeyWithCommaSeparation($key)) {
 
 						if (str_contains($value, ',')) {
-							$values = array_map('trim', preg_split('/(?<![^\\\\]\\\\),/', $value));
+							// split on commas not preceded by backslash
+							$values = array_map('trim', preg_split('/(?<!\\\\),/', $value));
 						} else {
 							$values = [$value];
 						}
@@ -269,6 +273,9 @@ class IcalParser {
 		return $recurrences;
 	}
 
+	/**
+	 * @throws DateInvalidTimeZoneException
+	 */
 	private function parseRow($row): array {
 		preg_match('#^([\w-]+);?([\w-]+="[^"]*"|.*?):(.*)$#i', $row, $matches);
 
@@ -358,7 +365,8 @@ class IcalParser {
 			'LOCATION', 'RESOURCES', 'STATUS', 'SUMMARY', 'TRANSP', 'TZID', 'TZNAME', 'CONTACT',
 			'RELATED-TO', 'UID', 'ACTION', 'REQUEST-STATUS', 'URL',
 		];
-		if (in_array($key, $text_properties, true) || str_starts_with($key, 'X-')) {
+
+		if (in_array($key, $text_properties, true) || str_starts_with((string) $key, 'X-')) {
 			if (is_array($value)) {
 				foreach ($value as &$var) {
 					$var = strtr($var, ['\\\\' => '\\', '\\N' => "\n", '\\n' => "\n", '\\;' => ';', '\\,' => ',']);
