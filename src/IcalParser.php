@@ -4,9 +4,13 @@ declare(strict_types=1);
 namespace om;
 
 use ArrayObject;
+use DateException;
 use DateInterval;
+use DateInvalidOperationException;
 use DateInvalidTimeZoneException;
+use DateMalformedStringException;
 use DateTime;
+use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
@@ -22,11 +26,8 @@ class IcalParser {
 	public ?DateTimeZone $timezone = null;
 	public ?array $data = null;
 	protected array $counters = [];
-	private array $windowsTimezones;
 
-	public function __construct() {
-		$this->windowsTimezones = require __DIR__ . '/WindowsTimezones.php'; // load Windows timezones from separate file
-	}
+	public function __construct(public ParserOptions $options = new ParserOptions()) {}
 
 	/**
 	 * @throws Exception
@@ -174,6 +175,7 @@ class IcalParser {
 	 */
 	public function parseRecurrences($event): array {
 		$recurring = new Recurrence($event['RRULE']);
+		$timezone = $event['DTSTART']->getTimezone();
 		$exclusions = [];
 		$additions = [];
 
@@ -201,17 +203,42 @@ class IcalParser {
 			}
 		}
 
-		$until = $recurring->getUntil();
-		if ($until === false) {
-			//forever... limit to 3 years from now
-			$end = new DateTime('now');
-			$end->add(new DateInterval('P3Y')); // + 3 years
-			$recurring->setUntil($end);
-			$until = $recurring->getUntil();
+		// if no UNTIL is set, we set it to +3 years from now
+		if ($recurring->getUntil() === false) {
+
+			// set UNTIL to now + shiftEnd
+			if ($this->options->untilInterval instanceof DateInterval) {
+				$recurring->setUntil(
+					new DateTime('today', $timezone)
+						->add($this->options->untilInterval)
+				);
+			} else {
+				$recurring->setUntil(
+					new DateTimeImmutable('today', $timezone)
+				);
+			}
+
+			// shift event dates if option is set
+			if ($this->options->shiftEventDates instanceof DateInterval) {
+				$event['DTSTART'] = $this->shiftDate(
+					date: $event['DTSTART'],
+					shiftInterval: $this->options->shiftEventDates,
+				);
+
+				$event['DTEND'] = $this->shiftDate(
+					date: $event['DTEND'],
+					shiftInterval: $this->options->shiftEventDates,
+				);
+			}
 		}
 
-		date_default_timezone_set($event['DTSTART']->getTimezone()->getName());
-		$frequency = new Freq($recurring->rrule, $event['DTSTART']->getTimestamp(), $exclusions, $additions);
+		date_default_timezone_set($timezone->getName());
+		$frequency = new Freq(
+			rule: $recurring->rrule,
+			start: $event['DTSTART']->getTimestamp(),
+			excluded: $exclusions,
+			added: $additions
+		);
 		$recurrenceTimestamps = $frequency->getAllOccurrences();
 
 		// This guard only works on WEEKLY, because the others have no fixed time interval
@@ -224,8 +251,8 @@ class IcalParser {
 				$wkstMap = ['SU' => 0, 'MO' => 1, 'TU' => 2, 'WE' => 3, 'TH' => 4, 'FR' => 5, 'SA' => 6];
 				$wkstIndex = $wkstMap[$wkst] ?? 1;
 
-				$getStartOfWeek = function ($ts) use ($event, $wkstIndex) {
-					$dt = new DateTime('now', $event['DTSTART']->getTimezone());
+				$getStartOfWeek = function ($ts) use ($event, $wkstIndex, $timezone) {
+					$dt = new DateTime('now', $timezone);
 					$dt->setTimestamp($ts);
 					$dt->setTime(0, 0, 0);
 					$w = (int) $dt->format('w');
@@ -253,8 +280,7 @@ class IcalParser {
 
 		$recurrences = [];
 		foreach ($recurrenceTimestamps as $recurrenceTimestamp) {
-			$tmp = new DateTime('now', $event['DTSTART']->getTimezone());
-			$tmp->setTimestamp($recurrenceTimestamp);
+			$tmp = DateTime::createFromTimestamp($recurrenceTimestamp)->setTimezone($timezone);
 
 			$recurrenceIDDate = $tmp->format('Ymd');
 			$recurrenceIDDateTime = $tmp->format('Ymd\THis');
@@ -270,6 +296,33 @@ class IcalParser {
 		}
 
 		return $recurrences;
+	}
+
+	/**
+	 * Shift event start date forward based on interval until it's in the future
+	 *
+	 * @param mixed $date
+	 * @param DateInterval $shiftInterval
+	 * @throws DateInvalidOperationException|DateMalformedStringException
+	 * @return DateTime
+	 */
+	private function shiftDate(DateTime $date, DateInterval $shiftInterval): DateTime {
+		$now = new DateTimeImmutable('today', $date->getTimezone());
+		$targetDate = $now->sub($shiftInterval);
+
+		// if start is already after target date, return it as is
+		if ($date >= $targetDate) {
+			return clone $date;
+		}
+
+		$resultDate = clone $date;
+		$resultDate->setDate(
+			(int) $targetDate->format('Y'),
+			(int) $date->format('m'),
+			(int) $date->format('d')
+		);
+
+		return $resultDate;
 	}
 
 	/**
@@ -292,7 +345,7 @@ class IcalParser {
 				if (preg_match('#(\w+/\w+)$#i', $value, $matches)) {
 					$value = $matches[1];
 				}
-				$value = $this->toTimezone($value);
+				$value = $this->valueToTimezone($value);
 				$this->timezone = new DateTimeZone($value);
 			}
 
@@ -302,10 +355,10 @@ class IcalParser {
 				foreach ($matches as $match) {
 					if ($match['key'] === 'TZID') {
 						$match['value'] = trim($match['value'], "'\"");
-						$match['value'] = $this->toTimezone($match['value']);
+						$match['value'] = $this->valueToTimezone($match['value']);
 						try {
 							$middle[$match['key']] = $timezone = new DateTimeZone($match['value']);
-						} catch (Exception) {
+						} catch (DateException) {
 							$middle[$match['key']] = $match['value'];
 						}
 					} elseif ($match['key'] === 'ENCODING') {
@@ -323,15 +376,15 @@ class IcalParser {
 		if (in_array($key, ['DTSTAMP', 'LAST-MODIFIED', 'CREATED', 'DTSTART', 'DTEND'], true)) {
 			try {
 				$value = new DateTime($value, ($timezone ?? $this->timezone));
-			} catch (Exception $e) {
+			} catch (DateException) {
 				$value = null;
 			}
-		} elseif (in_array($key, ['EXDATE', 'RDATE'])) {
+		} elseif (in_array($key, ['EXDATE', 'RDATE'], true)) {
 			$values = [];
 			foreach (explode(',', $value) as $singleValue) {
 				try {
 					$values[] = new DateTime($singleValue, ($timezone ?? $this->timezone));
-				} catch (Exception $e) {
+				} catch (DateException) {
 					// pass
 				}
 			}
@@ -346,10 +399,10 @@ class IcalParser {
 			$middle = null;
 			$value = [];
 			foreach ($matches as $match) {
-				if (in_array($match['key'], ['UNTIL'])) {
+				if ($match['key'] === 'UNTIL') {
 					try {
 						$value[$match['key']] = new DateTime($match['value'], ($timezone ?? $this->timezone));
-					} catch (Exception $e) {
+					} catch (DateException) {
 						$value[$match['key']] = $match['value'];
 					}
 				} else {
@@ -385,15 +438,20 @@ class IcalParser {
 	/**
 	 * Process timezone and return correct one...
 	 *
-	 * @param string $zone
+	 * @param string $value
 	 * @return mixed|null
 	 */
-	private function toTimezone(string $zone): mixed {
-		return $this->windowsTimezones[$zone] ?? $zone;
+	private function valueToTimezone(string $value): mixed {
+		return $this->options->windowsTimezones[$value] ?? $value;
 	}
 
 	public function isMultipleKey(string $key): ?string {
-		return (['ATTACH' => 'ATTACHMENTS', 'EXDATE' => 'EXDATES', 'RDATE' => 'RDATES', 'ATTENDEE' => 'ATTENDEES'])[$key] ?? null;
+		return ([
+			'ATTACH' => 'ATTACHMENTS',
+			'EXDATE' => 'EXDATES',
+			'RDATE' => 'RDATES',
+			'ATTENDEE' => 'ATTENDEES',
+		])[$key] ?? null;
 	}
 
 	/**

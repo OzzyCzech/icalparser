@@ -5,10 +5,68 @@
  */
 
 use om\IcalParser;
+use om\ParserOptions;
 use Tester\Assert;
 use function tests\test;
 
 require_once __DIR__ . '/bootstrap.php';
+
+test('Recurring with floating start', function () {
+	$cal = new IcalParser(
+		new ParserOptions(
+			untilInterval: null,
+			shiftEventDates: new DateInterval('P1Y')
+		)
+	);
+
+	$cal->parseFile(__DIR__ . '/cal/recur_floating.ics');
+	$events = $cal->getEvents()->sorted();
+
+	foreach ($events as $event) {
+		echo $event['DTSTART']->format('j.n.Y H:i:s') . PHP_EOL;
+	}
+
+});
+
+test('Events without specify UNTIL not shifting DTEND', function () {
+	$cal = new IcalParser(
+		new ParserOptions(untilInterval: null)
+	);
+
+	// recurring event without end date since 1970-01-01
+	$cal->parseFile(__DIR__ . '/cal/recur_floating.ics');
+	$events = $cal->getEvents()->sorted();
+
+	// calculate days since 1970-01-01 to today
+	$expectDays = new DateTimeImmutable('1970-01-01')
+		->diff(new DateTimeImmutable('today'))
+		->days;
+
+	Assert::same($expectDays, count($events));
+
+	// check first event date
+	Assert::same('1.1.1970 10:00:00', $events[0]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::same('1.1.1970 11:00:00', $events[0]['DTEND']->format('j.n.Y H:i:s'));
+
+	// check last event date
+	$yeasterday = new DateTimeImmutable('today')
+		->modify('-1 day');
+
+	// last event should be yeasterday
+	Assert::same(
+		$yeasterday
+			->setTime(10, 0, 0)
+			->format('j.n.Y H:i:s'),
+		$events[$events->count() - 1]['DTSTART']->format('j.n.Y H:i:s')
+	);
+
+	Assert::same(
+		$yeasterday
+			->setTime(11, 0, 0)
+			->format('j.n.Y H:i:s'),
+		$events[$events->count() - 1]['DTEND']->format('j.n.Y H:i:s')
+	);
+});
 
 test('Recurring instances finite', function () {
 	$cal = new IcalParser();
@@ -291,8 +349,6 @@ test('Recurring instances bi-weekly', function () {
 
 	$cal->parseFile(__DIR__ . '/cal/rrule_interval.ics');
 	$events = $cal->getEvents()->sorted();
-
-	var_dump($events[0]['RECURRENCES']);
 
 // DTSTART;TZID=America/Los_Angeles:20230131T050000
 // DTEND;TZID=America/Los_Angeles:20230131T060000

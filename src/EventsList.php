@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace om;
 
+use ArrayAccess;
 use ArrayObject;
 
 /**
@@ -40,6 +41,7 @@ class EventsList extends ArrayObject {
 
 	/**
 	 * Return a comparator callable for DTSTART values.
+	 *
 	 * @param bool $ascending When true, sorts ascending (older first) like the original implementation; false inverts order.
 	 */
 	private function comparator(bool $ascending): callable {
