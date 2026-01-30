@@ -4,14 +4,13 @@ declare(strict_types=1);
 namespace om;
 
 use DateTime;
+use DateTimeInterface;
 use Exception;
 
 /**
  * Class taken from https://github.com/coopTilleuls/intouch-iCalendar.git (Recurrence.php)
- *
  * A wrapper for recurrence rules in iCalendar.  Parses the given line and puts the
  * recurrence rules in the correct field of this object.
- *
  * See http://tools.ietf.org/html/rfc2445 for more information.  Page 39 and onward contains more
  * information on the recurrence rules themselves.  Page 116 and onward contains
  * some great examples which were often used for testing.
@@ -105,18 +104,15 @@ class Recurrence {
 	/**
 	 * Set the $until member
 	 *
-	 * @param mixed $ts timestamp (int) / Valid DateTime format (string)
+	 * @param string|int|DateTime $ts timestamp (int) / Valid DateTime format (string)
 	 * @throws Exception
 	 */
-	public function setUntil(mixed $ts): void {
-		if ($ts instanceof DateTime) {
-			$dt = $ts;
-		} elseif (is_int($ts)) {
-			$dt = new DateTime('@' . $ts);
-		} else {
-			$dt = new DateTime($ts);
+	public function setUntil(string|int|DateTimeInterface $ts): void {
+		if (!$ts instanceof DateTimeInterface) {
+			$ts = is_int($ts) ? DateTime::createFromTimestamp($ts) : new DateTime($ts);
 		}
-		$this->until = $dt->format('Ymd\THisO');
+
+		$this->until = $ts->format('Ymd\THisO');
 		$this->rrule['until'] = $this->until;
 	}
 
