@@ -289,11 +289,11 @@ class IcalParser {
 			$timezone = null;
 
 			if ($key === 'X-WR-TIMEZONE' || $key === 'TZID') {
-				if (preg_match('#(\w+/\w+)$#i', $value, $matches)) {
-					$value = $matches[1];
+				$resolved = $this->resolveTimezone($value);
+				if ($resolved !== null) {
+					$value = $resolved->getName();
+					$this->timezone = $resolved;
 				}
-				$value = $this->toTimezone($value);
-				$this->timezone = new DateTimeZone($value);
 			}
 
 			// have some middle part ?
@@ -302,10 +302,10 @@ class IcalParser {
 				foreach ($matches as $match) {
 					if ($match['key'] === 'TZID') {
 						$match['value'] = trim($match['value'], "'\"");
-						$match['value'] = $this->toTimezone($match['value']);
-						try {
-							$middle[$match['key']] = $timezone = new DateTimeZone($match['value']);
-						} catch (Exception) {
+						$resolved = $this->resolveTimezone($match['value']);
+						if ($resolved !== null) {
+							$middle[$match['key']] = $timezone = $resolved;
+						} else {
 							$middle[$match['key']] = $match['value'];
 						}
 					} elseif ($match['key'] === 'ENCODING') {
@@ -390,6 +390,43 @@ class IcalParser {
 	 */
 	private function toTimezone(string $zone): mixed {
 		return $this->windowsTimezones[$zone] ?? $zone;
+	}
+
+	/**
+	 * Extract and resolve timezone from a TZID or X-WR-TIMEZONE value.
+	 * Handles prefixed values (e.g. /mozilla.org/.../Europe/Paris) and
+	 * multi-segment IANA zones (e.g. America/Argentina/Buenos_Aires).
+	 */
+	private function resolveTimezone(string $value): ?DateTimeZone {
+		$parts = preg_split('#[/\\\\]#', $value);
+		$parts = array_values(array_filter($parts));
+
+		$count = count($parts);
+		if ($count < 2) {
+			// no slashes - try as-is via windowsTimezones lookup
+			$resolved = $this->toTimezone(trim($value));
+			try {
+				return new DateTimeZone($resolved);
+			} catch (Exception) {
+				return null;
+			}
+		}
+
+		// try building timezone paths from the end, shortest first
+		// e.g. for "/mozilla.org/20070129_1/Europe/Paris":
+		//   try "Europe/Paris" ✓
+		// e.g. for "America/Argentina/Buenos_Aires":
+		//   try "Argentina/Buenos_Aires" ✗, then "America/Argentina/Buenos_Aires" ✓
+		for ($length = 2; $length <= $count; $length++) {
+			$candidate = implode('/', array_slice($parts, $count - $length));
+			$resolved = $this->toTimezone($candidate);
+			try {
+				return new DateTimeZone($resolved);
+			} catch (Exception) {
+			}
+		}
+
+		return null;
 	}
 
 	public function isMultipleKey(string $key): ?string {

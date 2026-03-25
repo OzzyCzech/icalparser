@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Test//Test//EN
+X-WR-TIMEZONE:America/Argentina/Buenos_Aires
+BEGIN:VEVENT
+DTSTART;TZID=America/Indiana/Indianapolis:20240101T120000
+DTEND;TZID=America/Indiana/Indianapolis:20240101T130000
+SUMMARY:Test event
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;TZID=Argentina/Buenos_Aires:20240201T120000
+DTEND;TZID=Argentina/Buenos_Aires:20240201T130000
+SUMMARY:Test event with invalid timezone
+END:VEVENT
+END:VCALENDAR

@@ -31,6 +31,41 @@ test('Time zone with custom prefixes', function () {
 	Assert::same('Europe/Paris', $cal->timezone->getName());
 });
 
+test('Multi-segment IANA timezones', function () {
+	$cal = new IcalParser();
+	$cal->parseFile(__DIR__ . '/cal/multi_segment_timezone.ics');
+	Assert::same('America/Argentina/Buenos_Aires', $cal->timezone->getName());
+	$events = $cal->getEvents()->sorted();
+	Assert::count(2, $events);
+	// Argentina/Buenos_Aires is invalid but must not throw (issue #72)
+	Assert::noError(fn() => $cal->getEvents());
+});
+
+test('All IANA timezones', function () {
+	$template = <<<'ICS'
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Test//Test//EN
+X-WR-TIMEZONE:%s
+BEGIN:VEVENT
+DTSTART;TZID=%s:20240101T120000
+DTEND;TZID=%s:20240101T130000
+SUMMARY:Test
+END:VEVENT
+END:VCALENDAR
+ICS;
+
+	$now = new DateTime();
+	foreach (DateTimeZone::listIdentifiers() as $tz) {
+		$cal = new IcalParser();
+		$cal->parseString(sprintf($template, $tz, $tz, $tz));
+		Assert::notNull($cal->timezone, "Timezone not set for: $tz");
+		$expected = (new DateTimeZone($tz))->getOffset($now);
+		$actual = $cal->timezone->getOffset($now);
+		Assert::same($expected, $actual, "Offset mismatch for timezone: $tz (got {$cal->timezone->getName()})");
+	}
+});
+
 test('Weird windows timezones', function () {
 	$cal = new IcalParser();
 	$cal->parseFile(__DIR__ . '/cal/weird_windows_timezones.ics');
