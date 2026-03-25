@@ -66,7 +66,7 @@ php -S localhost:8000 -t example
 
 ## Requirements
 
-- PHP 8.1+
+- PHP version see `composer.json`
 
 ## Run tests
 
