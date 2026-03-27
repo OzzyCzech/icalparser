@@ -1,0 +1,12 @@
+*.php  text diff=php
+*.phpt text diff=php
+
+# Exclude non-essential files from dist to minimize package size.
+/.github/ export-ignore
+/bin/ export-ignore
+/example/ export-ignore
+/tests/ export-ignore
+/.editorconfig export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/readme.md export-ignore
