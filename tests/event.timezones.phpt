@@ -66,6 +66,16 @@ ICS;
 	}
 });
 
+test('Recurring event with Z timezone (issue #82)', function () {
+	$cal = new IcalParser();
+	Assert::noError(function () use ($cal) {
+		$cal->parseFile(__DIR__ . '/cal/recurring_utc_z.ics');
+		$cal->getEvents()->sorted();
+	});
+	$events = $cal->getEvents()->sorted();
+	Assert::count(3, $events);
+});
+
 test('Weird windows timezones', function () {
 	$cal = new IcalParser();
 	$cal->parseFile(__DIR__ . '/cal/weird_windows_timezones.ics');
