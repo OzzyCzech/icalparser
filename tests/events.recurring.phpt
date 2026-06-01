@@ -243,6 +243,32 @@ test('Two times weekly events', function () {
 	Assert::equal('29.1.2026 11:00:00', $events[8]['DTEND']->format('j.n.Y H:i:s'));
 });
 
+test('recurring ical feed does not leak timezone (issue #84', function () {
+	date_default_timezone_set('UTC');
+
+	$calendar = <<<'ICS'
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Test//DenverWeekly//EN
+BEGIN:VEVENT
+UID:denver-weekly@example.com
+DTSTAMP:20260601T120000Z
+SUMMARY:Saturday in Denver
+DTSTART;TZID=America/Denver:20260613T000000
+DTEND;TZID=America/Denver:20260614T000000
+RRULE:FREQ=WEEKLY;COUNT=3;BYDAY=SA
+END:VEVENT
+END:VCALENDAR
+ICS;
+
+	$parser = new IcalParser();
+	$parser->parseString($calendar);
+	$first = $parser->getEvents()->sorted()[0]['DTSTART'];
+
+	// echoe event time in the server timezone (UTC).
+	Assert::same('0600', (clone $first)->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('Hi'));
+});
+
 /**
  * https://github.com/OzzyCzech/icalparser/issues/38
  */

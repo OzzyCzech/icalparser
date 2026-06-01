@@ -210,7 +210,10 @@ class IcalParser {
 			$until = $recurring->getUntil();
 		}
 
-		$tzName = $event['DTSTART']->getTimezone()->getName();
+        // remember current tz
+        $default_timezone = date_default_timezone_get();
+
+        $tzName = $event['DTSTART']->getTimezone()->getName();
 		date_default_timezone_set($tzName === 'Z' ? 'UTC' : $tzName);
 		$frequency = new Freq($recurring->rrule, $event['DTSTART']->getTimestamp(), $exclusions, $additions);
 		$recurrenceTimestamps = $frequency->getAllOccurrences();
@@ -269,6 +272,9 @@ class IcalParser {
 				}
 			}
 		}
+
+		// restore previous default timezone
+		date_default_timezone_set($default_timezone);
 
 		return $recurrences;
 	}
