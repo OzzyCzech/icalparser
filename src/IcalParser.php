@@ -32,12 +32,12 @@ class IcalParser {
 	 * @throws Exception
 	 */
 	public function parseFile(string $file, ?callable $callback = null): ?array {
-		if (!$handle = fopen($file, 'rb')) {
-			throw new RuntimeException('Can\'t open file' . $file . ' for reading.');
+		$content = @file_get_contents($file);
+		if ($content === false) {
+			throw new RuntimeException(sprintf('Cannot read iCalendar file "%s".', $file));
 		}
-		fclose($handle);
 
-		return $this->parseString(file_get_contents($file), $callback);
+		return $this->parseString($content, $callback);
 	}
 
 	/**
@@ -45,27 +45,31 @@ class IcalParser {
 	 * @throws Exception
 	 */
 	public function parseString(string $string, ?callable $callback = null, bool $add = false): ?array {
+		if (!str_contains($string, 'BEGIN:VCALENDAR')) {
+			throw new InvalidArgumentException('Invalid ICAL data format');
+		}
+
 		if ($add === false) {
 			// delete old data
 			$this->data = [];
 			$this->counters = [];
 		}
 
-		if (!str_contains($string, 'BEGIN:VCALENDAR')) {
-			throw new InvalidArgumentException('Invalid ICAL data format');
-		}
-
 		$section = 'VCALENDAR';
+		$sections = [];
 
 		// Replace \r\n with \n
 		$string = str_replace("\r\n", "\n", $string);
 
 		// Unfold multi-line strings
-		$string = str_replace("\n ", '', $string);
+		$string = str_replace(["\n ", "\n\t"], '', $string);
 
 		foreach (explode("\n", $string) as $row) {
 
 			switch ($row) {
+				case '':
+				case 'BEGIN:VCALENDAR':
+					continue 2;
 				case 'BEGIN:DAYLIGHT':
 				case 'BEGIN:VALARM':
 				case 'BEGIN:VTIMEZONE':
@@ -74,17 +78,21 @@ class IcalParser {
 				case 'BEGIN:STANDARD':
 				case 'BEGIN:VTODO':
 				case 'BEGIN:VEVENT':
+					$sections[] = $section;
 					$section = substr($row, 6);
 					$this->counters[$section] = isset($this->counters[$section]) ? $this->counters[$section] + 1 : 0;
+					if ($callback === null) {
+						$this->data[$section][$this->counters[$section]] = [];
+					}
 					continue 2; // while
 				case 'END:VEVENT':
 					$section = substr($row, 4);
 					$currCounter = $this->counters[$section];
-					$event = $this->data[$section][$currCounter];
-					if (!empty($event['RECURRENCE-ID'])) {
-						$this->data['_RECURRENCE_IDS'][$event['RECURRENCE-ID']] = $event;
+					$event = $this->data[$section][$currCounter] ?? [];
+					if (isset($event['RECURRENCE-ID'], $event['UID'])) {
+						$this->data['_RECURRENCE_IDS'][$event['UID']][$event['RECURRENCE-ID']] = $event;
 					}
-
+					$section = array_pop($sections) ?? 'VCALENDAR';
 					continue 2; // while
 				case 'END:DAYLIGHT':
 				case 'END:VALARM':
@@ -93,17 +101,16 @@ class IcalParser {
 				case 'END:VJOURNAL':
 				case 'END:STANDARD':
 				case 'END:VTODO':
+					$section = array_pop($sections) ?? 'VCALENDAR';
 					continue 2; // while
 
 				case 'END:VCALENDAR':
 					$veventSection = 'VEVENT';
 					if (!empty($this->data[$veventSection])) {
 						foreach ($this->data[$veventSection] as $currCounter => $event) {
-							if (!empty($event['RRULE']) || !empty($event['RDATE'])) {
+							if (!empty($event['RRULE']) || !empty($event['RDATE']) || !empty($event['EXDATE'])) {
 								$recurrences = $this->parseRecurrences($event);
-								if (!empty($recurrences)) {
-									$this->data[$veventSection][$currCounter]['RECURRENCES'] = $recurrences;
-								}
+								$this->data[$veventSection][$currCounter]['RECURRENCES'] = $recurrences;
 
 								if (!empty($event['UID'])) {
 									$this->data["_RECURRENCE_COUNTERS_BY_UID"][$event['UID']] = $currCounter;
@@ -115,10 +122,13 @@ class IcalParser {
 			}
 
 			[$key, $middle, $value] = $this->parseRow($row);
+			if ($key === false) {
+				continue;
+			}
 
 			if ($callback) {
 				// call user function for processing line
-				call_user_func($callback, $row, $key, $middle, $value, $section, $this->counters[$section]);
+				$callback($row, $key, $middle, $value, $section, $this->counters[$section] ?? 0);
 			} else {
 				if ($section === 'VCALENDAR') {
 					$this->data[$key] = $value;
@@ -148,8 +158,8 @@ class IcalParser {
 						}
 
 					} else {
-						if ($key == 'ORGANIZER') {
-							foreach ($middle as $midKey => $midVal) {
+						if ($key === 'ORGANIZER') {
+							foreach ((is_array($middle) ? $middle : []) as $midKey => $midVal) {
 								$this->data[$section][$this->counters[$section]][$key . '-' . $midKey] = $midVal;
 							}
 						}
@@ -172,8 +182,8 @@ class IcalParser {
 	 * @throws Exception
 	 * @return array
 	 */
-	public function parseRecurrences($event): array {
-		$recurring = new Recurrence($event['RRULE']);
+	public function parseRecurrences(array $event): array {
+		$recurring = new Recurrence($event['RRULE'] ?? []);
 		$exclusions = [];
 		$additions = [];
 
@@ -201,22 +211,23 @@ class IcalParser {
 			}
 		}
 
-		$until = $recurring->getUntil();
-		if ($until === false) {
+		if (isset($event['RRULE']) && $recurring->getUntil() === false && $recurring->getCount() === false) {
 			//forever... limit to 3 years from now
 			$end = new DateTime('now');
 			$end->add(new DateInterval('P3Y')); // + 3 years
 			$recurring->setUntil($end);
-			$until = $recurring->getUntil();
 		}
 
-        // remember current tz
-        $default_timezone = date_default_timezone_get();
-
-        $tzName = $event['DTSTART']->getTimezone()->getName();
-		date_default_timezone_set($tzName === 'Z' ? 'UTC' : $tzName);
-		$frequency = new Freq($recurring->rrule, $event['DTSTART']->getTimestamp(), $exclusions, $additions);
-		$recurrenceTimestamps = $frequency->getAllOccurrences();
+		$defaultTimezone = date_default_timezone_get();
+		$tzName = $event['DTSTART']->getTimezone()->getName();
+		try {
+			date_default_timezone_set($tzName === 'Z' ? 'UTC' : $tzName);
+			$recurrenceTimestamps = isset($event['RRULE'])
+				? (new Freq($recurring->rrule, $event['DTSTART']->getTimestamp()))->getAllOccurrences()
+				: [$event['DTSTART']->getTimestamp()];
+		} finally {
+			date_default_timezone_set($defaultTimezone);
+		}
 
 		// This guard only works on WEEKLY, because the others have no fixed time interval
 		// There may still be a bug with the others
@@ -255,6 +266,13 @@ class IcalParser {
 			}
 		}
 
+		// Apply set operations after RRULE filtering: RDATE is independent of INTERVAL,
+		// and EXDATE takes precedence over both generated and explicitly added dates.
+		$recurrenceTimestamps = array_values(array_unique(array_diff(
+			array_merge($recurrenceTimestamps, $additions), $exclusions,
+		)));
+		sort($recurrenceTimestamps, SORT_NUMERIC);
+		$overrides = $this->data['_RECURRENCE_IDS'][$event['UID'] ?? ''] ?? [];
 		$recurrences = [];
 		foreach ($recurrenceTimestamps as $recurrenceTimestamp) {
 			$tmp = new DateTime('now', $event['DTSTART']->getTimezone());
@@ -262,19 +280,15 @@ class IcalParser {
 
 			$recurrenceIDDate = $tmp->format('Ymd');
 			$recurrenceIDDateTime = $tmp->format('Ymd\THis');
-			if (empty($this->data['_RECURRENCE_IDS'][$recurrenceIDDate]) &&
-				empty($this->data['_RECURRENCE_IDS'][$recurrenceIDDateTime])) {
+			if (empty($overrides[$recurrenceIDDate]) && empty($overrides[$recurrenceIDDateTime])) {
 				$gmtCheck = new DateTime('now', new DateTimeZone('UTC'));
 				$gmtCheck->setTimestamp($recurrenceTimestamp);
 				$recurrenceIDDateTimeZ = $gmtCheck->format('Ymd\THis\Z');
-				if (empty($this->data['_RECURRENCE_IDS'][$recurrenceIDDateTimeZ])) {
+				if (empty($overrides[$recurrenceIDDateTimeZ])) {
 					$recurrences[] = $tmp;
 				}
 			}
 		}
-
-		// restore previous default timezone
-		date_default_timezone_set($default_timezone);
 
 		return $recurrences;
 	}
@@ -282,7 +296,7 @@ class IcalParser {
 	/**
 	 * @throws DateInvalidTimeZoneException
 	 */
-	private function parseRow($row): array {
+	private function parseRow(string $row): array {
 		preg_match('#^([\w-]+);?([\w-]+="[^"]*"|.*?):(.*)$#i', $row, $matches);
 
 		$key = false;
@@ -471,75 +485,23 @@ class IcalParser {
 
 	public function getEvents(): EventsList {
 		$events = new EventsList();
-		if (isset($this->data['VEVENT'])) {
-			foreach ($this->data['VEVENT'] as $iValue) {
-				$event = $iValue;
+		foreach ($this->data['VEVENT'] ?? [] as $event) {
+			if (!array_key_exists('RECURRENCES', $event)) {
+				$events->append($event);
+				continue;
+			}
 
-				if (empty($event['RECURRENCES'])) {
-					if (!empty($event['RECURRENCE-ID']) && !empty($event['UID']) && isset($event['SEQUENCE'])) {
-						$modifiedEventUID = $event['UID'];
-						$modifiedEventRecurID = $event['RECURRENCE-ID'];
-						$modifiedEventSeq = (int) $event['SEQUENCE'];
-
-						if (isset($this->data['_RECURRENCE_COUNTERS_BY_UID'][$modifiedEventUID])) {
-							$counter = $this->data['_RECURRENCE_COUNTERS_BY_UID'][$modifiedEventUID];
-
-							$originalEvent = $this->data['VEVENT'][$counter];
-							if (isset($originalEvent['SEQUENCE'])) {
-								$originalEventSeq = (int) $originalEvent['SEQUENCE'];
-								$originalEventFormattedStartDate = $originalEvent['DTSTART']->format('Ymd\THis');
-								if ($modifiedEventRecurID === $originalEventFormattedStartDate && $modifiedEventSeq > $originalEventSeq) {
-									// this modifies the original event
-									$modifiedEvent = array_replace_recursive($originalEvent, $event);
-									$this->data['VEVENT'][$counter] = $modifiedEvent;
-									foreach ($events as $z => $event) {
-										if ($events[$z]['UID'] === $originalEvent['UID'] &&
-											$events[$z]['SEQUENCE'] === $originalEvent['SEQUENCE']) {
-											// replace the original event with the modified event
-											$events[$z] = $modifiedEvent;
-											break;
-										}
-									}
-									$event = null; // don't add this to the $events[] array again
-								} elseif (!empty($originalEvent['RECURRENCES'])) {
-									for ($j = 0; $j < count($originalEvent['RECURRENCES']); $j++) {
-										$recurDate = $originalEvent['RECURRENCES'][$j];
-										$formattedStartDate = $recurDate->format('Ymd\THis');
-										if ($formattedStartDate === $modifiedEventRecurID) {
-											unset($this->data['VEVENT'][$counter]['RECURRENCES'][$j]);
-											$this->data['VEVENT'][$counter]['RECURRENCES'] = array_values($this->data['VEVENT'][$counter]['RECURRENCES']);
-											break;
-										}
-									}
-								}
-							}
-						}
-					}
-
-					if (!empty($event)) {
-						$events->append($event);
-					}
-				} else {
-					$recurrences = $event['RECURRENCES'];
-					$event['RECURRING'] = true;
-					$event['DTEND'] = !empty($event['DTEND']) ? $event['DTEND'] : $event['DTSTART'];
-					$eventInterval = $event['DTSTART']->diff($event['DTEND']);
-
-					$firstEvent = true;
-					foreach ($recurrences as $j => $recurDate) {
-						$newEvent = $event;
-						if (!$firstEvent) {
-							unset($newEvent['RECURRENCES']);
-							$newEvent['DTSTART'] = $recurDate;
-							$newEvent['DTEND'] = clone($recurDate);
-							$newEvent['DTEND']->add($eventInterval);
-						}
-
-						$newEvent['RECURRENCE_INSTANCE'] = $j;
-						$events->append($newEvent);
-						$firstEvent = false;
-					}
+			$event['RECURRING'] = true;
+			$eventInterval = $event['DTSTART']->diff($event['DTEND'] ?? $event['DTSTART']);
+			foreach ($event['RECURRENCES'] as $index => $date) {
+				$instance = $event;
+				if ($index !== 0) {
+					unset($instance['RECURRENCES']);
 				}
+				$instance['DTSTART'] = clone $date;
+				$instance['DTEND'] = (clone $date)->add($eventInterval);
+				$instance['RECURRENCE_INSTANCE'] = $index;
+				$events->append($instance);
 			}
 		}
 		return $events;

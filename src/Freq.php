@@ -4,8 +4,11 @@ declare(strict_types=1);
 namespace om;
 
 use DateTime;
+use DateTimeInterface;
 use DateTimeZone;
 use Exception;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Class taken from https://github.com/coopTilleuls/intouch-iCalendar.git (Freq.php)
@@ -67,7 +70,9 @@ class Freq {
 	protected array $excluded; //EXDATE
 	protected array $added;    //RDATE
 
-	protected array $cache; // getAllOccurrences()
+	protected ?array $cache = null; // null means not calculated; [] is a valid result.
+	private int $searchDepth = 0;
+	private int $searchSteps = 0;
 
 	/**
 	 * Constructs a new Frequency-rule
@@ -77,21 +82,60 @@ class Freq {
 	 * @param array $added of int (timestamps), see RDATE documentation
 	 * @throws Exception
 	 */
-	public function __construct(array|string $rule, int $start, array $excluded = [], array $added = []) {
+	public function __construct(array|string $rule, int $start, array $excluded = [], array $added = [], private readonly int $maxOccurrences = 100000) {
+		if ($maxOccurrences < 1) {
+			throw new InvalidArgumentException('maxOccurrences must be positive.');
+		}
 		$this->start = $start;
 		$this->excluded = [];
 
-		$rules = [];
+		if (is_string($rule)) {
+			$parts = explode(';', $rule);
+			$rule = [];
+			foreach ($parts as $part) {
+				$pair = explode('=', $part, 2);
+				if (count($pair) !== 2 || $pair[0] === '' || $pair[1] === '') {
+					throw new InvalidArgumentException('Invalid recurrence rule.');
+				}
+				$rule[$pair[0]] = $pair[1];
+			}
+		}
 		foreach ($rule as $k => $v) {
 			$this->rules[strtolower($k)] = $v;
 		}
 
 		if (isset($this->rules['until']) && is_string($this->rules['until'])) {
 			$this->rules['until'] = strtotime($this->rules['until']);
-		} elseif ($this->rules['until'] instanceof DateTime) {
+		} elseif (($this->rules['until'] ?? null) instanceof DateTimeInterface) {
 			$this->rules['until'] = $this->rules['until']->getTimestamp();
 		}
+		if (array_key_exists('until', $this->rules) && !is_int($this->rules['until'])) {
+			throw new InvalidArgumentException('UNTIL must be a valid date or timestamp.');
+		}
 		$this->freq = strtolower($this->rules['freq']);
+		if (!in_array($this->freq, ['yearly', 'monthly', 'weekly', 'daily', 'hourly', 'minutely'], true)) {
+			throw new InvalidArgumentException('Unsupported recurrence frequency: ' . $this->freq);
+		}
+		foreach (['interval', 'count'] as $key) {
+			if (isset($this->rules[$key])) {
+				$raw = $this->rules[$key];
+				$value = (is_int($raw) || is_string($raw)) && preg_match('/^[0-9]+$/D', (string) $raw)
+					? filter_var(ltrim((string) $raw, '0'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]])
+					: false;
+				if ($value === false) {
+					throw new InvalidArgumentException(strtoupper($key) . ' must be a positive integer.');
+				}
+				$this->rules[$key] = $value;
+			}
+		}
+		if (($this->rules['count'] ?? 0) > $maxOccurrences || count($added) > $maxOccurrences) {
+			throw new RuntimeException('Recurrence occurrence limit exceeded.');
+		}
+		foreach (['bysetpos', 'bysecond'] as $key) {
+			if (isset($this->rules[$key])) {
+				throw new InvalidArgumentException('Unsupported recurrence rule: ' . strtoupper($key));
+			}
+		}
 
 		foreach ($this->knownRules as $rule) {
 			if (isset($this->rules['by' . $rule])) {
@@ -110,12 +154,16 @@ class Freq {
 		//set until, and cache
 		if (isset($this->rules['count'])) {
 
-			$cache[$ts] = $ts = $this->start;
+			$ts = $this->start;
+			$cache = [$ts => $ts];
 			for ($n = 1; $n < $this->rules['count']; $n++) {
 				$ts = $this->findNext($ts);
+				if ($ts === false) {
+					break;
+				}
 				$cache[$ts] = $ts;
 			}
-			$this->rules['until'] = $ts;
+			$this->rules['until'] = end($cache);
 
 			//EXDATE
 			if (!empty($excluded)) {
@@ -129,7 +177,10 @@ class Freq {
 				asort($cache);
 			}
 
-			$this->cache = array_values($cache);
+			$this->cache = array_values(array_diff($cache, $excluded));
+			if (count($this->cache) > $maxOccurrences) {
+				throw new RuntimeException('Recurrence occurrence limit exceeded.');
+			}
 		}
 
 		$this->excluded = $excluded;
@@ -189,12 +240,35 @@ class Freq {
 	 * @throws Exception
 	 */
 	public function findNext(int|bool $offset): bool|int {
-		if (!empty($this->cache)) {
+		if ($this->searchDepth === 0) {
+			$this->searchSteps = 0;
+		}
+		if (++$this->searchSteps > $this->maxOccurrences || $this->searchDepth >= 256) {
+			throw new RuntimeException('Recurrence search limit exceeded.');
+		}
+		$this->searchDepth++;
+		try {
+			$next = $this->calculateNext($offset);
+			if ($next !== false && $next <= $offset) {
+				throw new RuntimeException('Recurrence did not advance in time.');
+			}
+			return $next;
+		} finally {
+			$this->searchDepth--;
+		}
+	}
+
+	private function calculateNext(int|bool $offset): bool|int {
+		if ($offset === false) {
+			return false;
+		}
+		if ($this->cache !== null) {
 			foreach ($this->cache as $ts) {
 				if ($ts > $offset) {
 					return $ts;
 				}
 			}
+			return false;
 		}
 
 		//make sure the offset is valid
@@ -354,8 +428,8 @@ class Freq {
 		}
 
 		if (isset($this->rules['bymonth'])) {
-			$months = explode(',', $this->rules['bymonth']);
-			if (!in_array(date('m', $t), $months, true)) {
+			$months = array_map('intval', explode(',', $this->rules['bymonth']));
+			if (!in_array((int) date('m', $t), $months, true)) {
 				return false;
 			}
 		}
@@ -369,25 +443,25 @@ class Freq {
 			}
 		}
 		if (isset($this->rules['byweekno'])) {
-			$weeks = explode(',', $this->rules['byweekno']);
-			if (!in_array(date('W', $t), $weeks, true)) {
+			$weeks = array_map('intval', explode(',', $this->rules['byweekno']));
+			if (!in_array((int) date('W', $t), $weeks, true)) {
 				return false;
 			}
 		}
 		if (isset($this->rules['bymonthday'])) {
-			$weekdays = explode(',', $this->rules['bymonthday']);
+			$weekdays = array_map('intval', explode(',', $this->rules['bymonthday']));
 			foreach ($weekdays as $i => $k) {
 				if ($k < 0) {
 					$weekdays[$i] = (int) date('t', $t) + (int) $k + 1;
 				}
 			}
-			if (!in_array(date('d', $t), $weekdays, true)) {
+			if (!in_array((int) date('d', $t), $weekdays, true)) {
 				return false;
 			}
 		}
 		if (isset($this->rules['byhour'])) {
-			$hours = explode(',', $this->rules['byhour']);
-			if (!in_array(date('H', $t), $hours, true)) {
+			$hours = array_map('intval', explode(',', $this->rules['byhour']));
+			if (!in_array((int) date('H', $t), $hours, true)) {
 				return false;
 			}
 		}
@@ -411,25 +485,27 @@ class Freq {
 	 * @return bool|int
 	 */
 	public function previousOccurrence(int $offset): bool|int {
-		if (!empty($this->cache)) {
-			$t2 = $this->start;
+		if ($this->cache !== null) {
+			$previous = false;
 			foreach ($this->cache as $ts) {
 				if ($ts >= $offset) {
-					return $t2;
-				}
-				$t2 = $ts;
-			}
-		} else {
-			$ts = $this->start;
-			while (($t2 = $this->findNext($ts)) < $offset) {
-				if (!$t2) {
 					break;
 				}
-				$ts = $t2;
+				$previous = $ts;
 			}
+			return $previous;
 		}
-
-		return $ts;
+		$previous = false;
+		$next = $this->firstOccurrence();
+		$steps = 0;
+		while ($next !== false && $next < $offset) {
+			if (++$steps > $this->maxOccurrences) {
+				throw new RuntimeException('Recurrence occurrence limit exceeded.');
+			}
+			$previous = $next;
+			$next = $this->findNext($next);
+		}
+		return $previous;
 	}
 
 	/**
@@ -440,7 +516,7 @@ class Freq {
 	 * @return bool|int
 	 */
 	public function nextOccurrence(int $offset): bool|int {
-		if ($offset < $this->start) {
+		if ($this->cache === null && $offset < $this->start) {
 			return $this->firstOccurrence();
 		}
 		return $this->findNext($offset);
@@ -453,7 +529,13 @@ class Freq {
 	 * @return bool|int timestamp
 	 */
 	public function firstOccurrence(): bool|int {
+		if ($this->cache !== null) {
+			return $this->cache[0] ?? false;
+		}
 		$t = $this->start;
+		if (isset($this->rules['until']) && $t > $this->rules['until']) {
+			return false;
+		}
 		if (in_array($t, $this->excluded)) {
 			$t = $this->findNext($t);
 		}
@@ -466,9 +548,9 @@ class Freq {
 	 * Builds also the cache, if not set before...
 	 *
 	 * @throws Exception
-	 * @return int timestamp
+	 * @return int|false timestamp, or false for an empty recurrence set
 	 */
-	public function lastOccurrence(): int {
+	public function lastOccurrence(): int|false {
 		//build cache if not done
 		$this->getAllOccurrences();
 		//return last timestamp in cache
@@ -481,12 +563,15 @@ class Freq {
 	 * @throws Exception
 	 */
 	public function getAllOccurrences(): array {
-		if (empty($this->cache)) {
+		if ($this->cache === null) {
 			$cache = [];
 
 			//build cache
 			$next = $this->firstOccurrence();
-			while ($next) {
+			while ($next !== false) {
+				if (count($cache) >= $this->maxOccurrences) {
+					throw new RuntimeException('Recurrence occurrence limit exceeded.');
+				}
 				$cache[] = $next;
 				$next = $this->findNext($next);
 			}
@@ -494,7 +579,11 @@ class Freq {
 				$cache = array_unique(array_merge($cache, $this->added));
 				asort($cache);
 			}
-			$this->cache = $cache;
+			$this->cache = array_values(array_diff($cache, $this->excluded));
+			if (count($this->cache) > $this->maxOccurrences) {
+				$this->cache = null;
+				throw new RuntimeException('Recurrence occurrence limit exceeded.');
+			}
 		}
 
 		return $this->cache;

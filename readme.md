@@ -6,7 +6,7 @@
 
 # PHP iCal Parser
 
-Internet Calendaring Parser [rfc2445](https://www.ietf.org/rfc/rfc2445.txt) or iCal parser is simple PHP class for parsing format into array.
+An iCalendar parser that converts calendar data into PHP arrays. The format is defined by [RFC 5545](https://www.rfc-editor.org/rfc/rfc5545); not all recurrence rules are supported.
 
 ## How to install
 
@@ -71,7 +71,35 @@ php -S localhost:8000 -t example
 iCal parser using [Nette Tester](https://github.com/nette/tester). The tests can be invoked via [composer](https://getcomposer.org/).
 
 ```shell script
-composer update
+composer install
 composer test
 ```
 
+## Development on `next`
+
+See [the modernization analysis](docs/modernization.md) for implemented changes,
+remaining limitations, and the proposed migration stages.
+
+`parseFile()` reads the source once and throws `RuntimeException` when reading fails.
+`parseString()` ignores blank and unrecognized lines; its callback receives property
+rows, not component delimiters, with a zero-based component counter (zero for calendar
+properties). `sorted()` sorts the existing event list oldest first; `reversed()` sorts
+newest first. Both put missing dates last.
+
+Recurrence `INTERVAL` and `COUNT` must be positive integers. Invalid values and
+unsupported frequencies throw `InvalidArgumentException`. Supported frequencies are
+`YEARLY`, `MONTHLY`, `WEEKLY`, `DAILY`, `HOURLY`, and `MINUTELY`.
+
+`RDATE` also works without `RRULE`. Occurrences are deduplicated and sorted;
+`EXDATE` takes precedence over both generated dates and `RDATE`. Overrides are
+matched within the same UID. Empty recurrence sets produce no events, and
+`getEvents()` does not modify the parsed calendar.
+
+`Freq` limits expansion to 100,000 occurrences by default. Direct callers may
+override this with its `maxOccurrences` constructor argument. The same budget
+limits search steps per next-occurrence lookup; recursive search also stops at
+256 nested calls. Exceeding a budget or failing to advance time throws
+`RuntimeException`, with no truncated result returned. These are per-rule limits,
+not a limit on total calendar size or memory. `BYSETPOS` and `BYSECOND` are
+explicitly rejected until implemented. `Freq::lastOccurrence()` returns `false`
+for an empty set.

@@ -21,7 +21,7 @@ class EventsList extends ArrayObject {
 	}
 
 	/**
-	 * Return sorted EventList (the newest dates are first)
+	 * Sort in place, oldest dates first. Missing dates sort last.
 	 */
 	public function sorted(): EventsList {
 		$this->uasort($this->comparator(true));
@@ -30,7 +30,7 @@ class EventsList extends ArrayObject {
 	}
 
 	/**
-	 * Return reversed sorted EventList (the oldest dates are first)
+	 * Sort in place, newest dates first. Missing dates sort last.
 	 */
 	public function reversed(): EventsList {
 		$this->uasort($this->comparator(false));
@@ -68,9 +68,9 @@ class EventsList extends ArrayObject {
 			}
 
 			if ($ascending) {
-				return ($at < $bt) ? -1 : 1;
+				return $at <=> $bt;
 			}
-			return ($at > $bt) ? -1 : 1;
+			return $bt <=> $at;
 		};
 	}
 

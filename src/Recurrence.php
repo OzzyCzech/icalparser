@@ -65,6 +65,11 @@ class Recurrence {
 		foreach ($this->rrule as $propertyName => $propertyValue) {
 			//need the lower-case name for setting the member variable
 			$propertyName = strtolower($propertyName);
+			// Preserve extensions in rrule without creating dynamic object properties.
+			if (!in_array($propertyName, ['freq', 'until', 'count', 'interval', 'wkst'], true)
+				&& !in_array($propertyName, $this->listProperties, true)) {
+				continue;
+			}
 			//split up the list of values into an array (if it's a list)
 			if (in_array($propertyName, $this->listProperties, true)) {
 				$propertyValue = explode(',', $propertyValue);
