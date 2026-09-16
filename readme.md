@@ -77,9 +77,6 @@ composer test
 
 ## Development on `next`
 
-See [the modernization analysis](docs/modernization.md) for implemented changes,
-remaining limitations, and the proposed migration stages.
-
 `parseFile()` reads the source once and throws `RuntimeException` when reading fails.
 `parseString()` ignores blank and unrecognized lines; its callback receives property
 rows, not component delimiters, with a zero-based component counter (zero for calendar
