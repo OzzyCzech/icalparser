@@ -1,0 +1,25 @@
+# data
+{
+    "PRODID": "-//Test//Test//EN",
+    "VERSION": "2.0",
+    "CALSCALE": "GREGORIAN",
+    "VEVENT": [
+        {
+            "DTSTART": "2025-12-18 23:00:00 Z",
+            "DTEND": "2025-12-19 00:00:00 Z",
+            "RRULE": {
+                "FREQ": "DAILY",
+                "COUNT": "3"
+            },
+            "DTSTAMP": "2025-12-18 00:00:00 Z",
+            "UID": "recurring-utc-z-test@example.com",
+            "SUMMARY": "Recurring UTC Z event",
+            "RECURRENCES": "3 dates"
+        }
+    ]
+}
+
+# events: 3, md5 daeb65ec22d39c4cbfd9bd7bf5f05b35
+2025-12-18 23:00:00 Z | 2025-12-19 00:00:00 Z | 0 | - | recurring-utc-z-test@example.com | Recurring UTC Z event
+2025-12-19 23:00:00 Z | 2025-12-20 00:00:00 Z | 1 | - | recurring-utc-z-test@example.com | Recurring UTC Z event
+2025-12-20 23:00:00 Z | 2025-12-21 00:00:00 Z | 2 | - | recurring-utc-z-test@example.com | Recurring UTC Z event

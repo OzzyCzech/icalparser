@@ -1,0 +1,59 @@
+# data
+{
+    "PRODID": "-//Google Inc//Google Calendar 70.9054//EN",
+    "VERSION": "2.0",
+    "CALSCALE": "GREGORIAN",
+    "X-WR-CALNAME": "calmozilla1@gmail.com",
+    "X-WR-TIMEZONE": "America/Los_Angeles",
+    "VTIMEZONE": [
+        {
+            "TZID": "America/Los_Angeles",
+            "X-LIC-LOCATION": "America/Los_Angeles"
+        }
+    ],
+    "DAYLIGHT": [
+        {
+            "TZOFFSETFROM": "-0800",
+            "TZOFFSETTO": "-0700",
+            "TZNAME": "PDT",
+            "DTSTART": "1970-03-08 02:00:00 America/Los_Angeles",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "3",
+                "BYDAY": "2SU"
+            }
+        }
+    ],
+    "STANDARD": [
+        {
+            "TZOFFSETFROM": "-0700",
+            "TZOFFSETTO": "-0800",
+            "TZNAME": "PST",
+            "DTSTART": "1970-11-01 02:00:00 America/Los_Angeles",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "11",
+                "BYDAY": "1SU"
+            }
+        }
+    ],
+    "VEVENT": [
+        {
+            "DTSTART": "2012-06-30 06:00:00 America/Los_Angeles",
+            "DTEND": "2012-06-30 07:00:00 America/Los_Angeles",
+            "DTSTAMP": "2012-07-24 21:24:11 Z",
+            "UID": "dn4vrfmfn5p05roahsopg57h48@google.com",
+            "CREATED": "2012-07-24 21:24:11 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2012-07-24 21:24:11 Z",
+            "LOCATION": "",
+            "SEQUENCE": "0",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "Really long event name thing",
+            "TRANSP": "OPAQUE"
+        }
+    ]
+}
+
+# events: 1, md5 42b7840341e2b642e3c5956045937c0b
+2012-06-30 06:00:00 America/Los_Angeles | 2012-06-30 07:00:00 America/Los_Angeles | - | - | dn4vrfmfn5p05roahsopg57h48@google.com | Really long event name thing

@@ -1,0 +1,46 @@
+# data
+{
+    "PRODID": "-//Google Inc//Google Calendar 70.9054//EN",
+    "VERSION": "2.0",
+    "CALSCALE": "GREGORIAN",
+    "X-WR-CALNAME": "calmozilla1@gmail.com",
+    "X-WR-TIMEZONE": "America/Los_Angeles",
+    "VTIMEZONE": [
+        {
+            "TZID": "America/Los_Angeles",
+            "X-LIC-LOCATION": "America/Los_Angeles"
+        }
+    ],
+    "VEVENT": [
+        {
+            "DTSTART": null,
+            "DTEND": "2014-09-30 00:00:00 America/Los_Angeles",
+            "UID": "dn4vrfmfn5p05roahsopg57h48@google.com",
+            "CREATED": "2012-07-24 21:24:11 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2012-07-24 21:24:11 Z",
+            "LOCATION": "",
+            "SEQUENCE": "0",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "Really long event name thing",
+            "TRANSP": "OPAQUE"
+        },
+        {
+            "DTSTART": "2014-09-29 00:00:00 America/Los_Angeles",
+            "DTEND": null,
+            "UID": "dn4vrfmfn5p05roahsopg57h48@google.com",
+            "CREATED": "2012-07-24 21:24:11 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2012-07-24 21:24:11 Z",
+            "LOCATION": "",
+            "SEQUENCE": "0",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "Really long event name thing",
+            "TRANSP": "OPAQUE"
+        }
+    ]
+}
+
+# events: 2, md5 da8953fce8e0faa519c1dcb9c4d6fecf
+2014-09-29 00:00:00 America/Los_Angeles | - | - | - | dn4vrfmfn5p05roahsopg57h48@google.com | Really long event name thing
+- | 2014-09-30 00:00:00 America/Los_Angeles | - | - | dn4vrfmfn5p05roahsopg57h48@google.com | Really long event name thing

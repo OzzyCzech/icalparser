@@ -1,0 +1,83 @@
+# data
+{
+    "VERSION": "2.0",
+    "PRODID": "Zimbra-Calendar-Provider",
+    "VTIMEZONE": [
+        {
+            "TZID": "America/Los_Angeles"
+        }
+    ],
+    "STANDARD": [
+        {
+            "DTSTART": "1971-01-01 02:00:00 America/Los_Angeles",
+            "TZOFFSETTO": "-0800",
+            "TZOFFSETFROM": "-0700",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "WKST": "MO",
+                "INTERVAL": "1",
+                "BYMONTH": "11",
+                "BYDAY": "1SU"
+            },
+            "TZNAME": "PST"
+        }
+    ],
+    "DAYLIGHT": [
+        {
+            "DTSTART": "1971-01-01 02:00:00 America/Los_Angeles",
+            "TZOFFSETTO": "-0700",
+            "TZOFFSETFROM": "-0800",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "WKST": "MO",
+                "INTERVAL": "1",
+                "BYMONTH": "3",
+                "BYDAY": "2SU"
+            },
+            "TZNAME": "PDT"
+        }
+    ],
+    "VEVENT": [
+        {
+            "UID": "1334F9B7-6136-444E-A58D-472564C6AA73",
+            "SUMMARY": "sahaja <> frashed",
+            "DESCRIPTION": "weekly 1on1",
+            "ATTACHMENTS": [
+                "http://globe-views.com/dcim/dreams/dog/dog-01.jpg",
+                "http://www.hdanimals.com/static/cache/e9/59/e959f33a6b440f36cad24beca8bf6d1c.jpg"
+            ],
+            "ATTACH": "http://www.hdanimals.com/static/cache/e9/59/e959f33a6b440f36cad24beca8bf6d1c.jpg",
+            "ATTENDEES": [
+                {
+                    "CN": "James Lal",
+                    "CUTYPE": "INDIVIDUAL",
+                    "ROLE": "REQ-PARTICIPANT",
+                    "PARTSTAT": "NEEDS-ACTION",
+                    "RSVP": "TRUE",
+                    "VALUE": "mailto:jlal@mozilla.com"
+                }
+            ],
+            "ATTENDEE": "mailto:jlal@mozilla.com",
+            "ORGANIZER-CN": "Faramarz Rashed",
+            "ORGANIZER": "mailto:frashed@mozilla.com",
+            "DTSTART": "2012-03-26 11:00:00 America/Los_Angeles",
+            "DTEND": "2012-03-26 11:30:00 America/Los_Angeles",
+            "STATUS": "CONFIRMED",
+            "CLASS": "PUBLIC",
+            "TRANSP": "OPAQUE",
+            "LAST-MODIFIED": "2012-03-26 16:15:22 Z",
+            "DTSTAMP": "2012-07-30 16:56:37 Z",
+            "SEQUENCE": "9"
+        }
+    ],
+    "VALARM": [
+        {
+            "ACTION": "DISPLAY",
+            "TRIGGER": "-PT5M",
+            "DESCRIPTION": "Reminder"
+        }
+    ]
+}
+
+# events: 1, md5 e62ef4dba16e421eb4a22162240d6d1a
+2012-03-26 11:00:00 America/Los_Angeles | 2012-03-26 11:30:00 America/Los_Angeles | - | - | 1334F9B7-6136-444E-A58D-472564C6AA73 | sahaja <> frashed

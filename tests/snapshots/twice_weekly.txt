@@ -1,0 +1,40 @@
+# data
+{
+    "VERSION": "2.0",
+    "PRODID": "-//Example Corp//Calendar Generator 1.0//EN",
+    "VEVENT": [
+        {
+            "UID": "test-issue-75",
+            "SUMMARY": "Twice Weekly Event",
+            "DESCRIPTION": "Twice weekly event on Tuesdays and Thursdays",
+            "DTSTAMP": "2026-01-01 08:24:36 Z",
+            "DTSTART": "2026-01-01 10:00:00 UTC",
+            "DTEND": "2026-01-01 11:00:00 UTC",
+            "RRULE": {
+                "FREQ": "WEEKLY",
+                "INTERVAL": "1",
+                "BYDAY": "TU,TH",
+                "UNTIL": "2026-01-31 23:59:59 Z",
+                "WKST": "MO"
+            },
+            "CLASS": "PUBLIC",
+            "STATUS": "CONFIRMED",
+            "SEQUENCE": "0",
+            "TRANSP": "TRANSPARENT",
+            "X-MICROSOFT-CDO-ALLDAYEVENT": "TRUE",
+            "X-MICROSOFT-CDO-BUSYSTATUS": "FREE",
+            "RECURRENCES": "9 dates"
+        }
+    ]
+}
+
+# events: 9, md5 a9b4690568cadcecd9e0f82769aaef5c
+2026-01-01 10:00:00 UTC | 2026-01-01 11:00:00 UTC | 0 | - | test-issue-75 | Twice Weekly Event
+2026-01-06 10:00:00 UTC | 2026-01-06 11:00:00 UTC | 1 | - | test-issue-75 | Twice Weekly Event
+2026-01-08 10:00:00 UTC | 2026-01-08 11:00:00 UTC | 2 | - | test-issue-75 | Twice Weekly Event
+2026-01-13 10:00:00 UTC | 2026-01-13 11:00:00 UTC | 3 | - | test-issue-75 | Twice Weekly Event
+2026-01-15 10:00:00 UTC | 2026-01-15 11:00:00 UTC | 4 | - | test-issue-75 | Twice Weekly Event
+2026-01-20 10:00:00 UTC | 2026-01-20 11:00:00 UTC | 5 | - | test-issue-75 | Twice Weekly Event
+2026-01-22 10:00:00 UTC | 2026-01-22 11:00:00 UTC | 6 | - | test-issue-75 | Twice Weekly Event
+2026-01-27 10:00:00 UTC | 2026-01-27 11:00:00 UTC | 7 | - | test-issue-75 | Twice Weekly Event
+2026-01-29 10:00:00 UTC | 2026-01-29 11:00:00 UTC | 8 | - | test-issue-75 | Twice Weekly Event

@@ -1,0 +1,63 @@
+# data
+{
+    "PRODID": "-//Google Inc//Google Calendar 70.9054//EN",
+    "VERSION": "2.0",
+    "CALSCALE": "GREGORIAN",
+    "X-WR-CALNAME": "calmozilla1@gmail.com",
+    "X-WR-TIMEZONE": "America/Los_Angeles",
+    "VTIMEZONE": [
+        {
+            "TZID": "America/Los_Angeles",
+            "X-LIC-LOCATION": "America/Los_Angeles"
+        }
+    ],
+    "DAYLIGHT": [
+        {
+            "TZOFFSETFROM": "-0800",
+            "TZOFFSETTO": "-0700",
+            "TZNAME": "PDT",
+            "DTSTART": "1970-03-08 02:00:00 America/Los_Angeles",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "3",
+                "BYDAY": "2SU"
+            }
+        }
+    ],
+    "STANDARD": [
+        {
+            "TZOFFSETFROM": "-0700",
+            "TZOFFSETTO": "-0800",
+            "TZNAME": "PST",
+            "DTSTART": "1970-11-01 02:00:00 America/Los_Angeles",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "11",
+                "BYDAY": "1SU"
+            }
+        }
+    ],
+    "VEVENT": [
+        {
+            "DTSTART": "2023-01-31 05:00:00 America/Los_Angeles",
+            "DTEND": "2023-01-31 06:00:00 America/Los_Angeles",
+            "RRULE": {
+                "FREQ": "WEEKLY",
+                "WKST": "MO",
+                "UNTIL": "2023-02-28 09:00:00 America/Los_Angeles",
+                "INTERVAL": "2",
+                "BYDAY": "TU"
+            },
+            "DTSTAMP": "2012-08-03 22:12:36 Z",
+            "DESCRIPTION": "",
+            "SUMMARY": "Every day recurring",
+            "TRANSP": "OPAQUE",
+            "RECURRENCES": "3 dates"
+        }
+    ]
+}
+
+# events: 3, md5 008f8013843afaafd4a8a2d2ce92da31
+2023-01-31 05:00:00 America/Los_Angeles | 2023-01-31 06:00:00 America/Los_Angeles | 0 | - | - | Every day recurring
+2023-02-14 05:00:00 America/Los_Angeles | 2023-02-14 06:00:00 America/Los_Angeles | 1 | - | - | Every day recurring
+2023-02-28 05:00:00 America/Los_Angeles | 2023-02-28 06:00:00 America/Los_Angeles | 2 | - | - | Every day recurring

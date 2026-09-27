@@ -1,0 +1,38 @@
+# data
+{
+    "VERSION": "2.0",
+    "PRODID": "Zimbra-Calendar-Provider",
+    "VTIMEZONE": [
+        {
+            "TZID": "Etc/GMT"
+        }
+    ],
+    "STANDARD": [
+        {
+            "DTSTART": "1971-01-01 00:00:00 Etc/GMT",
+            "TZOFFSETTO": "-0000",
+            "TZOFFSETFROM": "-0000",
+            "TZNAME": "GMT"
+        }
+    ],
+    "VEVENT": [
+        {
+            "UID": "d118e997-3683-4552-8fe8-57c641f1f179",
+            "SUMMARY": "And another",
+            "ORGANIZER-CN": "Sahaja Lal",
+            "ORGANIZER": "mailto:calmozilla1@yahoo.com",
+            "DTSTART": "2012-08-21 21:00:00 Etc/GMT",
+            "DTEND": "2012-08-21 21:30:00 Etc/GMT",
+            "STATUS": "CONFIRMED",
+            "CLASS": "PUBLIC",
+            "X-MICROSOFT-CDO-INTENDEDSTATUS": "BUSY",
+            "TRANSP": "OPAQUE",
+            "X-MICROSOFT-DISALLOW-COUNTER": "TRUE",
+            "DTSTAMP": "2012-08-17 03:25:09 Z",
+            "SEQUENCE": "0"
+        }
+    ]
+}
+
+# events: 1, md5 52545fbb8f039ca254b9bda15b530c29
+2012-08-21 21:00:00 Etc/GMT | 2012-08-21 21:30:00 Etc/GMT | - | - | d118e997-3683-4552-8fe8-57c641f1f179 | And another

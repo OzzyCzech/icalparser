@@ -1,0 +1,78 @@
+# data
+{
+    "PRODID": "-//Google Inc//Google Calendar 70.9054//EN",
+    "VERSION": "2.0",
+    "CALSCALE": "GREGORIAN",
+    "X-WR-CALNAME": "calmozilla1@gmail.com",
+    "X-WR-TIMEZONE": "America/Los_Angeles",
+    "VTIMEZONE": [
+        {
+            "TZID": "America/Los_Angeles",
+            "X-LIC-LOCATION": "America/Los_Angeles"
+        }
+    ],
+    "DAYLIGHT": [
+        {
+            "TZOFFSETFROM": "-0800",
+            "TZOFFSETTO": "-0700",
+            "TZNAME": "PDT",
+            "DTSTART": "1970-03-08 02:00:00 America/Los_Angeles",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "3",
+                "BYDAY": "2SU"
+            }
+        }
+    ],
+    "STANDARD": [
+        {
+            "TZOFFSETFROM": "-0700",
+            "TZOFFSETTO": "-0800",
+            "TZNAME": "PST",
+            "DTSTART": "1970-11-01 02:00:00 America/Los_Angeles",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "11",
+                "BYDAY": "1SU"
+            }
+        }
+    ],
+    "VEVENT": [
+        {
+            "DTSTART": "2012-09-04 00:00:00 America/Los_Angeles",
+            "DTEND": "2012-09-05 00:00:00 America/Los_Angeles",
+            "DTSTAMP": "2012-09-05 08:47:34 Z",
+            "UID": "redgrb1l0aju5edm6h0s102eu4@google.com",
+            "CREATED": "2012-09-05 08:47:34 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2012-09-05 08:47:34 Z",
+            "LOCATION": "",
+            "SEQUENCE": "0",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "Event",
+            "TRANSP": "TRANSPARENT"
+        }
+    ],
+    "VALARM": [
+        {
+            "ACTION": "EMAIL",
+            "DESCRIPTION": "This is an event reminder",
+            "SUMMARY": "Alarm notification",
+            "ATTENDEES": [
+                {
+                    "middle": "",
+                    "VALUE": "mailto:calmozilla1@gmail.com"
+                }
+            ],
+            "ATTENDEE": "mailto:calmozilla1@gmail.com",
+            "TRIGGER": "20120903T233000Z"
+        },
+        {
+            "ACTION": "DISPLAY",
+            "DESCRIPTION": "This is an event reminder"
+        }
+    ]
+}
+
+# events: 1, md5 4e482fd04375e7447dcad436e9fa4906
+2012-09-04 00:00:00 America/Los_Angeles | 2012-09-05 00:00:00 America/Los_Angeles | - | - | redgrb1l0aju5edm6h0s102eu4@google.com | Event

@@ -1,0 +1,69 @@
+# data
+{
+    "PRODID": "-//Google Inc//Google Calendar 70.9054//EN",
+    "VERSION": "2.0",
+    "CALSCALE": "GREGORIAN",
+    "X-WR-CALNAME": "calmozilla1@gmail.com",
+    "X-WR-TIMEZONE": "America/Los_Angeles",
+    "VTIMEZONE": [
+        {
+            "TZID": "America/Los_Angeles",
+            "X-LIC-LOCATION": "America/Los_Angeles"
+        }
+    ],
+    "DAYLIGHT": [
+        {
+            "TZOFFSETFROM": "-0800",
+            "TZOFFSETTO": "-0700",
+            "TZNAME": "PDT",
+            "DTSTART": "1970-03-08 02:00:00 America/Los_Angeles",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "3",
+                "BYDAY": "2SU"
+            }
+        }
+    ],
+    "STANDARD": [
+        {
+            "TZOFFSETFROM": "-0700",
+            "TZOFFSETTO": "-0800",
+            "TZNAME": "PST",
+            "DTSTART": "1970-11-01 02:00:00 America/Los_Angeles",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "11",
+                "BYDAY": "1SU"
+            }
+        }
+    ],
+    "VEVENT": [
+        {
+            "DTSTART": "2017-08-21 00:00:00 America/Los_Angeles",
+            "DTEND": "2017-08-22 00:00:00 America/Los_Angeles",
+            "RRULE": {
+                "FREQ": "WEEKLY",
+                "UNTIL": "2017-09-11 00:00:00 America/Los_Angeles",
+                "BYDAY": "MO"
+            },
+            "DTSTAMP": "2017-08-18 19:15:47 Z",
+            "UID": "37mfdqtlcrrvbil9b3n7vicb1t@google.com",
+            "CLASS": "PUBLIC",
+            "CREATED": "2017-08-18 17:53:32 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2017-08-18 17:53:32 Z",
+            "LOCATION": "",
+            "SEQUENCE": "0",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "Late Start, SMS",
+            "TRANSP": "TRANSPARENT",
+            "RECURRENCES": "4 dates"
+        }
+    ]
+}
+
+# events: 4, md5 37e03f9acb5206771a367c8cb7ed94b7
+2017-08-21 00:00:00 America/Los_Angeles | 2017-08-22 00:00:00 America/Los_Angeles | 0 | - | 37mfdqtlcrrvbil9b3n7vicb1t@google.com | Late Start, SMS
+2017-08-28 00:00:00 America/Los_Angeles | 2017-08-29 00:00:00 America/Los_Angeles | 1 | - | 37mfdqtlcrrvbil9b3n7vicb1t@google.com | Late Start, SMS
+2017-09-04 00:00:00 America/Los_Angeles | 2017-09-05 00:00:00 America/Los_Angeles | 2 | - | 37mfdqtlcrrvbil9b3n7vicb1t@google.com | Late Start, SMS
+2017-09-11 00:00:00 America/Los_Angeles | 2017-09-12 00:00:00 America/Los_Angeles | 3 | - | 37mfdqtlcrrvbil9b3n7vicb1t@google.com | Late Start, SMS

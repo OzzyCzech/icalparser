@@ -1,0 +1,257 @@
+# data
+{
+    "METHOD": "PUBLISH",
+    "PRODID": "Microsoft Exchange Server 2010",
+    "VERSION": "2.0",
+    "X-WR-CALNAME": "High School Counselors Office",
+    "VTIMEZONE": [
+        {
+            "TZID": "America/Chicago"
+        },
+        {
+            "TZID": "America/New_York"
+        },
+        {
+            "TZID": "Atlantic/Reykjavik"
+        }
+    ],
+    "STANDARD": [
+        {
+            "DTSTART": "1601-01-01 02:00:00 America/Chicago",
+            "TZOFFSETFROM": "-0500",
+            "TZOFFSETTO": "-0600",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "INTERVAL": "1",
+                "BYDAY": "1SU",
+                "BYMONTH": "11"
+            }
+        },
+        {
+            "DTSTART": "1601-01-01 02:00:00 America/New_York",
+            "TZOFFSETFROM": "-0400",
+            "TZOFFSETTO": "-0500",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "INTERVAL": "1",
+                "BYDAY": "1SU",
+                "BYMONTH": "11"
+            }
+        },
+        {
+            "DTSTART": "1601-01-01 00:00:00 Atlantic/Reykjavik",
+            "TZOFFSETFROM": "+0000",
+            "TZOFFSETTO": "+0000"
+        }
+    ],
+    "DAYLIGHT": [
+        {
+            "DTSTART": "1601-01-01 02:00:00 America/Chicago",
+            "TZOFFSETFROM": "-0600",
+            "TZOFFSETTO": "-0500",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "INTERVAL": "1",
+                "BYDAY": "2SU",
+                "BYMONTH": "3"
+            }
+        },
+        {
+            "DTSTART": "1601-01-01 02:00:00 America/New_York",
+            "TZOFFSETFROM": "-0500",
+            "TZOFFSETTO": "-0400",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "INTERVAL": "1",
+                "BYDAY": "2SU",
+                "BYMONTH": "3"
+            }
+        },
+        {
+            "DTSTART": "1601-01-01 00:00:00 Atlantic/Reykjavik",
+            "TZOFFSETFROM": "+0000",
+            "TZOFFSETTO": "+0000"
+        }
+    ],
+    "VEVENT": [
+        {
+            "DESCRIPTION": "All seniors MUST make an appointment in the counseling office, to visit with a counselor and go over their application for graduation.\n",
+            "UID": "040000008200E00074C5B7101A82E008000000004A8A50D0FC09D201000000000000000010000000D27D08FB73761145BC661D80CE521463",
+            "SUMMARY": "Senior Appointment Sign-up",
+            "DTSTART": "2016-09-14 00:00:00 Atlantic/Reykjavik",
+            "DTEND": "2016-09-15 00:00:00 Atlantic/Reykjavik",
+            "CLASS": "PUBLIC",
+            "PRIORITY": "5",
+            "DTSTAMP": "2016-09-16 19:39:59 Z",
+            "TRANSP": "OPAQUE",
+            "STATUS": "CONFIRMED",
+            "SEQUENCE": "0",
+            "LOCATION": "",
+            "X-MICROSOFT-CDO-APPT-SEQUENCE": "0",
+            "X-MICROSOFT-CDO-BUSYSTATUS": "FREE",
+            "X-MICROSOFT-CDO-INTENDEDSTATUS": "BUSY",
+            "X-MICROSOFT-CDO-ALLDAYEVENT": "TRUE",
+            "X-MICROSOFT-CDO-IMPORTANCE": "1",
+            "X-MICROSOFT-CDO-INSTTYPE": "0",
+            "X-MICROSOFT-DISALLOW-COUNTER": "FALSE"
+        },
+        {
+            "DESCRIPTION": "Registration for the PSAT test begins in the counseling office. The test is open to any junior or sophomore. The test is $15 and must be paid at the time of registration. Test date is Wednesday, October 19th.\n",
+            "UID": "040000008200E00074C5B7101A82E008000000004B8D8376DB0AD201000000000000000010000000CF196AE75B9C684C9E51C33A403CA455",
+            "SUMMARY": "PSAT Registration",
+            "DTSTART": "2016-09-15 00:00:00 Atlantic/Reykjavik",
+            "DTEND": "2016-09-16 00:00:00 Atlantic/Reykjavik",
+            "CLASS": "PUBLIC",
+            "PRIORITY": "5",
+            "DTSTAMP": "2016-09-16 19:39:59 Z",
+            "TRANSP": "OPAQUE",
+            "STATUS": "CONFIRMED",
+            "SEQUENCE": "0",
+            "LOCATION": "",
+            "X-MICROSOFT-CDO-APPT-SEQUENCE": "0",
+            "X-MICROSOFT-CDO-BUSYSTATUS": "FREE",
+            "X-MICROSOFT-CDO-INTENDEDSTATUS": "BUSY",
+            "X-MICROSOFT-CDO-ALLDAYEVENT": "TRUE",
+            "X-MICROSOFT-CDO-IMPORTANCE": "1",
+            "X-MICROSOFT-CDO-INSTTYPE": "0",
+            "X-MICROSOFT-DISALLOW-COUNTER": "FALSE"
+        },
+        {
+            "DESCRIPTION": "Financial Aid night for all seniors and their parents at 7:00pm in the high school auditorium.\n",
+            "UID": "040000008200E00074C5B7101A82E00800000000A3D802C7DB0AD2010000000000000000100000004690B516982D4841A6A5808F1BF285D2",
+            "SUMMARY": "Financial Aid NIght",
+            "DTSTART": "2016-09-19 19:00:00 America/Chicago",
+            "DTEND": "2016-09-19 20:00:00 America/Chicago",
+            "CLASS": "PUBLIC",
+            "PRIORITY": "5",
+            "DTSTAMP": "2016-09-16 19:39:59 Z",
+            "TRANSP": "OPAQUE",
+            "STATUS": "CONFIRMED",
+            "SEQUENCE": "0",
+            "LOCATION": "",
+            "X-MICROSOFT-CDO-APPT-SEQUENCE": "0",
+            "X-MICROSOFT-CDO-BUSYSTATUS": "BUSY",
+            "X-MICROSOFT-CDO-INTENDEDSTATUS": "BUSY",
+            "X-MICROSOFT-CDO-ALLDAYEVENT": "FALSE",
+            "X-MICROSOFT-CDO-IMPORTANCE": "1",
+            "X-MICROSOFT-CDO-INSTTYPE": "0",
+            "X-MICROSOFT-DISALLOW-COUNTER": "FALSE"
+        },
+        {
+            "DESCRIPTION": "This is the last day to register for the PSAT test in October! Please see the counseling office if you would like to register.\n",
+            "UID": "040000008200E00074C5B7101A82E00800000000DE3BE28BDB0AD2010000000000000000100000008C413809A1751A4E82CEB8F1BB526C61",
+            "SUMMARY": "PSAT Test registration ends",
+            "DTSTART": "2016-09-23 00:00:00 Atlantic/Reykjavik",
+            "DTEND": "2016-09-24 00:00:00 Atlantic/Reykjavik",
+            "CLASS": "PUBLIC",
+            "PRIORITY": "5",
+            "DTSTAMP": "2016-09-16 19:39:59 Z",
+            "TRANSP": "OPAQUE",
+            "STATUS": "CONFIRMED",
+            "SEQUENCE": "0",
+            "LOCATION": "",
+            "X-MICROSOFT-CDO-APPT-SEQUENCE": "0",
+            "X-MICROSOFT-CDO-BUSYSTATUS": "FREE",
+            "X-MICROSOFT-CDO-INTENDEDSTATUS": "BUSY",
+            "X-MICROSOFT-CDO-ALLDAYEVENT": "TRUE",
+            "X-MICROSOFT-CDO-IMPORTANCE": "1",
+            "X-MICROSOFT-CDO-INSTTYPE": "0",
+            "X-MICROSOFT-DISALLOW-COUNTER": "FALSE"
+        },
+        {
+            "DESCRIPTION": "College Application Day for all interested seniors! The Bank of North Dakota is waiving the application fee for any student to apply to a North Dakota college or university. Counselors and college staff will be assisting students with their applications periods 1-3 in the high school library!\n",
+            "UID": "040000008200E00074C5B7101A82E0080000000019668644DC0AD201000000000000000010000000DB1D0B39660D4045A6AC5C232EB0D76B",
+            "SUMMARY": "College Application Day",
+            "DTSTART": "2016-10-05 08:00:00 America/Chicago",
+            "DTEND": "2016-10-05 08:15:00 America/Chicago",
+            "CLASS": "PUBLIC",
+            "PRIORITY": "5",
+            "DTSTAMP": "2016-09-16 19:39:59 Z",
+            "TRANSP": "OPAQUE",
+            "STATUS": "CONFIRMED",
+            "SEQUENCE": "0",
+            "LOCATION": "",
+            "X-MICROSOFT-CDO-APPT-SEQUENCE": "0",
+            "X-MICROSOFT-CDO-BUSYSTATUS": "BUSY",
+            "X-MICROSOFT-CDO-INTENDEDSTATUS": "BUSY",
+            "X-MICROSOFT-CDO-ALLDAYEVENT": "FALSE",
+            "X-MICROSOFT-CDO-IMPORTANCE": "1",
+            "X-MICROSOFT-CDO-INSTTYPE": "0",
+            "X-MICROSOFT-DISALLOW-COUNTER": "FALSE"
+        },
+        {
+            "DESCRIPTION": "PSAT Test in the high school auditorium for all students that registered. Please report to the auditorium at 8:30am with a sharpened #2 pencil and calculator.\n",
+            "UID": "040000008200E00074C5B7101A82E00800000000E68A2E67DC0AD20100000000000000001000000080E5BC118E41944ABC1C94B815AB2235",
+            "SUMMARY": "PSAT Test",
+            "DTSTART": "2016-10-19 00:00:00 Atlantic/Reykjavik",
+            "DTEND": "2016-10-20 00:00:00 Atlantic/Reykjavik",
+            "CLASS": "PUBLIC",
+            "PRIORITY": "5",
+            "DTSTAMP": "2016-09-16 19:39:59 Z",
+            "TRANSP": "OPAQUE",
+            "STATUS": "CONFIRMED",
+            "SEQUENCE": "0",
+            "LOCATION": "",
+            "X-MICROSOFT-CDO-APPT-SEQUENCE": "0",
+            "X-MICROSOFT-CDO-BUSYSTATUS": "FREE",
+            "X-MICROSOFT-CDO-INTENDEDSTATUS": "BUSY",
+            "X-MICROSOFT-CDO-ALLDAYEVENT": "TRUE",
+            "X-MICROSOFT-CDO-IMPORTANCE": "1",
+            "X-MICROSOFT-CDO-INSTTYPE": "0",
+            "X-MICROSOFT-DISALLOW-COUNTER": "FALSE"
+        },
+        {
+            "DESCRIPTION": "North Dakota State Assessment for all juniors (periods 2-4).\n",
+            "UID": "040000008200E00074C5B7101A82E008000000002EB6D123DD0AD20100000000000000001000000061F7AF4CD0D2C84B9C6A916D2C633339",
+            "SUMMARY": "NDSA Science Assessment",
+            "DTSTART": "2016-10-25 09:15:00 America/Chicago",
+            "DTEND": "2016-10-25 11:45:00 America/Chicago",
+            "CLASS": "PUBLIC",
+            "PRIORITY": "5",
+            "DTSTAMP": "2016-09-16 19:39:59 Z",
+            "TRANSP": "OPAQUE",
+            "STATUS": "CONFIRMED",
+            "SEQUENCE": "0",
+            "LOCATION": "",
+            "X-MICROSOFT-CDO-APPT-SEQUENCE": "0",
+            "X-MICROSOFT-CDO-BUSYSTATUS": "BUSY",
+            "X-MICROSOFT-CDO-INTENDEDSTATUS": "BUSY",
+            "X-MICROSOFT-CDO-ALLDAYEVENT": "FALSE",
+            "X-MICROSOFT-CDO-IMPORTANCE": "1",
+            "X-MICROSOFT-CDO-INSTTYPE": "0",
+            "X-MICROSOFT-DISALLOW-COUNTER": "FALSE"
+        },
+        {
+            "DESCRIPTION": "\n",
+            "UID": "040000008200E00074C5B7101A82E0080000000052D533E856D6D301000000000000000010000000568B47E6EF679B4B812809E063BB64E1",
+            "SUMMARY": "Test Event",
+            "DTSTART": "2018-04-19 10:30:00 America/New_York",
+            "DTEND": "2018-04-19 11:30:00 America/New_York",
+            "CLASS": "PUBLIC",
+            "PRIORITY": "5",
+            "DTSTAMP": "2018-04-17 14:43:09 Z",
+            "TRANSP": "OPAQUE",
+            "STATUS": "CONFIRMED",
+            "SEQUENCE": "0",
+            "LOCATION": "Boardroom",
+            "X-MICROSOFT-CDO-APPT-SEQUENCE": "0",
+            "X-MICROSOFT-CDO-BUSYSTATUS": "BUSY",
+            "X-MICROSOFT-CDO-INTENDEDSTATUS": "BUSY",
+            "X-MICROSOFT-CDO-ALLDAYEVENT": "FALSE",
+            "X-MICROSOFT-CDO-IMPORTANCE": "1",
+            "X-MICROSOFT-CDO-INSTTYPE": "0",
+            "X-MICROSOFT-DONOTFORWARDMEETING": "FALSE",
+            "X-MICROSOFT-DISALLOW-COUNTER": "FALSE"
+        }
+    ]
+}
+
+# events: 8, md5 f8de7a8fa66a1390016b00321415f06f
+2016-09-14 00:00:00 Atlantic/Reykjavik | 2016-09-15 00:00:00 Atlantic/Reykjavik | - | - | 040000008200E00074C5B7101A82E008000000004A8A50D0FC09D201000000000000000010000000D27D08FB73761145BC661D80CE521463 | Senior Appointment Sign-up
+2016-09-15 00:00:00 Atlantic/Reykjavik | 2016-09-16 00:00:00 Atlantic/Reykjavik | - | - | 040000008200E00074C5B7101A82E008000000004B8D8376DB0AD201000000000000000010000000CF196AE75B9C684C9E51C33A403CA455 | PSAT Registration
+2016-09-19 19:00:00 America/Chicago | 2016-09-19 20:00:00 America/Chicago | - | - | 040000008200E00074C5B7101A82E00800000000A3D802C7DB0AD2010000000000000000100000004690B516982D4841A6A5808F1BF285D2 | Financial Aid NIght
+2016-09-23 00:00:00 Atlantic/Reykjavik | 2016-09-24 00:00:00 Atlantic/Reykjavik | - | - | 040000008200E00074C5B7101A82E00800000000DE3BE28BDB0AD2010000000000000000100000008C413809A1751A4E82CEB8F1BB526C61 | PSAT Test registration ends
+2016-10-05 08:00:00 America/Chicago | 2016-10-05 08:15:00 America/Chicago | - | - | 040000008200E00074C5B7101A82E0080000000019668644DC0AD201000000000000000010000000DB1D0B39660D4045A6AC5C232EB0D76B | College Application Day
+2016-10-19 00:00:00 Atlantic/Reykjavik | 2016-10-20 00:00:00 Atlantic/Reykjavik | - | - | 040000008200E00074C5B7101A82E00800000000E68A2E67DC0AD20100000000000000001000000080E5BC118E41944ABC1C94B815AB2235 | PSAT Test
+2016-10-25 09:15:00 America/Chicago | 2016-10-25 11:45:00 America/Chicago | - | - | 040000008200E00074C5B7101A82E008000000002EB6D123DD0AD20100000000000000001000000061F7AF4CD0D2C84B9C6A916D2C633339 | NDSA Science Assessment
+2018-04-19 10:30:00 America/New_York | 2018-04-19 11:30:00 America/New_York | - | - | 040000008200E00074C5B7101A82E0080000000052D533E856D6D301000000000000000010000000568B47E6EF679B4B812809E063BB64E1 | Test Event

@@ -1,0 +1,154 @@
+# data
+{
+    "PRODID": "-//Google Inc//Google Calendar 70.9054//EN",
+    "VERSION": "2.0",
+    "CALSCALE": "GREGORIAN",
+    "X-WR-CALNAME": "calmozilla1@gmail.com",
+    "X-WR-TIMEZONE": "America/Los_Angeles",
+    "VTIMEZONE": [
+        {
+            "TZID": "America/Los_Angeles",
+            "X-LIC-LOCATION": "America/Los_Angeles"
+        }
+    ],
+    "DAYLIGHT": [
+        {
+            "TZOFFSETFROM": "-0800",
+            "TZOFFSETTO": "-0700",
+            "TZNAME": "PDT",
+            "DTSTART": "1970-03-08 02:00:00 America/Los_Angeles",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "3",
+                "BYDAY": "2SU"
+            }
+        }
+    ],
+    "STANDARD": [
+        {
+            "TZOFFSETFROM": "-0700",
+            "TZOFFSETTO": "-0800",
+            "TZNAME": "PST",
+            "DTSTART": "1970-11-01 02:00:00 America/Los_Angeles",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "11",
+                "BYDAY": "1SU"
+            }
+        }
+    ],
+    "VEVENT": [
+        {
+            "DTSTART": "2012-08-03 00:00:00 America/Los_Angeles",
+            "DTEND": "2012-08-04 00:00:00 America/Los_Angeles",
+            "RRULE": {
+                "FREQ": "WEEKLY",
+                "BYDAY": "MO,TU,WE,TH,FR"
+            },
+            "DTSTAMP": "2012-08-03 22:13:06 Z",
+            "UID": "4pfh824gvims850j0gar361t04@google.com",
+            "CREATED": "2012-08-03 22:13:06 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2012-08-03 22:13:06 Z",
+            "LOCATION": "",
+            "SEQUENCE": "0",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "Day Long Event",
+            "TRANSP": "TRANSPARENT",
+            "RECURRENCES": "4281 dates"
+        }
+    ],
+    "VALARM": [
+        {
+            "ACTION": "EMAIL",
+            "DESCRIPTION": "This is an event reminder",
+            "SUMMARY": "Alarm notification",
+            "ATTENDEES": [
+                {
+                    "middle": "",
+                    "VALUE": "mailto:calmozilla1@gmail.com"
+                }
+            ],
+            "ATTENDEE": "mailto:calmozilla1@gmail.com",
+            "TRIGGER": "20120802T233000Z"
+        },
+        {
+            "ACTION": "DISPLAY",
+            "DESCRIPTION": "This is an event reminder",
+            "TRIGGER": "20120802T233000Z"
+        }
+    ]
+}
+
+# events: 4281, md5 af765f6c23f00fd6b8d23e725af98055
+2012-08-03 00:00:00 America/Los_Angeles | 2012-08-04 00:00:00 America/Los_Angeles | 0 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-06 00:00:00 America/Los_Angeles | 2012-08-07 00:00:00 America/Los_Angeles | 1 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-07 00:00:00 America/Los_Angeles | 2012-08-08 00:00:00 America/Los_Angeles | 2 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-08 00:00:00 America/Los_Angeles | 2012-08-09 00:00:00 America/Los_Angeles | 3 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-09 00:00:00 America/Los_Angeles | 2012-08-10 00:00:00 America/Los_Angeles | 4 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-10 00:00:00 America/Los_Angeles | 2012-08-11 00:00:00 America/Los_Angeles | 5 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-13 00:00:00 America/Los_Angeles | 2012-08-14 00:00:00 America/Los_Angeles | 6 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-14 00:00:00 America/Los_Angeles | 2012-08-15 00:00:00 America/Los_Angeles | 7 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-15 00:00:00 America/Los_Angeles | 2012-08-16 00:00:00 America/Los_Angeles | 8 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-16 00:00:00 America/Los_Angeles | 2012-08-17 00:00:00 America/Los_Angeles | 9 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-17 00:00:00 America/Los_Angeles | 2012-08-18 00:00:00 America/Los_Angeles | 10 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-20 00:00:00 America/Los_Angeles | 2012-08-21 00:00:00 America/Los_Angeles | 11 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-21 00:00:00 America/Los_Angeles | 2012-08-22 00:00:00 America/Los_Angeles | 12 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-22 00:00:00 America/Los_Angeles | 2012-08-23 00:00:00 America/Los_Angeles | 13 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-23 00:00:00 America/Los_Angeles | 2012-08-24 00:00:00 America/Los_Angeles | 14 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-24 00:00:00 America/Los_Angeles | 2012-08-25 00:00:00 America/Los_Angeles | 15 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-27 00:00:00 America/Los_Angeles | 2012-08-28 00:00:00 America/Los_Angeles | 16 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-28 00:00:00 America/Los_Angeles | 2012-08-29 00:00:00 America/Los_Angeles | 17 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-29 00:00:00 America/Los_Angeles | 2012-08-30 00:00:00 America/Los_Angeles | 18 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-30 00:00:00 America/Los_Angeles | 2012-08-31 00:00:00 America/Los_Angeles | 19 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-08-31 00:00:00 America/Los_Angeles | 2012-09-01 00:00:00 America/Los_Angeles | 20 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-03 00:00:00 America/Los_Angeles | 2012-09-04 00:00:00 America/Los_Angeles | 21 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-04 00:00:00 America/Los_Angeles | 2012-09-05 00:00:00 America/Los_Angeles | 22 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-05 00:00:00 America/Los_Angeles | 2012-09-06 00:00:00 America/Los_Angeles | 23 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-06 00:00:00 America/Los_Angeles | 2012-09-07 00:00:00 America/Los_Angeles | 24 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-07 00:00:00 America/Los_Angeles | 2012-09-08 00:00:00 America/Los_Angeles | 25 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-10 00:00:00 America/Los_Angeles | 2012-09-11 00:00:00 America/Los_Angeles | 26 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-11 00:00:00 America/Los_Angeles | 2012-09-12 00:00:00 America/Los_Angeles | 27 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-12 00:00:00 America/Los_Angeles | 2012-09-13 00:00:00 America/Los_Angeles | 28 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-13 00:00:00 America/Los_Angeles | 2012-09-14 00:00:00 America/Los_Angeles | 29 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-14 00:00:00 America/Los_Angeles | 2012-09-15 00:00:00 America/Los_Angeles | 30 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-17 00:00:00 America/Los_Angeles | 2012-09-18 00:00:00 America/Los_Angeles | 31 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-18 00:00:00 America/Los_Angeles | 2012-09-19 00:00:00 America/Los_Angeles | 32 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-19 00:00:00 America/Los_Angeles | 2012-09-20 00:00:00 America/Los_Angeles | 33 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-20 00:00:00 America/Los_Angeles | 2012-09-21 00:00:00 America/Los_Angeles | 34 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-21 00:00:00 America/Los_Angeles | 2012-09-22 00:00:00 America/Los_Angeles | 35 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-24 00:00:00 America/Los_Angeles | 2012-09-25 00:00:00 America/Los_Angeles | 36 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-25 00:00:00 America/Los_Angeles | 2012-09-26 00:00:00 America/Los_Angeles | 37 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-26 00:00:00 America/Los_Angeles | 2012-09-27 00:00:00 America/Los_Angeles | 38 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-27 00:00:00 America/Los_Angeles | 2012-09-28 00:00:00 America/Los_Angeles | 39 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-09-28 00:00:00 America/Los_Angeles | 2012-09-29 00:00:00 America/Los_Angeles | 40 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-10-01 00:00:00 America/Los_Angeles | 2012-10-02 00:00:00 America/Los_Angeles | 41 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-10-02 00:00:00 America/Los_Angeles | 2012-10-03 00:00:00 America/Los_Angeles | 42 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-10-03 00:00:00 America/Los_Angeles | 2012-10-04 00:00:00 America/Los_Angeles | 43 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-10-04 00:00:00 America/Los_Angeles | 2012-10-05 00:00:00 America/Los_Angeles | 44 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-10-05 00:00:00 America/Los_Angeles | 2012-10-06 00:00:00 America/Los_Angeles | 45 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-10-08 00:00:00 America/Los_Angeles | 2012-10-09 00:00:00 America/Los_Angeles | 46 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-10-09 00:00:00 America/Los_Angeles | 2012-10-10 00:00:00 America/Los_Angeles | 47 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-10-10 00:00:00 America/Los_Angeles | 2012-10-11 00:00:00 America/Los_Angeles | 48 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-10-11 00:00:00 America/Los_Angeles | 2012-10-12 00:00:00 America/Los_Angeles | 49 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-10-12 00:00:00 America/Los_Angeles | 2012-10-13 00:00:00 America/Los_Angeles | 50 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-10-15 00:00:00 America/Los_Angeles | 2012-10-16 00:00:00 America/Los_Angeles | 51 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-10-16 00:00:00 America/Los_Angeles | 2012-10-17 00:00:00 America/Los_Angeles | 52 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-10-17 00:00:00 America/Los_Angeles | 2012-10-18 00:00:00 America/Los_Angeles | 53 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-10-18 00:00:00 America/Los_Angeles | 2012-10-19 00:00:00 America/Los_Angeles | 54 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-10-19 00:00:00 America/Los_Angeles | 2012-10-20 00:00:00 America/Los_Angeles | 55 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-10-22 00:00:00 America/Los_Angeles | 2012-10-23 00:00:00 America/Los_Angeles | 56 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-10-23 00:00:00 America/Los_Angeles | 2012-10-24 00:00:00 America/Los_Angeles | 57 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-10-24 00:00:00 America/Los_Angeles | 2012-10-25 00:00:00 America/Los_Angeles | 58 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2012-10-25 00:00:00 America/Los_Angeles | 2012-10-26 00:00:00 America/Los_Angeles | 59 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+... 4211 events omitted ...
+2028-12-18 00:00:00 America/Los_Angeles | 2028-12-19 00:00:00 America/Los_Angeles | 4271 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2028-12-19 00:00:00 America/Los_Angeles | 2028-12-20 00:00:00 America/Los_Angeles | 4272 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2028-12-20 00:00:00 America/Los_Angeles | 2028-12-21 00:00:00 America/Los_Angeles | 4273 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2028-12-21 00:00:00 America/Los_Angeles | 2028-12-22 00:00:00 America/Los_Angeles | 4274 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2028-12-22 00:00:00 America/Los_Angeles | 2028-12-23 00:00:00 America/Los_Angeles | 4275 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2028-12-25 00:00:00 America/Los_Angeles | 2028-12-26 00:00:00 America/Los_Angeles | 4276 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2028-12-26 00:00:00 America/Los_Angeles | 2028-12-27 00:00:00 America/Los_Angeles | 4277 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2028-12-27 00:00:00 America/Los_Angeles | 2028-12-28 00:00:00 America/Los_Angeles | 4278 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2028-12-28 00:00:00 America/Los_Angeles | 2028-12-29 00:00:00 America/Los_Angeles | 4279 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
+2028-12-29 00:00:00 America/Los_Angeles | 2028-12-30 00:00:00 America/Los_Angeles | 4280 | - | 4pfh824gvims850j0gar361t04@google.com | Day Long Event
