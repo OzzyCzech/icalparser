@@ -23,13 +23,17 @@ use RuntimeException;
  * @author Roman Ožana <roman@ozana.cz>
  */
 class IcalParser {
-	private const array DATE_PROPERTIES = ['DTSTAMP', 'LAST-MODIFIED', 'CREATED', 'DTSTART', 'DTEND', 'DUE', 'COMPLETED'];
+	private const array DATE_PROPERTIES = ['DTSTAMP' => true, 'LAST-MODIFIED' => true, 'CREATED' => true, 'DTSTART' => true, 'DTEND' => true, 'DUE' => true, 'COMPLETED' => true];
+	private const array MULTIPLE_KEYS = ['ATTACH' => 'ATTACHMENTS', 'EXDATE' => 'EXDATES', 'RDATE' => 'RDATES', 'ATTENDEE' => 'ATTENDEES'];
+	private const array COMMA_SEPARATED_KEYS = ['X-CATEGORIES' => 'X-CATEGORIES', 'CATEGORIES' => 'CATEGORIES'];
+	private const array META_KEYS = ['DTSTART' => true, 'RRULE' => true, 'EXDATE' => true, 'RECURRENCE-ID' => true];
 
 	/** Properties of the TEXT value type (RFC 5545, section 3.3.11) that are unescaped. */
 	private const array TEXT_PROPERTIES = [
-		'CALSCALE', 'METHOD', 'PRODID', 'VERSION', 'CATEGORIES', 'CLASS', 'COMMENT', 'DESCRIPTION',
-		'LOCATION', 'RESOURCES', 'STATUS', 'SUMMARY', 'TRANSP', 'TZID', 'TZNAME', 'CONTACT',
-		'RELATED-TO', 'UID', 'ACTION', 'REQUEST-STATUS', 'URL',
+		'CALSCALE' => true, 'METHOD' => true, 'PRODID' => true, 'VERSION' => true, 'CATEGORIES' => true,
+		'CLASS' => true, 'COMMENT' => true, 'DESCRIPTION' => true, 'LOCATION' => true, 'RESOURCES' => true,
+		'STATUS' => true, 'SUMMARY' => true, 'TRANSP' => true, 'TZID' => true, 'TZNAME' => true, 'CONTACT' => true,
+		'RELATED-TO' => true, 'UID' => true, 'ACTION' => true, 'REQUEST-STATUS' => true, 'URL' => true,
 	];
 
 	private const array TEXT_ESCAPES = ['\\\\' => '\\', '\\N' => "\n", '\\n' => "\n", '\\;' => ';', '\\,' => ','];
@@ -139,7 +143,7 @@ class IcalParser {
 			if (strncasecmp($row, 'END:', 4) === 0) {
 				$component = strtoupper(trim(substr($row, 4)));
 				if ($component !== 'VCALENDAR') {
-					if ($component === 'VEVENT' && $callback === null && isset($this->counters['VEVENT'])) {
+					if ($component === 'VEVENT' && $callback === null && isset($this->data['VEVENT'][$this->counters['VEVENT'] ?? -1]['RECURRENCE-ID'])) {
 						$this->registerOverride($this->counters['VEVENT']);
 					}
 					$section = array_pop($parents) ?? 'VCALENDAR';
@@ -182,11 +186,11 @@ class IcalParser {
 	}
 
 	public function isMultipleKey(string $key): ?string {
-		return (['ATTACH' => 'ATTACHMENTS', 'EXDATE' => 'EXDATES', 'RDATE' => 'RDATES', 'ATTENDEE' => 'ATTENDEES'])[$key] ?? null;
+		return self::MULTIPLE_KEYS[$key] ?? null;
 	}
 
 	public function isMultipleKeyWithCommaSeparation(string $key): ?string {
-		return (['X-CATEGORIES' => 'X-CATEGORIES', 'CATEGORIES' => 'CATEGORIES'])[$key] ?? null;
+		return self::COMMA_SEPARATED_KEYS[$key] ?? null;
 	}
 
 	/**
@@ -252,16 +256,10 @@ class IcalParser {
 	public function getEvents(): EventsList {
 		$events = new EventsList();
 		foreach ($this->data['VEVENT'] ?? [] as $counter => $event) {
-			$meta = $this->meta['VEVENT'][$counter] ?? [];
 			$start = $event['DTSTART'] ?? null;
-			if (!$start instanceof DateTimeInterface) {
-				$events->append($event);
-				continue;
-			}
-
-			$duration = $this->duration($event, $meta);
-			if (!array_key_exists('RECURRENCES', $event)) {
-				if (!array_key_exists('DTEND', $event) && $duration !== null) {
+			if (!isset($event['RECURRENCES']) || !$start instanceof DateTimeInterface) {
+				if (!array_key_exists('DTEND', $event) && $start instanceof DateTimeInterface
+					&& ($duration = $this->duration($event, $this->meta['VEVENT'][$counter] ?? [])) !== null) {
 					$end = DateTime::createFromInterface($start);
 					$event['DTEND'] = $end->add($duration);
 				}
@@ -270,18 +268,16 @@ class IcalParser {
 			}
 
 			$event['RECURRING'] = true;
-			$duration ??= new DateInterval('PT0S');
+			$duration = $this->duration($event, $this->meta['VEVENT'][$counter] ?? []) ?? new DateInterval('PT0S');
+			$template = $event;
+			unset($template['RECURRENCES']);
 			foreach ($event['RECURRENCES'] as $index => $date) {
-				if (!$date instanceof DateTimeInterface) {
+				if (!$date instanceof DateTime) {
 					continue;
 				}
-				$instance = $event;
-				if ($index !== 0) {
-					unset($instance['RECURRENCES']);
-				}
-				$instance['DTSTART'] = DateTime::createFromInterface($date);
-				$end = DateTime::createFromInterface($date);
-				$instance['DTEND'] = $end->add($duration);
+				$instance = $index === 0 ? $event : $template;
+				$instance['DTSTART'] = clone $date;
+				$instance['DTEND'] = (clone $date)->add($duration);
 				$instance['RECURRENCE_INSTANCE'] = $index;
 				$events->append($instance);
 			}
@@ -294,58 +290,66 @@ class IcalParser {
 	 */
 	private function store(string $section, int $counter, string $key, mixed $middle, mixed $value, string $raw): void {
 		$this->data ??= [];
-		$component = &$this->data[$section][$counter];
 
 		// Multiple entries are collected in an array under a separate key,
 		// the original key keeps the last value.
-		if ($newKey = $this->isMultipleKey($key)) {
-			$component[$newKey][] = $value;
+		if ($newKey = self::MULTIPLE_KEYS[$key] ?? null) {
+			$this->data[$section][$counter][$newKey][] = $value;
 		}
 
-		if ($this->isMultipleKeyWithCommaSeparation($key)) {
+		if (isset(self::COMMA_SEPARATED_KEYS[$key])) {
 			// split on commas not preceded by backslash, then unescape
 			foreach (preg_split('/(?<!\\\\),/', $raw) ?: [] as $item) {
-				$component[$key][] = trim(strtr($item, self::TEXT_ESCAPES));
+				$this->data[$section][$counter][$key][] = trim(strtr($item, self::TEXT_ESCAPES));
 			}
 			return;
 		}
 
 		if ($key === 'ORGANIZER') {
 			foreach (is_array($middle) ? $middle : [] as $midKey => $midVal) {
-				$component[$key . '-' . $midKey] = $midVal;
+				$this->data[$section][$counter][$key . '-' . $midKey] = $midVal;
 			}
 		}
 		if ($key === 'ATTENDEE' || $key === 'ORGANIZER') {
 			$value = $value['VALUE']; // backwards compatibility (leaves ATTENDEE entry as it was)
 		}
-		$component[$key] = $value;
+		$this->data[$section][$counter][$key] = $value;
 
-		$this->storeMeta($section, $counter, $key, $middle, $raw);
+		if (isset(self::META_KEYS[$key])) {
+			$this->storeMeta($section, $counter, $key, $middle, $raw);
+		}
 	}
 
 	/**
 	 * Remember parser details that the public data cannot express.
+	 * Only values other than the defaults are stored, to keep large calendars small.
 	 */
 	private function storeMeta(string $section, int $counter, string $key, mixed $middle, string $raw): void {
 		$params = is_array($middle) ? $middle : [];
 		$dateOnly = ($params['VALUE'] ?? null) === 'DATE';
 		switch ($key) {
 			case 'DTSTART':
-				$this->meta[$section][$counter]['dateOnly'] = $dateOnly || preg_match('/^\d{8}$/D', trim($raw)) === 1;
+				if ($dateOnly || (strlen($raw) === 8 && ctype_digit($raw))) {
+					$this->meta[$section][$counter]['dateOnly'] = true;
+				} else {
+					unset($this->meta[$section][$counter]['dateOnly']);
+				}
 				break;
 			case 'RRULE':
 				$this->meta[$section][$counter]['rrule'] = $raw;
 				break;
 			case 'EXDATE':
 				foreach (explode(',', $raw) as $item) {
-					if ($dateOnly || preg_match('/^\d{8}$/D', trim($item))) {
-						$this->meta[$section][$counter]['exdateDays'][] = substr(trim($item), 0, 8);
+					$item = trim($item);
+					if ($dateOnly || preg_match('/^\d{8}$/D', $item)) {
+						$this->meta[$section][$counter]['exdateDays'][] = substr($item, 0, 8);
 					}
 				}
 				break;
 			case 'RECURRENCE-ID':
-				$timezone = $params['TZID'] ?? null;
-				$this->meta[$section][$counter]['recurrenceIdTimezone'] = $timezone instanceof DateTimeZone ? $timezone : null;
+				if (($params['TZID'] ?? null) instanceof DateTimeZone) {
+					$this->meta[$section][$counter]['recurrenceIdTimezone'] = $params['TZID'];
+				}
 				break;
 		}
 	}
@@ -574,7 +578,7 @@ class IcalParser {
 			}
 		}
 
-		if (in_array($key, self::DATE_PROPERTIES, true)) {
+		if (isset(self::DATE_PROPERTIES[$key])) {
 			$value = self::createDate($value, $timezone ?? $this->timezone);
 		} elseif ($key === 'EXDATE' || $key === 'RDATE') {
 			$values = [];
@@ -596,7 +600,7 @@ class IcalParser {
 					$value[$match['key']] = $match['value'];
 				}
 			}
-		} elseif (in_array($key, self::TEXT_PROPERTIES, true) || str_starts_with($key, 'X-')) {
+		} elseif (isset(self::TEXT_PROPERTIES[$key]) || str_starts_with($key, 'X-')) {
 			// 3.3.11 Text ESCAPED-CHAR
 			$value = strtr($value, self::TEXT_ESCAPES);
 		}
@@ -653,6 +657,14 @@ class IcalParser {
 
 	private static function createDate(string $value, ?DateTimeZone $timezone): ?DateTime {
 		try {
+			// Fast path for UTC values like 20240105T100000Z: resolving the "Z" abbreviation
+			// is slow, so the date is read in UTC and the shared "Z" timezone is attached.
+			if (strlen($value) === 16 && $value[15] === 'Z' && $value[8] === 'T') {
+				static $utc, $zulu;
+				$utc ??= new DateTimeZone('UTC');
+				$zulu ??= (new DateTime('20000101T000000Z'))->getTimezone();
+				return (new DateTime(substr($value, 0, 15), $utc))->setTimezone($zulu);
+			}
 			return new DateTime($value, $timezone);
 		} catch (Exception) {
 			return null;

@@ -33,6 +33,10 @@ final class Expander implements IteratorAggregate {
 	private readonly DateTimeZone $timezone;
 	private readonly ?int $fixedOffset;
 	private readonly DateTime $probe;
+	/** UTC offset valid for instants in [$offsetFrom, $offsetUntil), see toTimestamp() */
+	private int $offset = 0;
+	private int $offsetFrom = PHP_INT_MAX;
+	private int $offsetUntil = PHP_INT_MIN;
 
 	/** @var array<int, true> */
 	private array $months = [];
@@ -450,15 +454,50 @@ final class Expander implements IteratorAggregate {
 		return array_values($selected);
 	}
 
+	/**
+	 * Convert a wall-clock time in the DTSTART timezone to a timestamp.
+	 *
+	 * The UTC offset only changes at timezone transitions, so the last offset is reused
+	 * while the result stays more than a day away from any transition. Times close to
+	 * a transition (including nonexistent and ambiguous times) are resolved by PHP.
+	 */
 	private function toTimestamp(int $days, int $secondsOfDay): int {
+		$local = $days * 86400 + $secondsOfDay;
 		if ($this->fixedOffset !== null) {
-			return $days * 86400 + $secondsOfDay - $this->fixedOffset;
+			return $local - $this->fixedOffset;
 		}
+		$timestamp = $local - $this->offset;
+		if ($timestamp >= $this->offsetFrom && $timestamp < $this->offsetUntil) {
+			return $timestamp;
+		}
+
 		[$year, $month, $day] = self::civilFromDays($days);
-		return $this->probe
+		$timestamp = $this->probe
 			->setDate($year, $month, $day)
 			->setTime(intdiv($secondsOfDay, 3600), intdiv($secondsOfDay % 3600, 60), $secondsOfDay % 60)
 			->getTimestamp();
+		$this->rememberOffset($timestamp);
+		return $timestamp;
+	}
+
+	private function rememberOffset(int $timestamp): void {
+		$window = 200 * 86400;
+		$previous = $timestamp - $window;
+		$next = $timestamp + $window;
+		foreach ($this->timezone->getTransitions($timestamp - $window, $timestamp + $window) ?: [] as $index => $transition) {
+			if ($index === 0) {
+				continue; // the first entry describes the start of the range, not a transition
+			}
+			if ($transition['ts'] <= $timestamp) {
+				$previous = $transition['ts'];
+			} elseif ($transition['ts'] < $next) {
+				$next = $transition['ts'];
+				break;
+			}
+		}
+		$this->offset = $this->timezone->getOffset($this->probe);
+		$this->offsetFrom = $previous + 86400;
+		$this->offsetUntil = $next - 86400;
 	}
 
 	/**
