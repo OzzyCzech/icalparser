@@ -37,7 +37,8 @@ a `ParseWarning` with a stable `code`, a `message`, the `line` and the `property
 | `syntax.no-calendar` | the input contains no VCALENDAR |
 | `timezone.unresolved` | a TZID cannot be resolved, its times stay floating |
 | `value.invalid` | a value does not match its type; it is ignored (`null`), an invalid RRULE makes the item a single one |
-| `value.nonstandard` | a value breaking the RFC was accepted: a date with a `Z` suffix (Google), `VALUE=DATE` with a time, a leap second |
+| `value.nonstandard` | a value breaking the RFC was accepted: a date with a `Z` suffix (Google), a date without `VALUE=DATE`, `VALUE=DATE` with a time or `VALUE=DATE-TIME` with a date, a TZID on a UTC time, a PERIOD where it is not allowed (its start is used) |
+| `value.leap-second` | a leap second (allowed by the RFC) was read as second 59, PHP cannot represent it |
 
 Unknown properties, parameters and components are kept. Values of known types are converted during
 parsing to report the `value.*` warnings; `->checkValues(false)` skips that for faster parsing of
@@ -49,7 +50,7 @@ The [validator](validation.md) reports RFC violations that are not repaired.
 For validation, tests and debugging. Every problem of the table above throws: a `SyntaxException`,
 a `TimezoneResolutionException` for `timezone.unresolved`, an `InvalidValueException` for an invalid
 or nonstandard DATE-TIME, DURATION, INTEGER, ... and an `InvalidRecurrenceRuleException` for an
-invalid RRULE.
+invalid RRULE. A leap second is only a warning.
 
 ## Exceptions
 
@@ -86,5 +87,6 @@ Untrusted input is limited; exceeding a limit throws `ResourceLimitException` in
 `ICal::stream($file)` and `Parser::stream($fileOrResource, $onWarning)` return events, tasks,
 journal entries and free/busy components one by one, so memory does not depend on the size of
 the file. Timezones (VTIMEZONE) and calendar properties seen before an item are used for its
-values. Overrides (RECURRENCE-ID) are separate items in a stream, parse the whole calendar to
-get complete series.
+values, which are checked like in `parse()` (warnings go to `$onWarning`, strict mode throws).
+Overrides (RECURRENCE-ID) are separate items in a stream, parse the whole calendar to get
+complete series.

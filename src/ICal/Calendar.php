@@ -47,6 +47,10 @@ final class Calendar {
 		return $this->values;
 	}
 
+	public function timezoneResolver(): ?TimezoneResolver {
+		return $this->timezoneResolver;
+	}
+
 	public function recurrenceLimits(): RecurrenceLimits {
 		return $this->recurrenceLimits;
 	}

@@ -90,7 +90,7 @@ test('Calendar properties and typed item getters', function () {
 	Assert::same(['john@example.org', 'ann@example.org'], array_map(fn($a) => $a->email(), $event->attendees()));
 	Assert::same('OPT-PARTICIPANT', $event->attendees()[1]->role());
 	Assert::same('2026-01-05 10:00 Europe/Prague', $event->start()->format('Y-m-d H:i e'));
-	Assert::same('PT5400S', ICal\Value\Duration::format($event->duration()), 'the exact duration of DTEND - DTSTART');
+	Assert::same('PT1H30M', ICal\Value\Duration::format($event->duration()), 'the exact duration of DTEND - DTSTART');
 	Assert::same('2026-01-05 11:30', $event->end()->format('Y-m-d H:i'));
 	Assert::false($event->isAllDay() || $event->isRecurring() || $event->isOverride() || $event->isCancelled());
 	Assert::same('Room 1', $event->property('X-APPLE-STRUCTURED-LOCATION')->parameter('X-TITLE'), 'unknown properties are kept');
@@ -285,7 +285,7 @@ test('Tasks, journal entries, free/busy components and alarms', function () {
 	$periods = $calendar->freeBusy()[0]->periods();
 	Assert::count(2, $periods);
 	Assert::same(['BUSY-TENTATIVE', '20260105T100000Z/PT1H'], [$periods[0][1], (string) $periods[0][0]]);
-	Assert::same(86400, $calendar->freeBusy()[0]->duration()->s, 'exact elapsed time');
+	Assert::same(24, $calendar->freeBusy()[0]->duration()->h, 'exact elapsed time in hours');
 
 	$mail = $calendar->events()[0]->alarms()[0];
 	Assert::same('2026-01-05 08:00', $mail->triggerTime($calendar->events()[0]->occurrences(1)->current())->format('Y-m-d H:i'));

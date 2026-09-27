@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace om\ICal;
 
+use InvalidArgumentException;
 use Stringable;
 
 /**
@@ -38,7 +39,15 @@ final class Property implements Stringable {
 	/**
 	 * @param array<string, string|list<string>>|Parameters $parameters
 	 */
+	/**
+	 * @param string $value the raw value; newlines are written as "\n" (use Text::escape() for TEXT)
+	 * @param array<string, string|list<string>>|Parameters $parameters
+	 * @throws InvalidArgumentException for an invalid property name
+	 */
 	public static function create(string $name, string $value, array|Parameters $parameters = []): self {
+		if (!preg_match('/^[A-Za-z0-9-]+$/D', $name)) {
+			throw new InvalidArgumentException("Invalid property name: $name");
+		}
 		return new self(strtoupper($name), is_array($parameters) ? Parameters::from($parameters) : $parameters, $value);
 	}
 
@@ -67,7 +76,14 @@ final class Property implements Stringable {
 	/**
 	 * The unfolded content line, e.g. "DTSTART;TZID=Europe/Prague:20261010T100000".
 	 */
+	/**
+	 * The unfolded content line; newlines of the value are written as "\n", so they cannot start
+	 * another content line.
+	 */
 	public function __toString(): string {
-		return $this->name . ($this->rawParameters === '' ? '' : ';' . $this->rawParameters) . ':' . $this->value;
+		$value = str_contains($this->value, "\n") || str_contains($this->value, "\r")
+			? str_replace(["\r\n", "\n", "\r"], '\\n', $this->value)
+			: $this->value;
+		return $this->name . ($this->rawParameters === '' ? '' : ';' . $this->rawParameters) . ':' . $value;
 	}
 }

@@ -47,9 +47,12 @@ Components with the same UID form a series. A component with RECURRENCE-ID repla
 starting at that time (compared as an instant in any timezone, or as a day for date-only IDs):
 
 - a moved instance is returned at its new time, also when it moved into or out of the window,
+- `RecurrenceLimits::$maxInstances` counts the returned occurrences, not the instances before the window,
 - `STATUS:CANCELLED` instances are skipped unless `includeCancelled: true` is passed,
-- `RECURRENCE-ID;RANGE=THISANDFUTURE` changes the instance and all later ones, shifted by the
-  same difference and with the duration of the override,
+- `RECURRENCE-ID;RANGE=THISANDFUTURE` changes the instance and all later ones: their local time
+  changes like the one of the override (also over DST changes) and they get its duration; an
+  override without DTSTART keeps the time and duration of the instances,
+- a moved instance may move into the window from outside of it, in both directions,
 - an override without its recurring item is a single item.
 
 ## Durations

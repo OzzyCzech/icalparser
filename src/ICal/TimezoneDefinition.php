@@ -5,6 +5,7 @@ namespace om\ICal;
 
 use om\ICal\Timezone\ResolvedTimezone;
 use om\ICal\Timezone\VTimezoneResolver;
+use om\ICal\Value\Text;
 
 /**
  * A VTIMEZONE component (RFC 5545, section 3.6.5).
@@ -20,7 +21,8 @@ final class TimezoneDefinition {
 	}
 
 	public function tzid(): ?string {
-		return $this->component->property('TZID')?->value;
+		$tzid = $this->component->property('TZID')?->value;
+		return $tzid === null ? null : Text::unescape($tzid);
 	}
 
 	/**

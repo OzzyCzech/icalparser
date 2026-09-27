@@ -30,6 +30,7 @@ final class TreeBuilder {
 	/** @var list<array{name: string, properties: list<Property>, components: list<Component>, line: int}> */
 	private array $stack = [];
 	private int $componentCount = 0;
+	private int $calendars = 0;
 	private int $propertyCount = 0;
 
 	public function __construct(
@@ -43,13 +44,17 @@ final class TreeBuilder {
 	 * @return Generator<string, Component>
 	 */
 	public function build(iterable $lines): Generator {
-		$calendars = 0;
 		foreach ($lines as $line) {
 			[$name, $parameters, $value, $number] = $line instanceof ContentLine ? [$line->name, $line->rawParameters, $line->value, $line->line] : $line;
 
 			if (($name === 'BEGIN' || $name === 'END') && $parameters === '') {
 				$component = strtoupper(trim($value));
 				if ($name === 'BEGIN') {
+					// a new calendar ends a calendar left open (concatenated or truncated feeds)
+					while ($component === 'VCALENDAR' && $this->stack !== []) {
+						$this->problem('syntax.missing-end', "END:{$this->current()} is missing before BEGIN:VCALENDAR, the component was closed.", $number);
+						yield from $this->close();
+					}
 					if ($this->stack === [] && $component !== 'VCALENDAR') {
 						$this->problem('syntax.missing-calendar', "$component outside of VCALENDAR, an implicit VCALENDAR was added.", $number);
 						$this->open('VCALENDAR', $number);
@@ -72,9 +77,6 @@ final class TreeBuilder {
 					$this->problem('syntax.missing-end', "END:{$this->current()} is missing, the component was closed.", $number);
 					yield from $this->close();
 				}
-				if ($component === 'VCALENDAR') {
-					$calendars++;
-				}
 				yield from $this->close();
 				continue;
 			}
@@ -92,12 +94,9 @@ final class TreeBuilder {
 		while ($this->stack !== []) {
 			$open = $this->current();
 			$this->problem('syntax.missing-end', "END:$open is missing at the end of the input, the component was closed.");
-			if ($open === 'VCALENDAR') {
-				$calendars++;
-			}
 			yield from $this->close();
 		}
-		if ($calendars === 0) {
+		if ($this->calendars === 0) {
 			$this->problem('syntax.no-calendar', 'The input contains no VCALENDAR component.');
 		}
 	}
@@ -159,6 +158,7 @@ final class TreeBuilder {
 		}
 		if ($this->stack === []) {
 			// the calendar itself; its components were yielded already
+			$this->calendars++;
 			yield 'calendar' => new Component($frame['name'], $frame['properties']);
 			return;
 		}

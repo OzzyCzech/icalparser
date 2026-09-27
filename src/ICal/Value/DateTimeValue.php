@@ -48,7 +48,7 @@ final readonly class DateTimeValue implements Stringable {
 	public static function fromDateTime(DateTimeInterface $dateTime, ?string $tzid = null): self {
 		$dateTime = DateTimeImmutable::createFromInterface($dateTime);
 		$name = $dateTime->getTimezone()->getName();
-		if (in_array($name, ['UTC', 'Z', '+00:00', 'GMT'], true)) {
+		if (in_array($name, ['UTC', 'Z', '+00:00', 'GMT', 'Etc/UTC', 'Etc/GMT', 'Etc/Universal', 'Etc/Zulu'], true)) {
 			return new self(DateTimeType::Utc, $dateTime->setTimezone(new DateTimeZone('UTC')));
 		}
 		return new self(DateTimeType::Zoned, $dateTime, $tzid ?? $name);
@@ -143,7 +143,8 @@ final readonly class DateTimeValue implements Stringable {
 			'timezone.floating',
 			sprintf('The %s value %s needs a timezone to become an instant.', $this->type === DateTimeType::Date ? 'DATE' : 'floating', $this),
 		);
-		return new DateTimeImmutable($this->dateTime->format('Y-m-d H:i:s'), $timezone);
+		// ambiguous and nonexistent local times as RFC 5545 requires (PHP is not consistent)
+		return (new DateTimeImmutable('@' . LocalTime::timestamp($timezone, $this->dateTime->getTimestamp())))->setTimezone($timezone);
 	}
 
 	/**

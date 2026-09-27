@@ -53,10 +53,10 @@ final class Validator {
 	 */
 	public function validate(Calendar $calendar): array {
 		$this->issues = [];
-		$this->values = new ValueParser($calendar->component);
+		$this->values = new ValueParser($calendar->component, $calendar->timezoneResolver());
 		$this->definedTimezones = [];
-		foreach ($calendar->component->components('VTIMEZONE') as $timezone) {
-			$tzid = $timezone->property('TZID')?->value;
+		foreach ($calendar->timezones() as $timezone) {
+			$tzid = $timezone->tzid();
 			if ($tzid !== null) {
 				$this->definedTimezones[$tzid] = true;
 			}

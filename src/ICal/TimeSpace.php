@@ -7,6 +7,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use om\ICal\Value\DateTimeValue;
+use om\RRule\LocalTime;
 
 /**
  * Timestamps comparable with the start of a recurring item.
@@ -42,6 +43,18 @@ final readonly class TimeSpace {
 
 	public function fromBase(int $timestamp): DateTimeValue {
 		return $this->start->withDateTime(new DateTimeImmutable('@' . $timestamp));
+	}
+
+	/**
+	 * Move a value by wall-clock seconds (the local time changes by exactly that much, also over DST).
+	 */
+	public function shift(DateTimeValue $value, int $seconds): DateTimeValue {
+		if ($seconds === 0) {
+			return $value;
+		}
+		$local = $value->wallClockAsUtc()->getTimestamp() + $seconds;
+		$instant = $this->local ? $local : LocalTime::timestamp($this->timezone, $local);
+		return $this->fromBase($instant);
 	}
 
 	/**

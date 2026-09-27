@@ -6,6 +6,7 @@ namespace om\ICal;
 use DateInterval;
 use DateTimeInterface;
 use Generator;
+use om\ICal\Exception\ResourceLimitException;
 use om\ICal\Value\CalAddress;
 use om\ICal\Value\DateTimeValue;
 use om\RRule\RecurrenceSet;
@@ -273,9 +274,34 @@ abstract class Item {
 			return;
 		}
 
-		$limits = $this->calendar->recurrenceLimits();
-		$exdays = [];
-		$exdates = [];
+		// overrides: single ones replace their instance, RANGE=THISANDFUTURE ones also change later instances
+		$singles = $replaced = $replacedDays = $ranges = [];
+		$earliest = 0; // the largest shift of a range to an earlier time, in seconds
+		foreach ($this->overrides as $override) {
+			$id = $override->recurrenceId();
+			if ($id === null) {
+				continue;
+			}
+			$overrideStart = $override->start();
+			$durationOf = $overrideStart === null ? $this : $override; // without DTSTART the instance keeps its time and length
+			if ($override->isThisAndFuture()) {
+				$shift = $overrideStart === null ? 0 : $overrideStart->wallClockAsUtc()->getTimestamp() - $id->wallClockAsUtc()->getTimestamp();
+				$ranges[$space->toBase($id)] = [$override, $shift, $durationOf];
+				$earliest = max($earliest, -$shift);
+				continue;
+			}
+			$id->isDate() && !$start->isDate() ? $replacedDays[$id->format('Ymd')] = true : $replaced[$space->toBase($id)] = true;
+			$overrideStart ??= $space->fromBase($space->toBase($id));
+			$occurrence = new Occurrence($overrideStart, $overrideStart->add($durationOf->duration()), $override, $this, $id);
+			if (($includeCancelled || !$override->isCancelled()) && $space->overlaps($occurrence, $fromTs, $toTs)) {
+				$singles[] = $occurrence;
+			}
+		}
+		ksort($ranges);
+		// an instance may move into the window from its end (DST changes add at most a few hours)
+		$slack = $earliest === 0 ? 0 : $earliest + 7200;
+
+		$exdays = $exdates = [];
 		foreach ($this->exceptionDates() as $date) {
 			if ($date->isDate() && !$start->isDate()) {
 				$exdays[] = $date->format('Ymd');
@@ -283,76 +309,55 @@ abstract class Item {
 				$exdates[] = $space->toBase($date);
 			}
 		}
+		$limits = $this->calendar->recurrenceLimits();
 		$set = new RecurrenceSet(
 			$space->start(),
 			$this->recurrenceRules(),
 			rdates: array_map($space->toBase(...), $this->recurrenceDates()),
 			exdates: $exdates,
 			exdays: $exdays,
-			until: $toTs === null ? null : $toTs - 1,
-			limit: $limits->maxInstances,
-			strict: true,
+			until: $toTs === null ? null : $toTs - 1 + $slack,
 			maxIterations: $limits->maxIterations,
 		);
 
-		// modified instances: single overrides are returned at their own time, ranges shift later instances
-		$singles = $replaced = $replacedDays = $ranges = [];
-		foreach ($this->overrides as $override) {
-			$id = $override->recurrenceId();
-			if ($id === null) {
-				continue;
-			}
-			if ($override->isThisAndFuture()) {
-				$ranges[$space->toBase($id)] = $override;
-				continue;
-			}
-			$id->isDate() && !$start->isDate() ? $replacedDays[$id->format('Ymd')] = true : $replaced[$space->toBase($id)] = true;
-			$overrideStart = $override->start() ?? $space->fromBase($space->toBase($id));
-			$occurrence = new Occurrence($overrideStart, $overrideStart->add($override->duration()), $override, $this, $id);
-			if (($includeCancelled || !$override->isCancelled()) && $space->overlaps($occurrence, $fromTs, $toTs)) {
-				$singles[] = $occurrence;
-			}
-		}
-		ksort($ranges);
-		usort($singles, fn(Occurrence $a, Occurrence $b): int => $space->toBase($a->start) <=> $space->toBase($b->start));
-
+		// occurrences are buffered while a later instance may still move before them
+		$buffer = new OccurrenceBuffer($space, $singles);
 		$count = 0;
 		foreach ($set as $timestamp) {
-			if ($toTs !== null && $timestamp >= $toTs) {
+			if ($toTs !== null && $timestamp >= $toTs + $slack) {
 				break;
 			}
 			$id = $space->fromBase($timestamp);
-			if (isset($replaced[$timestamp]) || ($replacedDays !== [] && isset($replacedDays[$id->format('Ymd')]))) {
-				continue;
-			}
-			[$item, $occurrenceStart] = [$this, $id];
-			foreach ($ranges as $rangeId => $range) {
-				if ($rangeId > $timestamp) {
-					break;
+			if (!isset($replaced[$timestamp]) && ($replacedDays === [] || !isset($replacedDays[$id->format('Ymd')]))) {
+				[$item, $occurrenceStart, $durationOf] = [$this, $id, $this];
+				foreach ($ranges as $rangeId => [$range, $shift, $rangeDuration]) {
+					if ($rangeId > $timestamp) {
+						break;
+					}
+					[$item, $occurrenceStart, $durationOf] = [$range, $space->shift($id, $shift), $rangeDuration];
 				}
-				$item = $range;
-				$shift = $space->toBase($range->start() ?? $id) - $rangeId;
-				$occurrenceStart = $space->fromBase($timestamp + $shift);
+				$occurrence = new Occurrence($occurrenceStart, $occurrenceStart->add($durationOf->duration()), $item, $this, $id);
+				if (($includeCancelled || !$item->isCancelled()) && $space->overlaps($occurrence, $fromTs, $toTs)) {
+					$buffer->add($occurrence);
+				}
 			}
-			$occurrence = new Occurrence($occurrenceStart, $occurrenceStart->add($item->duration()), $item, $this, $id);
-			if ((!$includeCancelled && $item->isCancelled()) || !$space->overlaps($occurrence, $fromTs, $toTs)) {
-				continue;
-			}
-			while ($singles !== [] && $space->toBase($singles[0]->start) <= $timestamp) {
-				yield array_shift($singles);
+			foreach ($buffer->ready($timestamp - $slack) as $occurrence) {
+				yield $occurrence;
 				if (++$count >= $limit) {
 					return;
 				}
+				if ($count > $limits->maxInstances) {
+					throw ResourceLimitException::create('recurrence.limit', "Recurrence occurrence limit of {$limits->maxInstances} exceeded.");
+				}
 			}
+		}
+		foreach ($buffer->ready(PHP_INT_MAX) as $occurrence) {
 			yield $occurrence;
 			if (++$count >= $limit) {
 				return;
 			}
-		}
-		foreach ($singles as $single) {
-			yield $single;
-			if (++$count >= $limit) {
-				return;
+			if ($count > $limits->maxInstances) {
+				throw ResourceLimitException::create('recurrence.limit', "Recurrence occurrence limit of {$limits->maxInstances} exceeded.");
 			}
 		}
 	}
@@ -408,7 +413,9 @@ abstract class Item {
 			return $start->wallClockAsUtc()->diff($end->wallClockAsUtc());
 		}
 		$seconds = $end->toDateTime(null, $start->timezone())->getTimestamp() - $start->toDateTime()->getTimestamp();
-		$interval = new DateInterval('PT' . abs($seconds) . 'S');
+		// hours, minutes and seconds are elapsed time, days would keep the local time instead
+		$absolute = abs($seconds);
+		$interval = new DateInterval(sprintf('PT%dH%dM%dS', intdiv($absolute, 3600), intdiv($absolute % 3600, 60), $absolute % 60));
 		$interval->invert = $seconds < 0 ? 1 : 0;
 		return $interval;
 	}

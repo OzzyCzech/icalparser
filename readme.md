@@ -37,7 +37,8 @@ foreach ($calendar->events() as $event) {
 $from = new DateTimeImmutable('2026-01-01');
 $to = new DateTimeImmutable('2026-02-01');
 foreach ($calendar->occurrencesBetween($from, $to) as $occurrence) {
-	printf("%s %s%s\n", $occurrence->startTime()->format('j. n. H:i'), $occurrence->summary(), $occurrence->isModified() ? ' (changed)' : '');
+	// the local time; ->startTime($timezone) gives an instant (see "Dates and times")
+	printf("%s %s%s\n", $occurrence->start->format('j. n. H:i'), $occurrence->summary(), $occurrence->isModified() ? ' (changed)' : '');
 }
 ```
 

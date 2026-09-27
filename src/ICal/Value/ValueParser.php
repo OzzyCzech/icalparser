@@ -105,6 +105,7 @@ final class ValueParser {
 	public function dateTimes(Property $property): array {
 		$result = [];
 		foreach (explode(',', $property->value) as $item) {
+			$this->periodSuffix($item, $property);
 			$value = $this->parseDate(explode('/', $item, 2)[0], $property);
 			if ($value !== null) {
 				$result[] = $value;
@@ -237,6 +238,7 @@ final class ValueParser {
 			$this->timezone($tzid);
 		}
 		foreach (explode(',', $property->value) as $item) {
+			$this->periodSuffix($item, $property);
 			$value = $this->normalizeDate(explode('/', $item, 2)[0], $property, $date);
 			if (!DateTimeValue::isValid($value, $date)) {
 				$this->fail(InvalidValueException::create('value.invalid-date-time', 'Invalid DATE-TIME value: ' . $value, rawValue: $value), $property);
@@ -250,17 +252,26 @@ final class ValueParser {
 	 * @param-out bool $date whether the value is read as a DATE
 	 */
 	private function normalizeDate(string $value, Property $property, ?bool &$date): string {
+		$repaired = false;
 		if (!$this->strict && preg_match('/^\s*\d{8}Z\s*$/Di', $value)) {
 			$value = substr(trim($value), 0, 8); // a date with "Z" (written by Google) is a date
 			$this->problem('value.nonstandard', "The date $value has a \"Z\" suffix, it was read as a date.");
+			$repaired = true;
 		}
 		$date = strtoupper($property->parameter('VALUE') ?? '') === 'DATE';
 		if ($date && !$this->strict && preg_match('/^\s*\d{8}T\d{6}Z?\s*$/Di', $value)) {
 			$date = false;
 			$this->problem('value.nonstandard', "The value $value has VALUE=DATE and a time, it was read as a DATE-TIME.");
 		}
-		if (preg_match('/T\d{4}60Z?$/Di', trim($value))) {
-			$this->problem('value.nonstandard', "The leap second of $value was read as second 59.");
+		$trimmed = strtoupper(trim($value));
+		if (!$date && !$repaired && preg_match('/^\d{8}$/D', $trimmed)) {
+			$this->nonstandard("The date $value has no VALUE=DATE parameter.", $property);
+		}
+		if (str_ends_with($trimmed, 'Z') && strlen($trimmed) === 16 && $property->parameter('TZID') !== null) {
+			$this->nonstandard("The UTC value $value has a TZID parameter, it was ignored.", $property);
+		}
+		if (preg_match('/T\d{4}60Z?$/D', $trimmed)) {
+			$this->problem('value.leap-second', "The leap second of $value was read as second 59.");
 		}
 		return $value;
 	}
@@ -285,6 +296,25 @@ final class ValueParser {
 		}
 		$this->problem('value.invalid', $e->getMessage() . " in $property->name, it was ignored.");
 		return null;
+	}
+
+	/**
+	 * A PERIOD where only RDATE;VALUE=PERIOD and FREEBUSY allow it; its start is used.
+	 */
+	private function periodSuffix(string $item, Property $property): void {
+		if (str_contains($item, '/') && $property->name !== 'FREEBUSY' && !($property->name === 'RDATE' && strtoupper($property->parameter('VALUE') ?? '') === 'PERIOD')) {
+			$this->nonstandard("The period $item is not allowed in $property->name, its start was used.", $property);
+		}
+	}
+
+	/**
+	 * A value breaking the RFC that is accepted in permissive mode.
+	 */
+	private function nonstandard(string $message, Property $property): void {
+		if ($this->strict) {
+			throw InvalidValueException::create('value.nonstandard', $message, $property->line, $property->name, $property->value);
+		}
+		$this->problem('value.nonstandard', $message);
 	}
 
 	private function problem(string $code, string $message): void {

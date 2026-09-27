@@ -96,7 +96,10 @@ final class LineReader {
 				$lineEndingReported = true;
 				$warn('syntax.line-ending', 'Line breaks other than CRLF were normalized.', $number + substr_count($buffer, "\n", 0, (int) $match[0][1]) + 1);
 			}
-			if ($first && $buffer !== '') {
+			if ($first) {
+				if (strlen($buffer) < 3 && !$end) {
+					continue; // wait for enough bytes to recognize a byte order mark
+				}
 				$buffer = str_starts_with($buffer, "\u{FEFF}") ? substr($buffer, 3) : $buffer;
 				$first = false;
 			}
@@ -113,6 +116,9 @@ final class LineReader {
 			foreach ($parts as $physical) {
 				$number++;
 				if ($physical !== '' && ($physical[0] === ' ' || $physical[0] === "\t")) {
+					if ($line === null && $warn !== null) {
+						$warn('syntax.invalid-line', 'A continuation line without a line to continue was ignored.', $number);
+					}
 					if ($line !== null) {
 						$line .= substr($physical, 1);
 						if (strlen($line) > $maxLineLength) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace om\ICal;
 
 use Countable;
+use InvalidArgumentException;
 use IteratorAggregate;
 use Traversable;
 
@@ -26,7 +27,7 @@ final class Parameters implements IteratorAggregate, Countable {
 	public static function from(array $parameters): self {
 		$values = [];
 		foreach ($parameters as $name => $value) {
-			$values[strtoupper($name)] = array_map('strval', (array) $value);
+			$values[strtoupper(self::name($name))] = array_map('strval', (array) $value);
 		}
 		return new self($values);
 	}
@@ -56,7 +57,7 @@ final class Parameters implements IteratorAggregate, Countable {
 			if ($char === ';') {
 				if (!$inName && trim($name) !== '') {
 					$list[] = $value;
-					$values[strtoupper(trim($name))] = $list;
+					$values[strtoupper(trim($name))] = array_map(self::decode(...), $list);
 				}
 				[$name, $value, $list, $inName] = ['', '', [], true];
 			} elseif ($inName) {
@@ -104,7 +105,7 @@ final class Parameters implements IteratorAggregate, Countable {
 		if ($value === null) {
 			unset($values[strtoupper($name)]);
 		} else {
-			$values[strtoupper($name)] = (array) $value;
+			$values[strtoupper(self::name($name))] = (array) $value;
 		}
 		return new self($values);
 	}
@@ -125,16 +126,34 @@ final class Parameters implements IteratorAggregate, Countable {
 	}
 
 	/**
-	 * Serialized form without the leading semicolon; values with ":", ";" or "," are quoted.
+	 * Serialized form without the leading semicolon. Values with ":", ";" or "," are quoted,
+	 * DQUOTE, newlines and "^" are encoded as RFC 6868 requires, other control characters are removed.
 	 */
 	public function __toString(): string {
 		$parts = [];
 		foreach ($this->values as $name => $values) {
-			$parts[] = $name . '=' . implode(',', array_map(
-				static fn(string $value): string => strpbrk($value, ':;,') === false ? $value : '"' . str_replace('"', "'", $value) . '"',
-				$values,
-			));
+			$parts[] = $name . '=' . implode(',', array_map(self::encode(...), $values));
 		}
 		return implode(';', $parts);
+	}
+
+	private static function encode(string $value): string {
+		$value = strtr($value, ['^' => '^^', "\r\n" => '^n', "\n" => '^n', "\r" => '^n', '"' => "^'"]);
+		$value = (string) preg_replace('/[\x00-\x08\x0A-\x1F\x7F]/', '', $value);
+		return strpbrk($value, ':;,') === false ? $value : '"' . $value . '"';
+	}
+
+	/**
+	 * RFC 6868: ^n is a newline, ^' a DQUOTE and ^^ a caret.
+	 */
+	private static function decode(string $value): string {
+		return str_contains($value, '^') ? strtr($value, ['^^' => '^', '^n' => "\n", '^N' => "\n", "^'" => '"']) : $value;
+	}
+
+	private static function name(string $name): string {
+		if (!preg_match('/^[A-Za-z0-9-]+$/D', $name)) {
+			throw new InvalidArgumentException("Invalid parameter name: $name");
+		}
+		return $name;
 	}
 }

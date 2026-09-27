@@ -104,7 +104,12 @@ test('Strict mode rejects invalid values and rules', function () {
 	Assert::type(InvalidValueException::class, strict($event('SEQUENCE:first')));
 	Assert::same(['value.invalid@3'], warnings($event('SEQUENCE:first')), 'permissive parsing reports invalid values');
 	Assert::same(['value.nonstandard@3'], warnings($event('RDATE:20261010Z')), 'and values accepted although they break the RFC');
-	Assert::same(['value.nonstandard@3'], warnings($event('DTSTART:20261231T235960Z')));
+	Assert::same(['value.leap-second@3'], warnings($event('DTSTART:20261231T235960Z')), 'allowed by the RFC, but read as second 59');
+	foreach (['DTSTART:20260101', 'DTSTART;VALUE=DATE-TIME:20260101', 'DTSTART;TZID=Europe/Prague:20260101T100000Z', 'DTSTART:20260101T100000Z/PT1H', 'RDATE:20260101T100000Z/PT1H'] as $line) {
+		Assert::same(['value.nonstandard@3'], warnings($event($line)), $line);
+		Assert::same('value.nonstandard', strict($event($line))->errorCode(), $line);
+	}
+	Assert::same([], warnings($event('RDATE;VALUE=PERIOD:20260101T100000Z/PT1H')), 'a PERIOD is allowed here');
 	Assert::same([], array_map(fn($w) => $w->code, ICal::parser()->checkValues(false)->parse($event('SEQUENCE:first'))->warnings()), 'unless turned off');
 	Assert::same(0, ICal::parse($event('SEQUENCE:first'))->events()[0]->sequence(), 'an invalid value is ignored');
 });
@@ -118,6 +123,47 @@ test('Resource limits', function () {
 	Assert::same('limit.file-size', Assert::exception(fn() => ICal::parser()->limits(new ParseLimits(maxFileSize: 100))->parse($many), ResourceLimitException::class)->errorCode());
 	Assert::same('limit.line-length', Assert::exception(fn() => ICal::parser()->limits(new ParseLimits(maxLineLength: 10))->parse($many), ResourceLimitException::class)->errorCode());
 	Assert::count(20, ICal::parser()->limits(ParseLimits::unlimited())->parse($many)->calendar()->events());
+});
+
+test('Regressions of the review: nested calendars, streams, BOM, orphan continuation lines', function () {
+	$result = ICal::parser()->parse(ics('BEGIN:VCALENDAR', 'X-WR-CALNAME:one', 'BEGIN:VEVENT', 'UID:a', 'BEGIN:VCALENDAR', 'X-WR-CALNAME:two', 'BEGIN:VEVENT', 'UID:b', 'END:VEVENT', 'END:VCALENDAR'));
+	Assert::same(['one', 'two'], array_map(fn($calendar) => $calendar->name(), $result->calendars()), 'BEGIN:VCALENDAR closes an open calendar');
+	Assert::same([['a'], ['b']], array_map(fn($calendar) => array_map(fn($event) => $event->uid(), $calendar->events()), $result->calendars()));
+
+	$stream = fopen('php://memory', 'r+b');
+	fwrite($stream, ics('BEGIN:VCALENDAR', 'BEGIN:VEVENT', 'UID:x', 'DTSTART;TZID=Nowhere/Land:20260101T100000', 'DURATION:garbage', 'END:VEVENT', 'END:VCALENDAR'));
+	rewind($stream);
+	$warnings = [];
+	iterator_to_array(ICal::parser()->stream($stream, function ($warning) use (&$warnings) {
+		$warnings[] = $warning->code;
+	}));
+	Assert::same(['timezone.unresolved', 'value.invalid'], $warnings, 'streams check values like parse()');
+	rewind($stream);
+	Assert::exception(fn() => iterator_to_array(ICal::parser()->mode(ParserMode::Strict)->stream($stream)), TimezoneResolutionException::class);
+
+	// a stream delivering one byte per read still recognizes the byte order mark
+	$slow = new class {
+		public mixed $context = null;
+		private string $data = "\u{FEFF}BEGIN:VCALENDAR\r\nVERSION:2.0\r\nEND:VCALENDAR\r\n";
+		private int $position = 0;
+
+		public function stream_open(string $path, string $mode, int $options, ?string &$opened): bool {
+			return true;
+		}
+
+		public function stream_read(int $count): string|false {
+			return $this->position < strlen($this->data) ? $this->data[$this->position++] : '';
+		}
+
+		public function stream_eof(): bool {
+			return $this->position >= strlen($this->data);
+		}
+	};
+	stream_wrapper_register('slowics', $slow::class);
+	Assert::same('2.0', ICal::parser()->mode(ParserMode::Strict)->parseStream(fopen('slowics://x', 'rb'))->calendar()->version());
+	stream_wrapper_unregister('slowics');
+
+	Assert::same(['syntax.invalid-line@1'], warnings(" orphan\r\nBEGIN:VCALENDAR\r\nEND:VCALENDAR\r\n"));
 });
 
 test('Files and streams', function () {

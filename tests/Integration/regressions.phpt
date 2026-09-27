@@ -74,3 +74,89 @@ test('#63 getEvents() returns a sortable list', function () {
 	$parser->parseFile(REGRESSION . 'issue-82-utc-z.ics');
 	Assert::count(4, $parser->getEvents()->sorted());
 });
+
+/**
+ * @return list<string>
+ */
+function series(string $lines, string $from, string $to, string $format = 'm-d H:i', ?int $limit = null, ?string $limitFrom = null): array {
+	$calendar = ICal::parse("BEGIN:VCALENDAR\r\n" . $lines . "\r\nEND:VCALENDAR\r\n");
+	$event = $calendar->events()[0];
+	$occurrences = $limit === null
+		? $event->occurrencesBetween(new DateTimeImmutable($from), new DateTimeImmutable($to))
+		: $event->occurrences($limit, new DateTimeImmutable((string) $limitFrom));
+	return array_map(fn($o) => $o->start->format($format) . ($o->isModified() ? ' *' : ''), iterator_to_array($occurrences, false));
+}
+
+test('Review: the instance limit counts occurrences of the window, not since DTSTART', function () {
+	$event = "BEGIN:VEVENT\r\nUID:h\r\nDTSTART:20000101T100000Z\r\nRRULE:FREQ=HOURLY\r\nEND:VEVENT";
+	Assert::same(['2026-01-01 00:00', '2026-01-01 01:00', '2026-01-01 02:00'], series($event, '2026-01-01T00:00:00Z', '2026-01-01T03:00:00Z', 'Y-m-d H:i'));
+	Assert::same(['2026-01-01 00:00', '2026-01-01 01:00'], series($event, '', '', 'Y-m-d H:i', 2, '2026-01-01T00:00:00Z'));
+});
+
+test('Review: THISANDFUTURE keeps the local time over DST, without DTSTART it keeps the instance', function () {
+	$dst = "BEGIN:VEVENT\r\nUID:w\r\nDTSTART;TZID=Europe/Prague:20260321T100000\r\nDTEND;TZID=Europe/Prague:20260321T110000\r\nRRULE:FREQ=WEEKLY;COUNT=4\r\nEND:VEVENT\r\n"
+		. "BEGIN:VEVENT\r\nUID:w\r\nRECURRENCE-ID;TZID=Europe/Prague;RANGE=THISANDFUTURE:20260328T100000\r\nDTSTART;TZID=Europe/Prague:20260329T100000\r\nDTEND;TZID=Europe/Prague:20260329T110000\r\nEND:VEVENT";
+	Assert::same(['03-21 10:00', '03-29 10:00 *', '04-05 10:00 *', '04-12 10:00 *'], series($dst, '2026-03-01', '2026-05-01'));
+
+	$noStart = "BEGIN:VEVENT\r\nUID:d\r\nDTSTART:20260101T100000Z\r\nDTEND:20260101T110000Z\r\nRRULE:FREQ=DAILY;COUNT=5\r\nEND:VEVENT\r\n"
+		. "BEGIN:VEVENT\r\nUID:d\r\nRECURRENCE-ID;RANGE=THISANDFUTURE:20260103T100000Z\r\nSUMMARY:Changed\r\nEND:VEVENT";
+	Assert::same(['01-01 10:00', '01-02 10:00', '01-03 10:00 *', '01-04 10:00 *', '01-05 10:00 *'], series($noStart, '2026-01-01', '2026-02-01'));
+	$calendar = ICal::parse("BEGIN:VCALENDAR\r\n$noStart\r\nEND:VCALENDAR");
+	$last = iterator_to_array($calendar->events()[0]->occurrences(10), false)[4];
+	Assert::same(['Changed', '11:00'], [$last->summary(), $last->end->format('H:i')], 'the length of the recurring event is kept');
+});
+
+test('Review: instances moved into the window by THISANDFUTURE and the order of merged overrides', function () {
+	$base = "BEGIN:VEVENT\r\nUID:r\r\nDTSTART:20260101T100000Z\r\nRRULE:FREQ=DAILY;COUNT=5\r\nEND:VEVENT\r\n";
+	$earlier = $base . "BEGIN:VEVENT\r\nUID:r\r\nRECURRENCE-ID;RANGE=THISANDFUTURE:20260103T100000Z\r\nDTSTART:20260102T120000Z\r\nEND:VEVENT";
+	Assert::same(['01-02 10:00', '01-02 12:00 *'], series($earlier, '2026-01-02T00:00:00Z', '2026-01-03T00:00:00Z'));
+
+	$mixed = $base . "BEGIN:VEVENT\r\nUID:r\r\nRECURRENCE-ID;RANGE=THISANDFUTURE:20260103T100000Z\r\nDTSTART:20260103T150000Z\r\nEND:VEVENT\r\n"
+		. "BEGIN:VEVENT\r\nUID:r\r\nRECURRENCE-ID:20260105T100000Z\r\nDTSTART:20260104T120000Z\r\nEND:VEVENT";
+	Assert::same(['01-01 10:00', '01-02 10:00', '01-03 15:00 *', '01-04 12:00 *', '01-04 15:00 *'], series($mixed, '2026-01-01', '2026-02-01'));
+	Assert::same(['01-01 10:00', '01-02 10:00', '01-03 15:00 *', '01-04 12:00 *'], series($mixed, '', '', 'm-d H:i', 4, '2026-01-01'));
+});
+
+test('Review: floating values resolve repeated local times to the first occurrence', function () {
+	$prague = new DateTimeZone('Europe/Prague');
+	Assert::same('+02:00', ICal\Value\DateTimeValue::parse('20261025T023000')->toDateTime($prague)->format('P'));
+	$exdate = "BEGIN:VEVENT\r\nUID:x\r\nDTSTART;TZID=Europe/Prague:20261024T023000\r\nRRULE:FREQ=DAILY;COUNT=3\r\nEXDATE:20261025T023000\r\nEND:VEVENT";
+	Assert::same(['10-24 02:30', '10-26 02:30'], series($exdate, '2026-10-01', '2026-11-01'));
+	$event = ICal::parse("BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nUID:d\r\nDTSTART;TZID=Europe/Prague:20261025T020000\r\nDTEND;TZID=Europe/Prague:20261025T023000\r\nEND:VEVENT\r\nEND:VCALENDAR")->events()[0];
+	Assert::same(30, $event->duration()->i);
+	Assert::same(0, $event->duration()->h);
+	Assert::true(ICal\Value\DateTimeValue::fromDateTime(new DateTimeImmutable('now', new DateTimeZone('Etc/UTC')))->isUtc());
+});
+
+test('Review: values, parameters and escaped TZIDs', function () {
+	$calendar = ICal::parse("BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nUID:x\r\nDTSTART:20260101T100000Z\r\nDURATION:P9999999999999999W\r\nCATEGORIES:a\\\\,b\r\nEND:VEVENT\r\nEND:VCALENDAR");
+	Assert::same('PT0S', ICal\Value\Duration::format($calendar->events()[0]->duration()), 'an oversized DURATION is ignored');
+	Assert::same(['a\\', 'b'], $calendar->events()[0]->categories());
+
+	$injected = ICal\Property::create('ATTENDEE', 'mailto:a@example.org', ['CN' => "Eve\r\nEND:VEVENT\r\nBEGIN:VEVENT\r\nUID:injected"]);
+	$ics = ICal\Calendar::create()->withComponent(new ICal\Component('VEVENT', [ICal\Property::create('UID', '1'), $injected, ICal\Property::create('SUMMARY', "a\r\nBEGIN:VEVENT")]))->serialize();
+	$parsed = ICal::parse($ics);
+	Assert::count(1, $parsed->events(), 'no content line can be injected');
+	Assert::same("Eve\nEND:VEVENT\nBEGIN:VEVENT\nUID:injected", $parsed->events()[0]->attendees()[0]->name(), 'RFC 6868 keeps the value');
+	Assert::same('The "Boss" x', ICal\Parameters::parse((string) ICal\Parameters::from(['CN' => 'The "Boss" x']))->get('CN'));
+	Assert::exception(fn() => ICal\Property::create('BAD:NAME', 'x'), InvalidArgumentException::class);
+	Assert::exception(fn() => ICal\Parameters::from(['BAD NAME' => 'x']), InvalidArgumentException::class);
+
+	$escaped = ICal::parse(implode("\r\n", [
+		'BEGIN:VCALENDAR', 'BEGIN:VTIMEZONE', 'TZID:My Zone\, Custom',
+		'BEGIN:STANDARD', 'DTSTART:16010101T030000', 'TZOFFSETFROM:+0200', 'TZOFFSETTO:+0100', 'RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10', 'END:STANDARD',
+		'BEGIN:DAYLIGHT', 'DTSTART:16010101T020000', 'TZOFFSETFROM:+0100', 'TZOFFSETTO:+0200', 'RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3', 'END:DAYLIGHT',
+		'END:VTIMEZONE', 'BEGIN:VEVENT', 'UID:x', 'DTSTAMP:20260101T000000Z', 'DTSTART;TZID="My Zone, Custom":20260101T100000', 'END:VEVENT', 'END:VCALENDAR',
+	]));
+	Assert::true($escaped->events()[0]->start()->isZoned());
+	Assert::same(['My Zone, Custom'], array_map(fn($definition) => $definition->tzid(), $escaped->timezones()));
+	Assert::same([], array_filter(array_map('strval', (new ICal\Validation\Validator())->validate($escaped)), fn($issue) => str_contains($issue, 'timezone.')));
+});
+
+test('Review: the validator uses the timezone resolver of the calendar', function () {
+	$calendar = ICal::parser()->timezoneResolver(ICal\Timezone\CompositeTimezoneResolver::default(new DateTimeZone('UTC')))
+		->parse("BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nDTSTART;TZID=Nowhere:20260101T100000\r\nEND:VEVENT\r\nEND:VCALENDAR")->calendar();
+	$codes = array_map(fn($issue) => $issue->code, (new ICal\Validation\Validator())->validate($calendar));
+	Assert::notContains('timezone.unresolved', $codes);
+	Assert::contains('timezone.not-defined', $codes);
+});

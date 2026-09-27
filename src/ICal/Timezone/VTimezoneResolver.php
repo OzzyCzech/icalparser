@@ -5,6 +5,7 @@ namespace om\ICal\Timezone;
 
 use DateTimeImmutable;
 use om\ICal\Component;
+use om\ICal\Value\Text;
 use om\TimezoneGuesser;
 use WeakMap;
 
@@ -37,7 +38,8 @@ final class VTimezoneResolver implements TimezoneResolver {
 
 	private function find(string $tzid, Component $calendar): ?ResolvedTimezone {
 		foreach ($calendar->components('VTIMEZONE') as $definition) {
-			if ($definition->property('TZID')?->value !== $tzid) {
+			$defined = $definition->property('TZID')?->value;
+			if ($defined === null || Text::unescape($defined) !== $tzid) {
 				continue;
 			}
 			// X-LIC-LOCATION (Mozilla) and the TZID itself name the intended zone

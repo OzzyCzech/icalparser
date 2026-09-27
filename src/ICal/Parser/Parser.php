@@ -103,6 +103,7 @@ final readonly class Parser {
 			: LineReader::fromStream($input, $this->limits->maxLineLength, $this->limits->maxFileSize, $warn);
 
 		$reported = 0;
+		$reportedTimezones = [];
 		$shell = null;       // properties and VTIMEZONE components of the current calendar
 		$calendar = null;
 		foreach ($builder->build(Tokenizer::rows($lines, $builder->invalidLine(...))) as $kind => $component) {
@@ -127,6 +128,11 @@ final readonly class Parser {
 			$calendar ??= $this->calendar($shell);
 			$item = $calendar->itemOf($component);
 			if ($item !== null) {
+				$this->checkProperties($calendar, self::properties($component), $builder, $reportedTimezones);
+				foreach (array_slice($builder->warnings(), $reported) as $warning) {
+					$onWarning !== null && $onWarning($warning);
+					$reported++;
+				}
 				yield $item;
 			}
 		}
@@ -166,10 +172,18 @@ final readonly class Parser {
 	 * invalid and nonstandard values are warnings, strict mode throws InvalidValueException.
 	 */
 	private function check(Calendar $calendar, TreeBuilder $builder): void {
+		$reported = [];
+		$this->checkProperties($calendar, self::properties($calendar->component), $builder, $reported);
+	}
+
+	/**
+	 * @param iterable<Property> $properties
+	 * @param array<string, true> $reported TZIDs reported already
+	 */
+	private function checkProperties(Calendar $calendar, iterable $properties, TreeBuilder $builder, array &$reported): void {
 		$values = $calendar->values();
 		$strict = $this->mode === ParserMode::Strict;
-		$reported = [];
-		foreach (self::properties($calendar->component) as $property) {
+		foreach ($properties as $property) {
 			$tzid = $property->parameter('TZID');
 			if ($tzid !== null && !isset($reported[$tzid]) && $values->timezone($tzid) === null) {
 				$reported[$tzid] = true;

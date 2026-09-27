@@ -45,8 +45,15 @@ only with a timezone: the one given to `toDateTime($timezone)`, the one configur
 `Parser::floatingTimezone()`, or X-WR-TIMEZONE of the calendar; otherwise a
 `TimezoneResolutionException` is thrown. `format()` always works on the local value.
 
-Local times are converted as RFC 5545 requires: a time repeated by a DST fall-back is its first
-occurrence, a time skipped by a DST gap uses the UTC offset before the gap.
+Local times are converted as RFC 5545 requires, also by `toDateTime()` of dates and floating times:
+a time repeated by a DST fall-back is its first occurrence, a time skipped by a DST gap uses the
+UTC offset before the gap.
+
+## Writing
+
+`Property::create()` validates the property name, `Parameters` validates parameter names and encodes
+values as RFC 6868 requires (`^n`, `^'`, `^^`), and newlines of raw values are written as `\n`, so
+no value can start another content line. Use `Text::escape()` for TEXT values.
 
 ## Timezones
 
