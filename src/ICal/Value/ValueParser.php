@@ -37,6 +37,8 @@ final class ValueParser {
 
 	/** @var array<string, ?ResolvedTimezone> */
 	private array $timezones = [];
+	/** @var list<array{string, string}>|null problems found by diagnose() */
+	private ?array $problems = null;
 	private readonly TimezoneResolver $resolver;
 
 	/**
@@ -193,7 +195,24 @@ final class ValueParser {
 			if ($this->strict) {
 				throw InvalidRecurrenceRuleException::create($e->errorCode(), $e->getMessage(), $property->line, $property->name, $property->value, $e);
 			}
+			$this->problem('value.invalid', $e->getMessage() . ' The RRULE was ignored.');
 			return null;
+		}
+	}
+
+	/**
+	 * Problems of a value as [code, message] pairs: "value.invalid" for an invalid value (null in
+	 * permissive mode), "value.nonstandard" for a value accepted although it breaks the RFC.
+	 *
+	 * @return list<array{string, string}>
+	 */
+	public function diagnose(Property $property): array {
+		$this->problems = [];
+		try {
+			$this->value($property);
+			return $this->problems;
+		} finally {
+			$this->problems = null;
 		}
 	}
 
@@ -211,11 +230,20 @@ final class ValueParser {
 		$tzid = $property->parameter('TZID');
 		if (!$this->strict && preg_match('/^\s*\d{8}Z\s*$/Di', $value)) {
 			$value = substr(trim($value), 0, 8); // a date with "Z" (written by Google) is a date
+			$this->problem('value.nonstandard', "The date $value has a \"Z\" suffix, it was read as a date.");
+		}
+		$date = strtoupper($property->parameter('VALUE') ?? '') === 'DATE';
+		if ($date && !$this->strict && preg_match('/^\s*\d{8}T\d{6}Z?\s*$/Di', $value)) {
+			$date = false;
+			$this->problem('value.nonstandard', "The value $value has VALUE=DATE and a time, it was read as a DATE-TIME.");
+		}
+		if (preg_match('/T\d{4}60Z?$/Di', trim($value))) {
+			$this->problem('value.nonstandard', "The leap second of $value was read as second 59.");
 		}
 		try {
 			return DateTimeValue::parse(
 				$value,
-				strtoupper($property->parameter('VALUE') ?? '') === 'DATE',
+				$date,
 				$tzid,
 				$tzid === null ? null : $this->timezone($tzid)?->timezone,
 			);
@@ -225,13 +253,20 @@ final class ValueParser {
 	}
 
 	private function invalid(string $type, Property $property): null {
-		return $this->fail(InvalidValueException::create('value.invalid-' . strtolower($type), "Invalid $type value", $property->line, $property->name, $property->value), $property);
+		return $this->fail(InvalidValueException::create('value.invalid-' . strtolower($type), "Invalid $type value", rawValue: $property->value), $property);
 	}
 
 	private function fail(InvalidValueException $e, Property $property): null {
 		if ($this->strict) {
 			throw InvalidValueException::create($e->errorCode(), $e->getMessage() . " in $property->name", $property->line, $property->name, $property->value, $e);
 		}
+		$this->problem('value.invalid', $e->getMessage() . " in $property->name, it was ignored.");
 		return null;
+	}
+
+	private function problem(string $code, string $message): void {
+		if ($this->problems !== null) {
+			$this->problems[] = [$code, $message];
+		}
 	}
 }

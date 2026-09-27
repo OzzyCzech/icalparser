@@ -1,6 +1,8 @@
 {
     "warnings": [
-        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]",
+        "line 10: The value 20260101T100000 has VALUE=DATE and a time, it was read as a DATE-TIME. [value.nonstandard]",
+        "line 11: The value 20260101T110000 has VALUE=DATE and a time, it was read as a DATE-TIME. [value.nonstandard]"
     ],
     "calendars": [
         {
@@ -9,6 +11,8 @@
                     "type": "VEVENT",
                     "uid": "test-issue-75",
                     "summary": "Twice Weekly Event",
+                    "start": "2026-01-01 10:00:00 (floating)",
+                    "end": "2026-01-01 11:00:00 (floating)",
                     "rrules": [
                         "FREQ=WEEKLY;UNTIL=20260131T235959Z;BYDAY=TU,TH"
                     ],
@@ -16,13 +20,22 @@
                     "x-properties": [
                         "X-MICROSOFT-CDO-ALLDAYEVENT",
                         "X-MICROSOFT-CDO-BUSYSTATUS"
+                    ],
+                    "occurrences": [
+                        "2026-01-01 10:00:00 (floating) – 2026-01-01 11:00:00 (floating)",
+                        "2026-01-06 10:00:00 (floating) – 2026-01-06 11:00:00 (floating)",
+                        "2026-01-08 10:00:00 (floating) – 2026-01-08 11:00:00 (floating)",
+                        "2026-01-13 10:00:00 (floating) – 2026-01-13 11:00:00 (floating)",
+                        "2026-01-15 10:00:00 (floating) – 2026-01-15 11:00:00 (floating)",
+                        "2026-01-20 10:00:00 (floating) – 2026-01-20 11:00:00 (floating)",
+                        "2026-01-22 10:00:00 (floating) – 2026-01-22 11:00:00 (floating)",
+                        "2026-01-27 10:00:00 (floating) – 2026-01-27 11:00:00 (floating)",
+                        "2026-01-29 10:00:00 (floating) – 2026-01-29 11:00:00 (floating)"
                     ]
                 }
             ],
             "issues": [
-                "ERROR VEVENT.DTSTART (line 10): Invalid value \"20260101T100000\". [value.invalid]",
-                "ERROR VEVENT.DTEND (line 11): Invalid value \"20260101T110000\". [value.invalid]",
-                "ERROR VEVENT.RRULE: A recurring component requires DTSTART. [recurrence.without-start]"
+                "ERROR VEVENT.RRULE (line 13): UNTIL must have the value type of DTSTART (UTC for zoned times). [recurrence.until-type]"
             ]
         }
     ]

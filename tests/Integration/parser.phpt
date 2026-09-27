@@ -102,8 +102,11 @@ test('Strict mode rejects invalid values and rules', function () {
 	Assert::same(['DTSTART', 3], [$exception->property(), $exception->line()]);
 	Assert::type(InvalidRecurrenceRuleException::class, strict($event('RRULE:FREQ=DAILY;BYHOUR=99')));
 	Assert::type(InvalidValueException::class, strict($event('SEQUENCE:first')));
-	Assert::same([], warnings($event('SEQUENCE:first')), 'permissive parsing does not convert values, see Validator');
-	Assert::null(ICal::parse($event('SEQUENCE:first'))->events()[0]->priority());
+	Assert::same(['value.invalid@3'], warnings($event('SEQUENCE:first')), 'permissive parsing reports invalid values');
+	Assert::same(['value.nonstandard@3'], warnings($event('RDATE:20261010Z')), 'and values accepted although they break the RFC');
+	Assert::same(['value.nonstandard@3'], warnings($event('DTSTART:20261231T235960Z')));
+	Assert::same([], array_map(fn($w) => $w->code, ICal::parser()->checkValues(false)->parse($event('SEQUENCE:first'))->warnings()), 'unless turned off');
+	Assert::same(0, ICal::parse($event('SEQUENCE:first'))->events()[0]->sequence(), 'an invalid value is ignored');
 });
 
 test('Resource limits', function () {

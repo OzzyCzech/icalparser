@@ -1,6 +1,8 @@
 {
     "warnings": [
-        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]",
+        "line 12: Invalid DATE-TIME value: 2014929 in DTSTART, it was ignored. [value.invalid]",
+        "line 26: Invalid DATE-TIME value: 2014930 in DTEND, it was ignored. [value.invalid]"
     ],
     "calendars": [
         {

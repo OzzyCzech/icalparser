@@ -36,17 +36,20 @@ a `ParseWarning` with a stable `code`, a `message`, the `line` and the `property
 | `syntax.missing-end` | an END was missing, the component was closed (also when a new VEVENT, VTODO, ... starts inside an open component) |
 | `syntax.no-calendar` | the input contains no VCALENDAR |
 | `timezone.unresolved` | a TZID cannot be resolved, its times stay floating |
+| `value.invalid` | a value does not match its type; it is ignored (`null`), an invalid RRULE makes the item a single one |
+| `value.nonstandard` | a value breaking the RFC was accepted: a date with a `Z` suffix (Google), `VALUE=DATE` with a time, a leap second |
 
-Unknown properties, parameters and components are kept. Values are converted only when they
-are read (see [values](values.md)); an invalid value is `null` then. Use the
-[validator](validation.md) to find invalid values and RFC violations.
+Unknown properties, parameters and components are kept. Values of known types are converted during
+parsing to report the `value.*` warnings; `->checkValues(false)` skips that for faster parsing of
+large files, values are then converted only when they are read (see [values](values.md)).
+The [validator](validation.md) reports RFC violations that are not repaired.
 
 ## Strict mode
 
-For validation, tests and debugging. Every problem of the table above throws a `SyntaxException`
-(`TimezoneResolutionException` for `timezone.unresolved`), and every value of a known type is
-converted during parsing, so an invalid DATE-TIME, DURATION, INTEGER, ... throws an
-`InvalidValueException` and an invalid RRULE an `InvalidRecurrenceRuleException`.
+For validation, tests and debugging. Every problem of the table above throws: a `SyntaxException`,
+a `TimezoneResolutionException` for `timezone.unresolved`, an `InvalidValueException` for an invalid
+or nonstandard DATE-TIME, DURATION, INTEGER, ... and an `InvalidRecurrenceRuleException` for an
+invalid RRULE.
 
 ## Exceptions
 

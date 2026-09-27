@@ -31,31 +31,41 @@ final readonly class Parser {
 		private RecurrenceLimits $recurrenceLimits = new RecurrenceLimits(),
 		?TimezoneResolver $timezoneResolver = null,
 		private ?DateTimeZone $floatingTimezone = null,
+		private bool $checkValues = true,
 	) {
 		$this->timezoneResolver = $timezoneResolver ?? CompositeTimezoneResolver::default();
 	}
 
 	public function mode(ParserMode $mode): self {
-		return new self($mode, $this->limits, $this->recurrenceLimits, $this->timezoneResolver, $this->floatingTimezone);
+		return new self($mode, $this->limits, $this->recurrenceLimits, $this->timezoneResolver, $this->floatingTimezone, $this->checkValues);
 	}
 
 	public function limits(ParseLimits $limits): self {
-		return new self($this->mode, $limits, $this->recurrenceLimits, $this->timezoneResolver, $this->floatingTimezone);
+		return new self($this->mode, $limits, $this->recurrenceLimits, $this->timezoneResolver, $this->floatingTimezone, $this->checkValues);
 	}
 
 	public function recurrenceLimits(RecurrenceLimits $limits): self {
-		return new self($this->mode, $this->limits, $limits, $this->timezoneResolver, $this->floatingTimezone);
+		return new self($this->mode, $this->limits, $limits, $this->timezoneResolver, $this->floatingTimezone, $this->checkValues);
 	}
 
 	public function timezoneResolver(TimezoneResolver $resolver): self {
-		return new self($this->mode, $this->limits, $this->recurrenceLimits, $resolver, $this->floatingTimezone);
+		return new self($this->mode, $this->limits, $this->recurrenceLimits, $resolver, $this->floatingTimezone, $this->checkValues);
 	}
 
 	/**
 	 * Timezone of dates and floating times (instead of X-WR-TIMEZONE).
 	 */
 	public function floatingTimezone(?DateTimeZone $timezone): self {
-		return new self($this->mode, $this->limits, $this->recurrenceLimits, $this->timezoneResolver, $timezone);
+		return new self($this->mode, $this->limits, $this->recurrenceLimits, $this->timezoneResolver, $timezone, $this->checkValues);
+	}
+
+	/**
+	 * Convert every value of a known type during parsing and report invalid and nonstandard
+	 * values as warnings (default). Turn it off to parse large files faster; values are then
+	 * checked only when they are read (and by the Validator).
+	 */
+	public function checkValues(bool $check = true): self {
+		return new self($this->mode, $this->limits, $this->recurrenceLimits, $this->timezoneResolver, $this->floatingTimezone, $check);
 	}
 
 	public function parse(string $content): ParseResult {
@@ -152,8 +162,8 @@ final readonly class Parser {
 	}
 
 	/**
-	 * Unresolved TZIDs are warnings (errors in strict mode); strict mode also converts every
-	 * value of a known type, so invalid values fail during parsing.
+	 * Unresolved TZIDs are warnings (errors in strict mode). Values of known types are converted:
+	 * invalid and nonstandard values are warnings, strict mode throws InvalidValueException.
 	 */
 	private function check(Calendar $calendar, TreeBuilder $builder): void {
 		$values = $calendar->values();
@@ -168,8 +178,11 @@ final readonly class Parser {
 				}
 				$builder->warn('timezone.unresolved', "Unknown timezone \"$tzid\", its times are floating.", $property->line, $property->name);
 			}
-			if ($strict && isset(ValueParser::TYPES[$property->name])) {
-				$values->value($property); // throws InvalidValueException in strict mode
+			if (($strict || $this->checkValues) && (isset(ValueParser::TYPES[$property->name]) || $property->parameter('VALUE') !== null)) {
+				// throws InvalidValueException in strict mode
+				foreach ($values->diagnose($property) as [$code, $message]) {
+					$builder->warn($code, $message, $property->line, $property->name);
+				}
 			}
 		}
 	}
