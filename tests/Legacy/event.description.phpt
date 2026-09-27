@@ -10,12 +10,12 @@ use om\IcalParser;
 use Tester\Assert;
 use function tests\test;
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 date_default_timezone_set('Europe/Prague');
 
 test('Blank description test', function () {
 	$cal = new IcalParser();
-	$results = $cal->parseFile(__DIR__ . '/cal/blank_description.ics');
+	$results = $cal->parseFile(__DIR__ . '/../Fixtures/Samples/blank_description.ics');
 	$first = $cal->getEvents()->getIterator()->current();
 
 	Assert::hasKey('DESCRIPTION', $first);
@@ -24,7 +24,7 @@ test('Blank description test', function () {
 
 test('Multiple lines description', function () {
 	$cal = new IcalParser();
-	$cal->parseFile(__DIR__ . '/cal/multiline_description.ics');
+	$cal->parseFile(__DIR__ . '/../Fixtures/Samples/multiline_description.ics');
 	$events = $cal->getEvents()->sorted();
 	$first = $events->getIterator()->current();
 

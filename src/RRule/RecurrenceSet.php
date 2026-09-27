@@ -7,7 +7,7 @@ use DateTime;
 use DateTimeInterface;
 use Generator;
 use IteratorAggregate;
-use RuntimeException;
+use om\ICal\Exception\ResourceLimitException;
 
 /**
  * Recurrence set of RFC 5545, section 3.8.5: RRULE occurrences and RDATE values,
@@ -26,19 +26,23 @@ final class RecurrenceSet implements IteratorAggregate {
 	/** @var array<string, true> */
 	private readonly array $exdays;
 
+	/** @var list<Rule> */
+	private readonly array $rules;
+
 	/**
-	 * @param ?Rule $rule RRULE; without it the set starts with DTSTART only
+	 * @param Rule|list<Rule>|null $rule RRULE (several rules are combined, as in RFC 2445); without it the set starts with DTSTART only
 	 * @param list<int> $rdates RDATE timestamps
 	 * @param list<int> $exdates EXDATE timestamps
 	 * @param list<string> $exdays EXDATE days as "Ymd" in the timezone of DTSTART
 	 * @param ?int $until inclusive end of the RRULE expansion (RDATE values are not limited)
 	 * @param ?int $from RRULE occurrences before this timestamp are skipped
 	 * @param int $limit maximal number of returned occurrences
-	 * @param bool $strict throw RuntimeException instead of stopping at the limit
+	 * @param bool $strict throw ResourceLimitException instead of stopping at the limit
+	 * @param int $maxIterations see Expander
 	 */
 	public function __construct(
 		private readonly DateTimeInterface $start,
-		private readonly ?Rule $rule = null,
+		Rule|array|null $rule = null,
 		array $rdates = [],
 		array $exdates = [],
 		array $exdays = [],
@@ -46,7 +50,9 @@ final class RecurrenceSet implements IteratorAggregate {
 		private readonly ?int $from = null,
 		private readonly int $limit = PHP_INT_MAX,
 		private readonly bool $strict = false,
+		private readonly int $maxIterations = PHP_INT_MAX,
 	) {
+		$this->rules = $rule === null ? [] : ($rule instanceof Rule ? [$rule] : $rule);
 		$rdates = array_values(array_unique($rdates));
 		sort($rdates);
 		$this->rdates = $rdates;
@@ -67,7 +73,7 @@ final class RecurrenceSet implements IteratorAggregate {
 			}
 			if ($count >= $this->limit) {
 				if ($this->strict) {
-					throw new RuntimeException("Recurrence occurrence limit of {$this->limit} exceeded.");
+					throw ResourceLimitException::create('recurrence.limit', "Recurrence occurrence limit of {$this->limit} exceeded.");
 				}
 				return;
 			}
@@ -97,14 +103,34 @@ final class RecurrenceSet implements IteratorAggregate {
 	}
 
 	/**
+	 * Occurrences of all rules merged in order (duplicates are removed later).
+	 *
 	 * @return iterable<int>
 	 */
 	private function ruleOccurrences(): iterable {
-		if ($this->rule === null) {
+		if ($this->rules === []) {
 			return [$this->start->getTimestamp()];
 		}
 		return (function (): Generator {
-			foreach (new Expander($this->rule, $this->start, $this->until) as $timestamp) {
+			$streams = [];
+			foreach ($this->rules as $rule) {
+				$stream = (new Expander($rule, $this->start, $this->until, PHP_INT_MAX, $this->maxIterations))->getIterator();
+				if ($stream->valid()) {
+					$streams[] = $stream;
+				}
+			}
+			while ($streams !== []) {
+				$next = 0;
+				foreach ($streams as $index => $stream) {
+					if ($stream->current() < $streams[$next]->current()) {
+						$next = $index;
+					}
+				}
+				$timestamp = $streams[$next]->current();
+				$streams[$next]->next();
+				if (!$streams[$next]->valid()) {
+					array_splice($streams, $next, 1);
+				}
 				if ($this->from === null || $timestamp >= $this->from) {
 					yield $timestamp;
 				}

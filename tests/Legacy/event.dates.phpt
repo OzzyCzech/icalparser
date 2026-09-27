@@ -10,11 +10,11 @@ use om\IcalParser;
 use Tester\Assert;
 use function tests\test;
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 test('Events with wrong dates', function () {
 	$cal = new IcalParser();
-	$cal->parseFile(__DIR__ . '/cal/wrong_dates.ics');
+	$cal->parseFile(__DIR__ . '/../Fixtures/Samples/wrong_dates.ics');
 	$events = $cal->getEvents()->sorted();
 	Assert::same('29.9.2014 00:00:00', $events[1]['DTSTART']->format('j.n.Y H:i:s'));
 	Assert::same(null, $events[1]['DTEND']);

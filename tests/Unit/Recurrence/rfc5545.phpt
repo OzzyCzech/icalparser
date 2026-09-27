@@ -10,7 +10,7 @@ use om\RRule\Rule;
 use Tester\Assert;
 use function tests\test;
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../../bootstrap.php';
 
 /**
  * @return list<string> local date-times in America/New_York

@@ -7,7 +7,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use Exception;
-use InvalidArgumentException;
+use om\ICal\Exception\InvalidRecurrenceRuleException;
 
 /**
  * Validated recurrence rule (RFC 5545, section 3.3.10).
@@ -28,6 +28,7 @@ final readonly class Rule {
 	 * @param list<int> $byMonth
 	 * @param list<int> $bySetPos
 	 * @param DateTimeImmutable|string|null $until parsed date, or a floating value resolved in the DTSTART timezone
+	 * @param int<1, 7> $wkst
 	 */
 	public function __construct(
 		public Frequency $freq,
@@ -46,10 +47,10 @@ final readonly class Rule {
 		public int $wkst = 1,
 	) {
 		if ($interval < 1) {
-			throw new InvalidArgumentException('INTERVAL must be a positive integer.');
+			throw InvalidRecurrenceRuleException::create('recurrence.invalid-rule', 'INTERVAL must be a positive integer.');
 		}
 		if ($count !== null && $count < 1) {
-			throw new InvalidArgumentException('COUNT must be a positive integer.');
+			throw InvalidRecurrenceRuleException::create('recurrence.invalid-rule', 'COUNT must be a positive integer.');
 		}
 	}
 
@@ -64,7 +65,7 @@ final readonly class Rule {
 			}
 			$pair = explode('=', $part, 2);
 			if (count($pair) !== 2 || $pair[0] === '' || $pair[1] === '') {
-				throw new InvalidArgumentException('Invalid recurrence rule.');
+				throw InvalidRecurrenceRuleException::create('recurrence.invalid-rule', 'Invalid recurrence rule.');
 			}
 			$parts[$pair[0]] = $pair[1];
 		}
@@ -81,7 +82,7 @@ final readonly class Rule {
 		$parts = array_change_key_case($parts, CASE_UPPER);
 		$freq = Frequency::tryFrom(strtoupper(self::scalar($parts['FREQ'] ?? '', 'FREQ')));
 		if ($freq === null) {
-			throw new InvalidArgumentException('Unsupported recurrence frequency: ' . self::scalar($parts['FREQ'] ?? '', 'FREQ'));
+			throw InvalidRecurrenceRuleException::create('recurrence.invalid-rule', 'Unsupported recurrence frequency: ' . self::scalar($parts['FREQ'] ?? '', 'FREQ'));
 		}
 
 		$interval = isset($parts['INTERVAL']) ? self::positiveInt($parts['INTERVAL'], 'INTERVAL') : 1;
@@ -95,7 +96,7 @@ final readonly class Rule {
 		$wkst = 1;
 		if (isset($parts['WKST'])) {
 			$wkst = self::WEEKDAYS[strtoupper(self::scalar($parts['WKST'], 'WKST'))]
-				?? throw new InvalidArgumentException('Invalid WKST value.');
+				?? throw InvalidRecurrenceRuleException::create('recurrence.invalid-rule', 'Invalid WKST value.');
 		}
 
 		return new self(
@@ -114,6 +115,38 @@ final readonly class Rule {
 			bySetPos: self::intList($parts, 'BYSETPOS', -366, 366, false),
 			wkst: $wkst,
 		);
+	}
+
+	/**
+	 * Serialize the rule, e.g. "FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE".
+	 */
+	public function toString(): string {
+		$days = array_flip(self::WEEKDAYS);
+		$parts = ['FREQ' => $this->freq->value];
+		if ($this->until !== null) {
+			$parts['UNTIL'] = is_string($this->until) ? $this->until : $this->until->setTimezone(new DateTimeZone('UTC'))->format('Ymd\THis\Z');
+		}
+		if ($this->count !== null) {
+			$parts['COUNT'] = $this->count;
+		}
+		if ($this->interval !== 1) {
+			$parts['INTERVAL'] = $this->interval;
+		}
+		$lists = [
+			'BYSECOND' => $this->bySecond, 'BYMINUTE' => $this->byMinute, 'BYHOUR' => $this->byHour,
+			'BYDAY' => array_map(static fn(array $day): string => ($day[0] ?: '') . $days[$day[1]], $this->byDay),
+			'BYMONTHDAY' => $this->byMonthDay, 'BYYEARDAY' => $this->byYearDay, 'BYWEEKNO' => $this->byWeekNo,
+			'BYMONTH' => $this->byMonth, 'BYSETPOS' => $this->bySetPos,
+		];
+		foreach ($lists as $name => $values) {
+			if ($values !== []) {
+				$parts[$name] = implode(',', $values);
+			}
+		}
+		if ($this->wkst !== 1) {
+			$parts['WKST'] = $days[$this->wkst];
+		}
+		return implode(';', array_map(static fn(string $name, string|int $value): string => "$name=$value", array_keys($parts), $parts));
 	}
 
 	/**
@@ -145,7 +178,7 @@ final readonly class Rule {
 			[, $year, $month, $day, $hour, $minute, $second, $utc] = $match;
 			$validTime = $hour === null || ((int) $hour < 24 && (int) $minute < 60 && (int) $second <= 60);
 			if (!$validTime || !checkdate((int) $month, (int) $day, (int) $year)) {
-				throw new InvalidArgumentException("Invalid UNTIL value: $value");
+				throw InvalidRecurrenceRuleException::create('recurrence.invalid-rule', "Invalid UNTIL value: $value");
 			}
 			// a date or a floating date-time is resolved later in the timezone of DTSTART
 			return $utc === 'Z' ? new DateTimeImmutable($value) : $value;
@@ -153,7 +186,7 @@ final readonly class Rule {
 		try {
 			return new DateTimeImmutable($value);
 		} catch (Exception) {
-			throw new InvalidArgumentException('UNTIL must be a valid date or timestamp.');
+			throw InvalidRecurrenceRuleException::create('recurrence.invalid-rule', 'UNTIL must be a valid date or timestamp.');
 		}
 	}
 
@@ -161,13 +194,13 @@ final readonly class Rule {
 		if (is_string($value) || is_int($value)) {
 			return trim((string) $value);
 		}
-		throw new InvalidArgumentException($name . ' must be a string.');
+		throw InvalidRecurrenceRuleException::create('recurrence.invalid-rule', $name . ' must be a string.');
 	}
 
 	private static function positiveInt(mixed $value, string $name): int {
 		$value = self::scalar($value, $name);
 		if (!preg_match('/^\+?\d{1,9}$/D', $value) || (int) $value < 1) {
-			throw new InvalidArgumentException($name . ' must be a positive integer.');
+			throw InvalidRecurrenceRuleException::create('recurrence.invalid-rule', $name . ' must be a positive integer.');
 		}
 		return (int) $value;
 	}
@@ -187,11 +220,11 @@ final readonly class Rule {
 				continue; // tolerate "BYHOUR=9," produced by some generators
 			}
 			if (!preg_match('/^[+-]?\d{1,3}$/D', $item)) {
-				throw new InvalidArgumentException("Invalid $name value: $item");
+				throw InvalidRecurrenceRuleException::create('recurrence.invalid-rule', "Invalid $name value: $item");
 			}
 			$value = (int) $item;
 			if ($value < $min || $value > $max || (!$allowZero && $value === 0)) {
-				throw new InvalidArgumentException("$name value out of range: $item");
+				throw InvalidRecurrenceRuleException::create('recurrence.invalid-rule', "$name value out of range: $item");
 			}
 			$values[$value] = $value;
 		}
@@ -214,11 +247,11 @@ final readonly class Rule {
 				continue;
 			}
 			if (!preg_match('/^([+-]?\d{1,2})?(MO|TU|WE|TH|FR|SA|SU)$/D', $item, $match)) {
-				throw new InvalidArgumentException("Invalid BYDAY value: $item");
+				throw InvalidRecurrenceRuleException::create('recurrence.invalid-rule', "Invalid BYDAY value: $item");
 			}
 			$ordinal = (int) $match[1]; // an empty ordinal means every weekday
 			if ($ordinal < -53 || $ordinal > 53) {
-				throw new InvalidArgumentException("BYDAY value out of range: $item");
+				throw InvalidRecurrenceRuleException::create('recurrence.invalid-rule', "BYDAY value out of range: $item");
 			}
 			$values[] = [$ordinal, self::WEEKDAYS[$match[2]]];
 		}

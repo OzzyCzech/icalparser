@@ -10,7 +10,7 @@ use om\ParserOptions;
 use Tester\Assert;
 use function tests\test;
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 date_default_timezone_set('UTC');
 
 function parse(string $content, ?ParserOptions $options = null): IcalParser {

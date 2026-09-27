@@ -10,27 +10,27 @@ use om\IcalParser;
 use Tester\Assert;
 use function tests\test;
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 date_default_timezone_set('Europe/Prague');
 
 test('Natural sort order by date', function () {
 	$cal = new IcalParser();
-	$cal->parseFile(__DIR__ . '/cal/basic.ics');
+	$cal->parseFile(__DIR__ . '/../Fixtures/Samples/basic.ics');
 	$first = $cal->getEvents()->sorted()->getIterator()->current();
 	Assert::same('1.1.2013 00:00:00', $first['DTSTART']->format('j.n.Y H:i:s'));
 });
 
 test('Reverse events sort (parseFile)', function () {
 	$cal = new IcalParser();
-	$cal->parseFile(__DIR__ . '/cal/basic.ics');
+	$cal->parseFile(__DIR__ . '/../Fixtures/Samples/basic.ics');
 	$first = $cal->getEvents()->reversed()->getIterator()->current();
 	Assert::same('26.12.2015 00:00:00', $first['DTSTART']->format('j.n.Y H:i:s'));
 });
 
 test('Reverse events sort (parseString)', function () {
 	$cal = new IcalParser();
-	$cal->parseString(file_get_contents(__DIR__ . '/cal/basic.ics'));
+	$cal->parseString(file_get_contents(__DIR__ . '/../Fixtures/Samples/basic.ics'));
 	$first = $cal->getEvents()->reversed()->getIterator()->current();
 	Assert::same('26.12.2015 00:00:00', $first['DTSTART']->format('j.n.Y H:i:s'));
 });

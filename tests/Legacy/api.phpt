@@ -15,7 +15,7 @@ use om\RRule\Rule;
 use Tester\Assert;
 use function tests\test;
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 date_default_timezone_set('UTC');
 
 /**
@@ -76,7 +76,7 @@ test('EventsList sorts oldest or newest first and puts events without a date las
 
 test('Deprecated accessors return the same results', function () {
 	$parser = new IcalParser();
-	$parser->parseFile(__DIR__ . '/cal/recur_instances_finite.ics');
+	$parser->parseFile(__DIR__ . '/../Fixtures/Samples/recur_instances_finite.ics');
 	Assert::equal($parser->getEvents()->sorted()->getArrayCopy(), $parser->getSortedEvents()->getArrayCopy());
 	Assert::equal($parser->getEvents()->reversed()->getArrayCopy(), $parser->getReverseSortedEvents()->getArrayCopy());
 	Assert::same($parser->getTimezones(), $parser->getTimezone());

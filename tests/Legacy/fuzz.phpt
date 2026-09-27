@@ -10,7 +10,7 @@ use om\IcalParser;
 use om\ParserOptions;
 use Tester\Assert;
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 date_default_timezone_set('Europe/Prague');
 
 set_error_handler(static function (int $severity, string $message, string $file, int $line): never {
@@ -18,7 +18,7 @@ set_error_handler(static function (int $severity, string $message, string $file,
 });
 
 mt_srand(20260927);
-$files = glob(__DIR__ . '/cal/*.ics');
+$files = glob(__DIR__ . '/../Fixtures/Samples/*.ics');
 $mutations = [
 	static fn(string $line): string => substr($line, 0, mt_rand(0, strlen($line))),
 	static fn(string $line): string => $line . ';X=' . chr(mt_rand(32, 126)),

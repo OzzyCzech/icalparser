@@ -5,7 +5,7 @@ use om\IcalParser;
 use Tester\Assert;
 use function tests\test;
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 test('Unfold spaces and tabs, ignore blank lines, preserve component parents', function () {
 	$parser = new IcalParser();
@@ -60,7 +60,7 @@ test('Invalid input preserves previously parsed data', function () {
 });
 
 test('Unreadable files produce a RuntimeException', function () {
-	Assert::exception(fn() => (new IcalParser())->parseFile(__DIR__ . '/cal/not-present.ics'), RuntimeException::class);
+	Assert::exception(fn() => (new IcalParser())->parseFile(__DIR__ . '/../Fixtures/Samples/not-present.ics'), RuntimeException::class);
 });
 
 test('Append mode retains previous events and advances counters', function () {

@@ -10,11 +10,11 @@ use om\IcalParser;
 use Tester\Assert;
 use function tests\test;
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 test('URL parsing check', function () {
 	$cal = new IcalParser();
-	$cal->parseFile(__DIR__ . '/cal/url.ics');
+	$cal->parseFile(__DIR__ . '/../Fixtures/Samples/url.ics');
 	$first = $cal->getEvents()->getIterator()->current();
 
 	Assert::hasKey('URL', $first);

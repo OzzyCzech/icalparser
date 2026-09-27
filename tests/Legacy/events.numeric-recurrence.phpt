@@ -7,7 +7,7 @@ use om\IcalParser;
 use Tester\Assert;
 use Tester\Environment;
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 [$start, $rule, $expected, $excluded] = Environment::loadData();
 $end = (new DateTimeImmutable($start, new DateTimeZone('UTC')))->modify('+1 hour')->format('Ymd\THis');

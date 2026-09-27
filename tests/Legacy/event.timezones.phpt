@@ -7,18 +7,18 @@ use om\IcalParser;
 use Tester\Assert;
 use function tests\test;
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 date_default_timezone_set('Europe/Paris');
 
 test('Normal time zone', function () {
 	$cal = new IcalParser();
-	$cal->parseFile(__DIR__ . '/cal/blank_description.ics');
+	$cal->parseFile(__DIR__ . '/../Fixtures/Samples/blank_description.ics');
 	Assert::same('America/Los_Angeles', $cal->timezone->getName());
 });
 
 test('Negative zero UTC timezone', function () {
 	$cal = new IcalParser();
-	$cal->parseFile(__DIR__ . '/cal/utc_negative_zero.ics');
+	$cal->parseFile(__DIR__ . '/../Fixtures/Samples/utc_negative_zero.ics');
 	Assert::same('Etc/GMT', $cal->timezone->getName());
 });
 
@@ -27,13 +27,13 @@ test('Negative zero UTC timezone', function () {
  */
 test('Time zone with custom prefixes', function () {
 	$cal = new IcalParser();
-	$cal->parseFile(__DIR__ . '/cal/FrenchHolidays.ics');
+	$cal->parseFile(__DIR__ . '/../Fixtures/Samples/FrenchHolidays.ics');
 	Assert::same('Europe/Paris', $cal->timezone->getName());
 });
 
 test('Multi-segment IANA timezones', function () {
 	$cal = new IcalParser();
-	$cal->parseFile(__DIR__ . '/cal/multi_segment_timezone.ics');
+	$cal->parseFile(__DIR__ . '/../Fixtures/Samples/multi_segment_timezone.ics');
 	Assert::same('America/Argentina/Buenos_Aires', $cal->timezone->getName());
 	$events = $cal->getEvents()->sorted();
 	Assert::count(2, $events);
@@ -69,7 +69,7 @@ ICS;
 test('Recurring event with Z timezone (issue #82)', function () {
 	$cal = new IcalParser();
 	Assert::noError(function () use ($cal) {
-		$cal->parseFile(__DIR__ . '/cal/recurring_utc_z.ics');
+		$cal->parseFile(__DIR__ . '/../Fixtures/Samples/recurring_utc_z.ics');
 		$cal->getEvents()->sorted();
 	});
 	$events = $cal->getEvents()->sorted();
@@ -78,7 +78,7 @@ test('Recurring event with Z timezone (issue #82)', function () {
 
 test('Weird windows timezones', function () {
 	$cal = new IcalParser();
-	$cal->parseFile(__DIR__ . '/cal/weird_windows_timezones.ics');
+	$cal->parseFile(__DIR__ . '/../Fixtures/Samples/weird_windows_timezones.ics');
 	$cal->getEvents()->sorted();
 	Assert::same('Atlantic/Reykjavik', $cal->timezone->getName());
 });

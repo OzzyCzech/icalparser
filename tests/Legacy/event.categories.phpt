@@ -10,12 +10,12 @@ use om\IcalParser;
 use Tester\Assert;
 use function tests\test;
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 date_default_timezone_set('Europe/Prague');
 
 test('Multiple categories test', function () {
 	$cal = new IcalParser();
-	$cal->parseFile(__DIR__ . '/cal/multiple_categories.ics');
+	$cal->parseFile(__DIR__ . '/../Fixtures/Samples/multiple_categories.ics');
 	$events = $cal->getEvents()->sorted();
 
 	foreach ($events as $event) {

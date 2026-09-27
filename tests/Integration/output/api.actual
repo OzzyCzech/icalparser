@@ -1,0 +1,378 @@
+om\ICal\Component::__set_state(/* #9fe9 */ [
+	'name' => 'VCALENDAR',
+	'properties' => [
+		om\ICal\Property::__set_state(/* #5a14 */ [
+			'parsed' => om\ICal\Parameters::__set_state(/* #c6a0 */ [
+				'values' => [],
+			]),
+			'rawParameters' => '',
+			'name' => 'PRODID',
+			'value' => '-//Google Inc//Google Calendar 70.9054//EN',
+			'line' => 2,
+		]),
+		om\ICal\Property::__set_state(/* #8b31 */ [
+			'parsed' => om\ICal\Parameters::__set_state(/* #8b57 */ [
+				'values' => [],
+			]),
+			'rawParameters' => '',
+			'name' => 'VERSION',
+			'value' => '2.0',
+			'line' => 3,
+		]),
+		om\ICal\Property::__set_state(/* #f003 */ [
+			'parsed' => om\ICal\Parameters::__set_state(/* #cdc0 */ [
+				'values' => [],
+			]),
+			'rawParameters' => '',
+			'name' => 'CALSCALE',
+			'value' => 'GREGORIAN',
+			'line' => 4,
+		]),
+		om\ICal\Property::__set_state(/* #15cf */ [
+			'parsed' => om\ICal\Parameters::__set_state(/* #52ed */ [
+				'values' => [],
+			]),
+			'rawParameters' => '',
+			'name' => 'X-WR-CALNAME',
+			'value' => 'calmozilla1@gmail.com',
+			'line' => 5,
+		]),
+		om\ICal\Property::__set_state(/* #687f */ [
+			'parsed' => om\ICal\Parameters::__set_state(/* #08f9 */ [
+				'values' => [],
+			]),
+			'rawParameters' => '',
+			'name' => 'X-WR-TIMEZONE',
+			'value' => 'America/Los_Angeles',
+			'line' => 6,
+		]),
+	],
+	'components' => [
+		om\ICal\Component::__set_state(/* #de70 */ [
+			'name' => 'VTIMEZONE',
+			'properties' => [
+				om\ICal\Property::__set_state(/* #3326 */ [
+					'parsed' => om\ICal\Parameters::__set_state(/* #db60 */ [
+						'values' => [],
+					]),
+					'rawParameters' => '',
+					'name' => 'TZID',
+					'value' => 'America/Los_Angeles',
+					'line' => 8,
+				]),
+				om\ICal\Property::__set_state(/* #f42c */ [
+					'parsed' => om\ICal\Parameters::__set_state(/* #8832 */ [
+						'values' => [],
+					]),
+					'rawParameters' => '',
+					'name' => 'X-LIC-LOCATION',
+					'value' => 'America/Los_Angeles',
+					'line' => 9,
+				]),
+			],
+			'components' => [
+				om\ICal\Component::__set_state(/* #65d2 */ [
+					'name' => 'DAYLIGHT',
+					'properties' => [
+						om\ICal\Property::__set_state(/* #fccb */ [
+							'parsed' => om\ICal\Parameters::__set_state(/* #7a00 */ [
+								'values' => [],
+							]),
+							'rawParameters' => '',
+							'name' => 'TZOFFSETFROM',
+							'value' => '-0800',
+							'line' => 11,
+						]),
+						om\ICal\Property::__set_state(/* #e6af */ [
+							'parsed' => om\ICal\Parameters::__set_state(/* #801f */ [
+								'values' => [],
+							]),
+							'rawParameters' => '',
+							'name' => 'TZOFFSETTO',
+							'value' => '-0700',
+							'line' => 12,
+						]),
+						om\ICal\Property::__set_state(/* #4dd9 */ [
+							'parsed' => om\ICal\Parameters::__set_state(/* #892c */ [
+								'values' => [],
+							]),
+							'rawParameters' => '',
+							'name' => 'TZNAME',
+							'value' => 'PDT',
+							'line' => 13,
+						]),
+						om\ICal\Property::__set_state(/* #ea6b */ [
+							'parsed' => om\ICal\Parameters::__set_state(/* #f50a */ [
+								'values' => [],
+							]),
+							'rawParameters' => '',
+							'name' => 'DTSTART',
+							'value' => '19700308T020000',
+							'line' => 14,
+						]),
+						om\ICal\Property::__set_state(/* #fb26 */ [
+							'parsed' => om\ICal\Parameters::__set_state(/* #9f62 */ [
+								'values' => [],
+							]),
+							'rawParameters' => '',
+							'name' => 'RRULE',
+							'value' => 'FREQ=YEARLY;BYMONTH=3;BYDAY=2SU',
+							'line' => 15,
+						]),
+					],
+					'components' => [],
+				]),
+				om\ICal\Component::__set_state(/* #8b83 */ [
+					'name' => 'STANDARD',
+					'properties' => [
+						om\ICal\Property::__set_state(/* #d707 */ [
+							'parsed' => om\ICal\Parameters::__set_state(/* #cee8 */ [
+								'values' => [],
+							]),
+							'rawParameters' => '',
+							'name' => 'TZOFFSETFROM',
+							'value' => '-0700',
+							'line' => 18,
+						]),
+						om\ICal\Property::__set_state(/* #6b8b */ [
+							'parsed' => om\ICal\Parameters::__set_state(/* #831c */ [
+								'values' => [],
+							]),
+							'rawParameters' => '',
+							'name' => 'TZOFFSETTO',
+							'value' => '-0800',
+							'line' => 19,
+						]),
+						om\ICal\Property::__set_state(/* #6d0f */ [
+							'parsed' => om\ICal\Parameters::__set_state(/* #6a81 */ [
+								'values' => [],
+							]),
+							'rawParameters' => '',
+							'name' => 'TZNAME',
+							'value' => 'PST',
+							'line' => 20,
+						]),
+						om\ICal\Property::__set_state(/* #8b6d */ [
+							'parsed' => om\ICal\Parameters::__set_state(/* #4e09 */ [
+								'values' => [],
+							]),
+							'rawParameters' => '',
+							'name' => 'DTSTART',
+							'value' => '19701101T020000',
+							'line' => 21,
+						]),
+						om\ICal\Property::__set_state(/* #8e2c */ [
+							'parsed' => om\ICal\Parameters::__set_state(/* #3bf5 */ [
+								'values' => [],
+							]),
+							'rawParameters' => '',
+							'name' => 'RRULE',
+							'value' => 'FREQ=YEARLY;BYMONTH=11;BYDAY=1SU',
+							'line' => 22,
+						]),
+					],
+					'components' => [],
+				]),
+			],
+		]),
+		om\ICal\Component::__set_state(/* #8c9a */ [
+			'name' => 'VEVENT',
+			'properties' => [
+				om\ICal\Property::__set_state(/* #6a4d */ [
+					'parsed' => om\ICal\Parameters::__set_state(/* #4a06 */ [
+						'values' => ['TZID' => ['America/Los_Angeles']],
+					]),
+					'rawParameters' => 'TZID=America/Los_Angeles',
+					'name' => 'DTSTART',
+					'value' => '20120630T060000',
+					'line' => 26,
+				]),
+				om\ICal\Property::__set_state(/* #b9f9 */ [
+					'parsed' => om\ICal\Parameters::__set_state(/* #e638 */ [
+						'values' => ['TZID' => ['America/Los_Angeles']],
+					]),
+					'rawParameters' => 'TZID=America/Los_Angeles',
+					'name' => 'DTEND',
+					'value' => '20120630T070000',
+					'line' => 27,
+				]),
+				om\ICal\Property::__set_state(/* #b299 */ [
+					'parsed' => om\ICal\Parameters::__set_state(/* #7eb3 */ [
+						'values' => [],
+					]),
+					'rawParameters' => '',
+					'name' => 'DTSTAMP',
+					'value' => '20120724T212411Z',
+					'line' => 28,
+				]),
+				om\ICal\Property::__set_state(/* #b22b */ [
+					'parsed' => om\ICal\Parameters::__set_state(/* #647c */ [
+						'values' => [],
+					]),
+					'rawParameters' => '',
+					'name' => 'UID',
+					'value' => 'dn4vrfmfn5p05roahsopg57h48@google.com',
+					'line' => 29,
+				]),
+				om\ICal\Property::__set_state(/* #ba95 */ [
+					'parsed' => om\ICal\Parameters::__set_state(/* #05a5 */ [
+						'values' => [],
+					]),
+					'rawParameters' => '',
+					'name' => 'CREATED',
+					'value' => '20120724T212411Z',
+					'line' => 30,
+				]),
+				om\ICal\Property::__set_state(/* #d282 */ [
+					'parsed' => om\ICal\Parameters::__set_state(/* #4f1f */ [
+						'values' => [],
+					]),
+					'rawParameters' => '',
+					'name' => 'DESCRIPTION',
+					'value' => 'Here is a description that spans multiple lines!\n\nThis should be on a new line as well because the description contains newline characters.',
+					'line' => 31,
+				]),
+				om\ICal\Property::__set_state(/* #2658 */ [
+					'parsed' => om\ICal\Parameters::__set_state(/* #3123 */ [
+						'values' => [],
+					]),
+					'rawParameters' => '',
+					'name' => 'LAST-MODIFIED',
+					'value' => '20120724T212411Z',
+					'line' => 34,
+				]),
+				om\ICal\Property::__set_state(/* #7993 */ [
+					'parsed' => om\ICal\Parameters::__set_state(/* #a941 */ [
+						'values' => [],
+					]),
+					'rawParameters' => '',
+					'name' => 'LOCATION',
+					'value' => '',
+					'line' => 35,
+				]),
+				om\ICal\Property::__set_state(/* #464d */ [
+					'parsed' => om\ICal\Parameters::__set_state(/* #2812 */ [
+						'values' => [],
+					]),
+					'rawParameters' => '',
+					'name' => 'SEQUENCE',
+					'value' => '0',
+					'line' => 36,
+				]),
+				om\ICal\Property::__set_state(/* #8d6d */ [
+					'parsed' => om\ICal\Parameters::__set_state(/* #2451 */ [
+						'values' => [],
+					]),
+					'rawParameters' => '',
+					'name' => 'STATUS',
+					'value' => 'CONFIRMED',
+					'line' => 37,
+				]),
+				om\ICal\Property::__set_state(/* #84dd */ [
+					'parsed' => om\ICal\Parameters::__set_state(/* #dff8 */ [
+						'values' => [],
+					]),
+					'rawParameters' => '',
+					'name' => 'SUMMARY',
+					'value' => 'Really long event name thing',
+					'line' => 38,
+				]),
+				om\ICal\Property::__set_state(/* #a083 */ [
+					'parsed' => om\ICal\Parameters::__set_state(/* #1fb2 */ [
+						'values' => [],
+					]),
+					'rawParameters' => '',
+					'name' => 'TRANSP',
+					'value' => 'OPAQUE',
+					'line' => 39,
+				]),
+			],
+			'components' => [
+				om\ICal\Component::__set_state(/* #7809 */ [
+					'name' => 'VALARM',
+					'properties' => [
+						om\ICal\Property::__set_state(/* #242c */ [
+							'parsed' => om\ICal\Parameters::__set_state(/* #379a */ [
+								'values' => [],
+							]),
+							'rawParameters' => '',
+							'name' => 'ACTION',
+							'value' => 'EMAIL',
+							'line' => 41,
+						]),
+						om\ICal\Property::__set_state(/* #7f01 */ [
+							'parsed' => om\ICal\Parameters::__set_state(/* #2df4 */ [
+								'values' => [],
+							]),
+							'rawParameters' => '',
+							'name' => 'DESCRIPTION',
+							'value' => 'This is an event reminder',
+							'line' => 42,
+						]),
+						om\ICal\Property::__set_state(/* #8b3b */ [
+							'parsed' => om\ICal\Parameters::__set_state(/* #2ecd */ [
+								'values' => [],
+							]),
+							'rawParameters' => '',
+							'name' => 'SUMMARY',
+							'value' => 'Alarm notification',
+							'line' => 43,
+						]),
+						om\ICal\Property::__set_state(/* #f91e */ [
+							'parsed' => om\ICal\Parameters::__set_state(/* #437d */ [
+								'values' => [],
+							]),
+							'rawParameters' => '',
+							'name' => 'ATTENDEE',
+							'value' => 'mailto:calmozilla1@gmail.com',
+							'line' => 44,
+						]),
+						om\ICal\Property::__set_state(/* #eeb6 */ [
+							'parsed' => om\ICal\Parameters::__set_state(/* #6395 */ [
+								'values' => [],
+							]),
+							'rawParameters' => '',
+							'name' => 'TRIGGER',
+							'value' => '-P0DT0H30M0S',
+							'line' => 45,
+						]),
+					],
+					'components' => [],
+				]),
+				om\ICal\Component::__set_state(/* #c922 */ [
+					'name' => 'VALARM',
+					'properties' => [
+						om\ICal\Property::__set_state(/* #be1d */ [
+							'parsed' => om\ICal\Parameters::__set_state(/* #b090 */ [
+								'values' => [],
+							]),
+							'rawParameters' => '',
+							'name' => 'ACTION',
+							'value' => 'DISPLAY',
+							'line' => 48,
+						]),
+						om\ICal\Property::__set_state(/* #ef84 */ [
+							'parsed' => om\ICal\Parameters::__set_state(/* #ca1d */ [
+								'values' => [],
+							]),
+							'rawParameters' => '',
+							'name' => 'DESCRIPTION',
+							'value' => 'This is an event reminder',
+							'line' => 49,
+						]),
+						om\ICal\Property::__set_state(/* #9137 */ [
+							'parsed' => om\ICal\Parameters::__set_state(/* #ef2a */ [
+								'values' => [],
+							]),
+							'rawParameters' => '',
+							'name' => 'TRIGGER',
+							'value' => '-P0DT0H30M0S',
+							'line' => 50,
+						]),
+					],
+					'components' => [],
+				]),
+			],
+		]),
+	],
+])

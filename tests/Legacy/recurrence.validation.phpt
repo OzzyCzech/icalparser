@@ -8,7 +8,7 @@ use om\Recurrence;
 use Tester\Assert;
 use function tests\test;
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 date_default_timezone_set('UTC');
 
 test('String and array recurrence rules produce the same finite series', function () {

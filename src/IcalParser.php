@@ -10,7 +10,7 @@ use DateTimeInterface;
 use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
-use om\Parser\ContentLine;
+use om\ICal\ContentLine;
 use om\RRule\RecurrenceSet;
 use om\RRule\Rule;
 use RuntimeException;

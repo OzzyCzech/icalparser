@@ -14,7 +14,7 @@ use om\IcalParser;
 use om\ParserOptions;
 use Tester\Assert;
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 date_default_timezone_set('UTC');
 
 const HEAD = 60;
@@ -70,7 +70,7 @@ function snapshot(string $file): string {
 }
 
 $update = (bool) getenv('UPDATE_SNAPSHOTS');
-foreach (glob(__DIR__ . '/cal/*.ics') as $file) {
+foreach (glob(__DIR__ . '/../Fixtures/Samples/*.ics') as $file) {
 	$target = __DIR__ . '/snapshots/' . basename($file, '.ics') . '.txt';
 	$actual = snapshot($file);
 	if ($update) {

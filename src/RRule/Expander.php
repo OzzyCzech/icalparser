@@ -9,7 +9,7 @@ use DateTimeInterface;
 use DateTimeZone;
 use Generator;
 use IteratorAggregate;
-use RuntimeException;
+use om\ICal\Exception\ResourceLimitException;
 
 /**
  * Expands a recurrence rule into occurrence timestamps (RFC 5545, section 3.3.10).
@@ -26,8 +26,14 @@ use RuntimeException;
  * @implements IteratorAggregate<int, int>
  */
 final class Expander implements IteratorAggregate {
-	/** Stop searching after this many consecutive periods without any candidate. */
+	/** Stop searching sub-daily rules after this many consecutive periods without any candidate. */
 	public const int MAX_EMPTY_PERIODS = 100000;
+
+	/**
+	 * The Gregorian calendar repeats every 400 years (146 097 days, a multiple of 7). When all
+	 * periods of a whole cycle are empty, no later period can match, so the search ends.
+	 */
+	private const array CYCLE_PERIODS = ['YEARLY' => 400, 'MONTHLY' => 4800, 'WEEKLY' => 20871, 'DAILY' => 146097];
 	private const int MAX_DAYS = 2932897; // 10000-01-01, the first day that is not expanded
 
 	private readonly DateTimeZone $timezone;
@@ -65,13 +71,15 @@ final class Expander implements IteratorAggregate {
 
 	/**
 	 * @param ?int $horizon additional inclusive end of the expansion (timestamp)
-	 * @param int $limit maximal number of occurrences; exceeding it throws RuntimeException
+	 * @param int $limit maximal number of occurrences; exceeding it throws ResourceLimitException
+	 * @param int $maxIterations maximal number of FREQ periods examined; exceeding it throws ResourceLimitException
 	 */
 	public function __construct(
 		private readonly Rule $rule,
 		private readonly DateTimeInterface $start,
 		private readonly ?int $horizon = null,
 		private readonly int $limit = 100000,
+		private readonly int $maxIterations = PHP_INT_MAX,
 	) {
 		$timezone = $start->getTimezone();
 		$name = $timezone->getName();
@@ -132,21 +140,26 @@ final class Expander implements IteratorAggregate {
 		$subDaily = !$freq->isCoarserThan(Frequency::Hourly);
 		$last = $startTs;
 		$emptyPeriods = 0;
+		$maxEmptyPeriods = self::CYCLE_PERIODS[$freq->value] ?? self::MAX_EMPTY_PERIODS;
+		$iterations = 0;
 
 		while (true) {
+			if (++$iterations > $this->maxIterations) {
+				throw ResourceLimitException::create('recurrence.iterations', "The rule needs more than {$this->maxIterations} iterations.");
+			}
 			// sub-daily periods of a day (or hour) that cannot match are skipped at once
 			$skip = $subDaily ? $this->secondsToSkip($freq, $periodDays, $periodSeconds) : 0;
 			$candidates = $skip === 0 ? $this->candidates($freq, $year, $month, $periodDays, $periodSeconds) : [];
+			if ($candidates !== [] && $rule->bySetPos !== []) {
+				$candidates = $this->applySetPos($candidates);
+			}
 
 			if ($candidates === []) {
-				if (++$emptyPeriods > self::MAX_EMPTY_PERIODS || $this->periodStart($freq, $year, $month, $periodDays, $periodSeconds) > $until) {
+				if (++$emptyPeriods > $maxEmptyPeriods || $this->periodStart($freq, $year, $month, $periodDays, $periodSeconds) > $until) {
 					return;
 				}
 			} else {
 				$emptyPeriods = 0;
-				if ($rule->bySetPos !== []) {
-					$candidates = $this->applySetPos($candidates);
-				}
 				foreach ($candidates as [$days, $time]) {
 					if ($days >= self::MAX_DAYS) {
 						return;
@@ -162,7 +175,7 @@ final class Expander implements IteratorAggregate {
 					yield $ts;
 					$last = $ts;
 					if (++$emitted > $this->limit) {
-						throw new RuntimeException('Recurrence occurrence limit exceeded.');
+						throw ResourceLimitException::create('recurrence.limit', 'Recurrence occurrence limit exceeded.');
 					}
 					if ($rule->count !== null && $emitted >= $rule->count) {
 						return;

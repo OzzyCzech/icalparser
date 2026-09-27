@@ -8,12 +8,12 @@ use Tester\Assert;
 use Tester\Environment;
 use function tests\test;
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 date_default_timezone_set('Europe/Prague');
 
 test('Event with multiple ATTACHMENTS', function () {
 	$cal = new IcalParser();
-	$cal->parseFile(__DIR__ . '/cal/multiple_attachments.ics');
+	$cal->parseFile(__DIR__ . '/../Fixtures/Samples/multiple_attachments.ics');
 	$first = $cal->getEvents()->getIterator()->current();
 
 	// Backwards compatibility, there is only ever one key displayed

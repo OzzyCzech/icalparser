@@ -8,12 +8,12 @@ use om\IcalParser;
 use Tester\Assert;
 use function tests\test;
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 test('Recurring instances finite', function () {
 	$cal = new IcalParser();
 
-	$cal->parseFile(__DIR__ . '/cal/recur_instances_finite.ics');
+	$cal->parseFile(__DIR__ . '/../Fixtures/Samples/recur_instances_finite.ics');
 	$events = $cal->getEvents()->sorted();
 
 // DTSTART;TZID=America/Los_Angeles:20121002T100000
@@ -31,7 +31,7 @@ test('Recurring instances finite', function () {
 
 test('Recurring instance check with a fixed horizon', function () {
 	$cal = new IcalParser();
-	$source = file_get_contents(__DIR__ . '/cal/recur_instances.ics');
+	$source = file_get_contents(__DIR__ . '/../Fixtures/Samples/recur_instances.ics');
 	$source = str_replace('RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=1TU', 'RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=1TU;UNTIL=20151104T000000Z', $source);
 	$cal->parseString($source);
 	$events = $cal->getEvents()->sorted()->getArrayCopy();
@@ -82,7 +82,7 @@ test('Recurring instance check with a fixed horizon', function () {
 
 test('Recurrent event with modifications at single date', function () {
 	$cal = new IcalParser();
-	$cal->parseFile(__DIR__ . '/cal/recur_instances_with_modifications.ics');
+	$cal->parseFile(__DIR__ . '/../Fixtures/Samples/recur_instances_with_modifications.ics');
 	$events = $cal->getEvents()->sorted();
 
 	// There should be 36 total events because of the modified event + 35 recurrences
@@ -108,7 +108,7 @@ test('Recurrent event with modifications at single date', function () {
 
 test('Recuring instances with modifications and interval', function () {
 	$cal = new IcalParser();
-	$results = $cal->parseFile(__DIR__ . '/cal/recur_instances_with_modifications_and_interval.ics');
+	$results = $cal->parseFile(__DIR__ . '/../Fixtures/Samples/recur_instances_with_modifications_and_interval.ics');
 
 // Build the cache of RECURRENCE-IDs and EXDATES first, so that we can properly determine the interval
 	$eventCache = [];
@@ -158,7 +158,7 @@ test('Modifications to first recurrence handled correctly', function () {
 // There is still an issue that needs to be resolved when modifications are made to the initial event that is the
 // base of the recurrences.  The below ICS file has a great edge case example: one event, no recurrences in the
 // recurring ruleset, and a modification to the initial event.
-	$results = $cal->parseFile(__DIR__ . '/cal/recur_instances_with_modifications_to_first_day.ics');
+	$results = $cal->parseFile(__DIR__ . '/../Fixtures/Samples/recur_instances_with_modifications_to_first_day.ics');
 	$events = $cal->getEvents()->sorted()->getArrayCopy();
 	Assert::true(empty($events[0]['RECURRENCES'])); // edited event
 	Assert::true(empty($events[1]['RECURRENCES'])); // recurring event base with no recurrences
@@ -167,7 +167,7 @@ test('Modifications to first recurrence handled correctly', function () {
 
 test('Daily recurring period matches expected days', function () {
 	$cal = new IcalParser();
-	$results = $cal->parseFile(__DIR__ . '/cal/daily_recur.ics');
+	$results = $cal->parseFile(__DIR__ . '/../Fixtures/Samples/daily_recur.ics');
 	$events = $cal->getEvents()->sorted()->getArrayCopy();
 	$period = new DatePeriod(new DateTime('20120801T050000'), new DateInterval('P1D'), new DateTime('20150801T050000'));
 	foreach ($period as $i => $day) {
@@ -177,7 +177,7 @@ test('Daily recurring period matches expected days', function () {
 
 test('Daily recurring with count', function () {
 	$cal = new IcalParser();
-	$results = $cal->parseFile(__DIR__ . '/cal/daily_recur2.ics');
+	$results = $cal->parseFile(__DIR__ . '/../Fixtures/Samples/daily_recur2.ics');
 	$events = $cal->getEvents()->sorted()->getArrayCopy();
 
 	Assert::equal(4, count($events));
@@ -192,7 +192,7 @@ test('Daily recurring with count', function () {
  */
 test('Two times weekly events', function () {
 	$cal = new IcalParser();
-	$cal->parseFile(__DIR__ . '/cal/twice_weekly.ics');
+	$cal->parseFile(__DIR__ . '/../Fixtures/Samples/twice_weekly.ics');
 	$events = $cal->getEvents()->sorted()->getArrayCopy();
 
 	// repeat 9 times (thu + tue) within january 2026
@@ -261,7 +261,7 @@ ICS;
  */
 test('Weekly recurring event missing day (issue #38)', function () {
 	$cal = new IcalParser();
-	$cal->parseFile(__DIR__ . '/cal/38_weekly_recurring_event_missing_day.ics');
+	$cal->parseFile(__DIR__ . '/../Fixtures/Samples/38_weekly_recurring_event_missing_day.ics');
 	$events = $cal->getEvents()->sorted()->getArrayCopy();
 
 	//first monday
@@ -302,7 +302,7 @@ test('Recurring instances bi-weekly', function () {
 // https://github.com/OzzyCzech/icalparser/issues/61
 	$cal = new IcalParser();
 
-	$cal->parseFile(__DIR__ . '/cal/rrule_interval.ics');
+	$cal->parseFile(__DIR__ . '/../Fixtures/Samples/rrule_interval.ics');
 	$events = $cal->getEvents()->sorted();
 
 	var_dump($events[0]['RECURRENCES']);
