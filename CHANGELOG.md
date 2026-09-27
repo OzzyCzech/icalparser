@@ -21,6 +21,7 @@ See [UPGRADING.md](UPGRADING.md).
 - series: overrides grouped by UID, moved, cancelled and `RANGE=THISANDFUTURE` instances, lazy `occurrencesBetween()`
   and `occurrences(limit)`
 - `Validator` with severities, `Serializer` with UTF-8 safe folding
+- vCalendar 1.0 `ENCODING=QUOTED-PRINTABLE` text values are decoded (with a warning), as by `IcalParser`
 - exceptions with error code, line, property and raw value (`SyntaxException`, `InvalidValueException`,
   `InvalidRecurrenceRuleException`, `TimezoneResolutionException`, `ResourceLimitException`, `ValidationException`)
 - documentation in `docs/`, examples in `examples/`

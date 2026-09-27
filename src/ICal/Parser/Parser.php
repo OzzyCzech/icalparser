@@ -192,7 +192,7 @@ final readonly class Parser {
 				}
 				$builder->warn('timezone.unresolved', "Unknown timezone \"$tzid\", its times are floating.", $property->line, $property->name);
 			}
-			if (($strict || $this->checkValues) && (isset(ValueParser::TYPES[$property->name]) || $property->parameter('VALUE') !== null)) {
+			if (($strict || $this->checkValues) && (isset(ValueParser::TYPES[$property->name]) || $property->parameter('VALUE') !== null || $property->parameter('ENCODING') !== null)) {
 				// throws InvalidValueException in strict mode
 				foreach ($values->diagnose($property) as [$code, $message]) {
 					$builder->warn($code, $message, $property->line, $property->name);

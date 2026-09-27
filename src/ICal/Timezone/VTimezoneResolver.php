@@ -44,12 +44,12 @@ final class VTimezoneResolver implements TimezoneResolver {
 			}
 			// X-LIC-LOCATION (Mozilla) and the TZID itself name the intended zone
 			$location = $definition->property('X-LIC-LOCATION')?->value;
-			$preferred = array_values(array_unique(array_filter([
+			$named = array_values(array_unique(array_filter([
 				$location === null ? null : $this->names->resolve($location, $calendar)?->timezone->getName(),
 				$this->names->resolve($tzid, $calendar)?->timezone->getName(),
-				...array_values(AliasTimezoneResolver::windowsTimezones()),
 			])));
-			$timezone = TimezoneGuesser::guess(self::observances($definition), $this->reference, $preferred);
+			$preferred = array_values(array_unique(AliasTimezoneResolver::windowsTimezones()));
+			$timezone = TimezoneGuesser::guess(self::observances($definition), $this->reference, $preferred, $named);
 			return $timezone === null ? null : new ResolvedTimezone($tzid, $timezone, TimezoneSource::VTimezone);
 		}
 		return null;

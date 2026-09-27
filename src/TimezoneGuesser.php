@@ -27,8 +27,10 @@ final class TimezoneGuesser {
 	 * @param list<array{start: string, offsetFrom: string, offsetTo: string, rrule?: ?string, rdates?: list<string>}> $observances
 	 *        start is the local DTSTART like "19701025T030000", offsets look like "+0100"
 	 * @param list<string> $preferred timezones tried first
+	 * @param list<string> $named timezones named by the definition (its TZID, X-LIC-LOCATION); they are
+	 *        used also for definitions without transitions when their offset matches
 	 */
-	public static function guess(array $observances, ?DateTimeImmutable $reference = null, array $preferred = []): ?DateTimeZone {
+	public static function guess(array $observances, ?DateTimeImmutable $reference = null, array $preferred = [], array $named = []): ?DateTimeZone {
 		if ($observances === []) {
 			return null;
 		}
@@ -42,11 +44,11 @@ final class TimezoneGuesser {
 			return null; // invalid DTSTART, offset or RRULE
 		}
 
-		$key = json_encode([$initial, $transitions]) . implode(',', $preferred);
+		$key = json_encode([$initial, $transitions]) . implode(',', $named) . '|' . implode(',', $preferred);
 		if (!isset(self::$cache[$key])) {
 			self::$cache[$key] = $transitions === []
-				? self::fixedOffset($initial)
-				: self::find($initial, $transitions, $from, $until, $preferred) ?? false;
+				? self::find($initial, [], $from, $until, $named) ?? self::fixedOffset($initial)
+				: self::find($initial, $transitions, $from, $until, [...$named, ...$preferred]) ?? false;
 		}
 		return self::$cache[$key] ?: null;
 	}
@@ -99,7 +101,8 @@ final class TimezoneGuesser {
 	 * @param list<string> $preferred
 	 */
 	private static function find(int $initial, array $transitions, int $from, int $until, array $preferred): ?DateTimeZone {
-		$candidates = array_unique([...$preferred, ...DateTimeZone::listIdentifiers()]);
+		// a fixed offset is matched only with the named timezones, any zone could have it
+		$candidates = array_unique($transitions === [] ? $preferred : [...$preferred, ...DateTimeZone::listIdentifiers()]);
 		foreach ($candidates as $name) {
 			try {
 				$timezone = new DateTimeZone($name);

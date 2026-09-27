@@ -9,7 +9,7 @@
             "timezones": [
                 "(UTC-06:00) Central Time (US & Canada) => America/Chicago (VTimezone)",
                 "Eastern Time => America/New_York (VTimezone)",
-                "Greenwich Standard Time => +00:00 (VTimezone)"
+                "Greenwich Standard Time => Atlantic/Reykjavik (VTimezone)"
             ],
             "items": [
                 {

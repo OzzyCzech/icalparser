@@ -83,14 +83,25 @@ final class ValueParser {
 	}
 
 	public function text(Property $property): string {
-		return Text::unescape($property->value);
+		return Text::unescape($this->decoded($property));
 	}
 
 	/**
 	 * @return list<string>
 	 */
 	public function texts(Property $property): array {
-		return Text::split($property->value);
+		return Text::split($this->decoded($property));
+	}
+
+	/**
+	 * The value, decoded when it has ENCODING=QUOTED-PRINTABLE (vCalendar 1.0, not RFC 5545).
+	 */
+	private function decoded(Property $property): string {
+		if (strtoupper($property->parameter('ENCODING') ?? '') !== 'QUOTED-PRINTABLE') {
+			return $property->value;
+		}
+		$this->nonstandard('The value uses ENCODING=QUOTED-PRINTABLE of vCalendar 1.0, it was decoded.', $property);
+		return quoted_printable_decode($property->value);
 	}
 
 	public function dateTime(Property $property): ?DateTimeValue {
@@ -213,7 +224,7 @@ final class ValueParser {
 			$type = self::type($property);
 			if ($type === 'DATE-TIME' || $type === 'DATE') {
 				$this->checkDates($property); // the same checks as dateTimes(), without creating objects
-			} elseif ($type !== 'CAL-ADDRESS' && $type !== 'URI' && $type !== 'TEXT') {
+			} elseif ($type !== 'CAL-ADDRESS' && $type !== 'URI') {
 				$this->value($property);
 			}
 			return $this->problems ?? [];

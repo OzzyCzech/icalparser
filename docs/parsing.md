@@ -37,7 +37,7 @@ a `ParseWarning` with a stable `code`, a `message`, the `line` and the `property
 | `syntax.no-calendar` | the input contains no VCALENDAR |
 | `timezone.unresolved` | a TZID cannot be resolved, its times stay floating |
 | `value.invalid` | a value does not match its type; it is ignored (`null`), an invalid RRULE makes the item a single one |
-| `value.nonstandard` | a value breaking the RFC was accepted: a date with a `Z` suffix (Google), a date without `VALUE=DATE`, `VALUE=DATE` with a time or `VALUE=DATE-TIME` with a date, a TZID on a UTC time, a PERIOD where it is not allowed (its start is used) |
+| `value.nonstandard` | a value breaking the RFC was accepted: a date with a `Z` suffix (Google), a date without `VALUE=DATE`, `VALUE=DATE` with a time or `VALUE=DATE-TIME` with a date, a TZID on a UTC time, a PERIOD where it is not allowed (its start is used), `ENCODING=QUOTED-PRINTABLE` of vCalendar 1.0 (decoded) |
 | `value.leap-second` | a leap second (allowed by the RFC) was read as second 59, PHP cannot represent it |
 
 Unknown properties, parameters and components are kept. Values of known types are converted during

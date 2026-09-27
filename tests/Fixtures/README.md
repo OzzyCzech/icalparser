@@ -13,4 +13,4 @@ UPDATE_SNAPSHOTS=1 composer test:integration
 | `Google`, `Apple`, `Outlook`, `Exchange`, `Nextcloud`, `Fastmail` | synthetic calendars following the export format of these programs (their typical properties, X- properties, VTIMEZONE styles and quirks) |
 | `Broken` | damaged input for the permissive parser |
 | `Regression` | bugs found in the past; every bug gets a fixture or a test |
-| `Samples` | sample calendars of [ical.js](https://github.com/mozilla-comm/ical.js/tree/master/samples) used by the tests of the array based `IcalParser` |
+| `Samples` | sample calendars of [ical.js](https://github.com/mozilla-comm/ical.js/tree/master/samples), tested with the new API (`tests/Integration/samples.phpt`) and with the deprecated `IcalParser` (`tests/Legacy/snapshots.phpt`) |
