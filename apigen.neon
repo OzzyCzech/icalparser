@@ -1,0 +1,8 @@
+# API reference generated from the docblocks of src/, see .github/workflows/docs.yml
+parameters:
+	paths: [src]
+	exclude: [src/WindowsTimezones.php]
+	excludePrivate: true
+	excludeTagged: [internal]
+	outputDir: website/public/api
+	title: PHP iCal Parser

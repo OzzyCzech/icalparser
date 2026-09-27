@@ -6,4 +6,8 @@ tests/**/output/
 coverage.html
 .php-cs-fixer.cache
 /.venv/
-/build/
+/website/node_modules/
+/website/dist/
+/website/.astro/
+/website/src/content/docs/
+/website/public/api/

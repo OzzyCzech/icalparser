@@ -14,9 +14,6 @@ concurrency:
   group: docs-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  PHPDOCUMENTOR_VERSION: v3.10.0
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,28 +24,30 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.5'
+          tools: composer
 
-      - name: Setup Python
-        uses: actions/setup-python@v7
+      - name: Setup Node
+        uses: actions/setup-node@v7
         with:
-          python-version: '3.13'
-          cache: pip
-          cache-dependency-path: docs/requirements.txt
+          node-version: 24
+          cache: npm
+          cache-dependency-path: website/package-lock.json
 
-      - name: Guides (MkDocs from docs/*.md)
+      - name: API reference (ApiGen from the docblocks of src/, apigen.neon)
         run: |
-          pip install -r docs/requirements.txt
-          mkdocs build
+          composer create-project apigen/apigen:dev-master "$RUNNER_TEMP/apigen" --no-dev --no-interaction --no-progress
+          php "$RUNNER_TEMP/apigen/bin/apigen"
 
-      - name: API reference (phpDocumentor from the docblocks of src/)
+      - name: Site (Starlight from docs/*.md, UPGRADING.md and CHANGELOG.md)
+        working-directory: website
         run: |
-          curl -sfL -o phpDocumentor.phar "https://github.com/phpDocumentor/phpDocumentor/releases/download/${PHPDOCUMENTOR_VERSION}/phpDocumentor.phar"
-          php phpDocumentor.phar run --no-interaction
+          npm ci
+          npm run build
 
       - name: Upload the site
         uses: actions/upload-pages-artifact@v5
         with:
-          path: build/site
+          path: website/dist
 
   deploy:
     # the site shows the default branch; other branches and pull requests only check that it builds
