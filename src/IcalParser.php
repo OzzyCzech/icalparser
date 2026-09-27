@@ -11,7 +11,7 @@ use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
 use om\Parser\ContentLine;
-use om\RRule\Expander;
+use om\RRule\RecurrenceSet;
 use om\RRule\Rule;
 use RuntimeException;
 
@@ -405,11 +405,10 @@ class IcalParser {
 		$start = DateTime::createFromInterface($start);
 		$timezone = $start->getTimezone();
 
-		$timestamps = [$start->getTimestamp()];
+		$rule = null;
 		if (!empty($event['RRULE'])) {
 			try {
 				$rule = isset($meta['rrule']) ? Rule::fromString($meta['rrule']) : Rule::fromArray($event['RRULE']);
-				$timestamps = $this->expandRule($rule, $start);
 			} catch (InvalidArgumentException $e) {
 				if ($this->options->strict) {
 					throw $e;
@@ -417,60 +416,41 @@ class IcalParser {
 			}
 		}
 
-		// RDATE is independent of INTERVAL, EXDATE takes precedence over RRULE and RDATE
-		$timestamps = array_merge($timestamps, self::timestamps($event['RDATES'] ?? []));
-		$timestamps = array_diff($timestamps, self::timestamps($event['EXDATES'] ?? []));
-		$timestamps = array_unique($timestamps);
-		sort($timestamps, SORT_NUMERIC);
-
-		$excludedDays = array_fill_keys($meta['exdateDays'] ?? [], true);
-		[$overriddenTimestamps, $overriddenDays] = $this->overriddenInstances($event['UID'] ?? null, $timezone);
-
-		$recurrences = [];
-		foreach ($timestamps as $timestamp) {
-			$date = (clone $start)->setTimestamp($timestamp);
-			if (isset($overriddenTimestamps[$timestamp])) {
-				continue;
-			}
-			if ($excludedDays !== [] || $overriddenDays !== []) {
-				$day = $date->format('Ymd');
-				if (isset($excludedDays[$day]) || isset($overriddenDays[$day])) {
-					continue;
-				}
-			}
-			$recurrences[] = $date;
-		}
-		return $recurrences;
-	}
-
-	/**
-	 * @return list<int>
-	 */
-	private function expandRule(Rule $rule, DateTimeInterface $start): array {
-		$horizon = $from = null;
-		if ($rule->count === null && $rule->until === null) {
+		// Rules without an end are expanded until the horizon, optionally skipping old occurrences
+		$until = $from = null;
+		if ($rule !== null && $rule->count === null && $rule->until === null) {
 			$now = $this->options->now();
-			$horizon = ($this->options->untilInterval ? $now->add($this->options->untilInterval) : $now)->getTimestamp();
+			$until = ($this->options->untilInterval ? $now->add($this->options->untilInterval) : $now)->getTimestamp();
 			if ($this->options->shiftEventDates) {
 				$from = $now->sub($this->options->shiftEventDates)->getTimestamp();
 			}
 		}
 
-		$timestamps = [];
-		$limit = $this->options->maxOccurrences;
-		foreach (new Expander($rule, $start, $horizon, PHP_INT_MAX) as $timestamp) {
-			if ($from !== null && $timestamp < $from) {
+		$set = new RecurrenceSet(
+			$start,
+			$rule,
+			rdates: self::timestamps($event['RDATES'] ?? []),
+			exdates: self::timestamps($event['EXDATES'] ?? []),
+			exdays: $meta['exdateDays'] ?? [],
+			until: $until,
+			from: $from,
+			limit: $this->options->maxOccurrences,
+			strict: $this->options->strict,
+		);
+		[$overriddenTimestamps, $overriddenDays] = $this->overriddenInstances($event['UID'] ?? null, $timezone);
+
+		$recurrences = [];
+		foreach ($set as $timestamp) {
+			if (isset($overriddenTimestamps[$timestamp])) {
 				continue;
 			}
-			if (count($timestamps) >= $limit) {
-				if ($this->options->strict) {
-					throw new RuntimeException("Recurrence occurrence limit of $limit exceeded.");
-				}
-				break;
+			$date = (clone $start)->setTimestamp($timestamp);
+			if ($overriddenDays !== [] && isset($overriddenDays[$date->format('Ymd')])) {
+				continue;
 			}
-			$timestamps[] = $timestamp;
+			$recurrences[] = $date;
 		}
-		return $timestamps;
+		return $recurrences;
 	}
 
 	/**

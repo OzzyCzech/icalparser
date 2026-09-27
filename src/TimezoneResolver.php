@@ -30,6 +30,23 @@ final class TimezoneResolver {
 		return $timezone ?: null;
 	}
 
+	/**
+	 * Use the given timezone for a TZID, e.g. one defined by a VTIMEZONE component.
+	 * Names that already resolve to a PHP timezone are kept.
+	 */
+	public function register(string $tzid, DateTimeZone $timezone): void {
+		if ($this->resolve($tzid) === null) {
+			$this->cache[$tzid] = $timezone;
+		}
+	}
+
+	/**
+	 * @return array<string, string>
+	 */
+	public function windowsTimezones(): array {
+		return $this->windowsTimezones;
+	}
+
 	private function find(string $value): ?DateTimeZone {
 		$value = trim($value, " \t'\"");
 		$parts = array_values(array_filter(preg_split('#[/\\\\]#', $value) ?: []));
