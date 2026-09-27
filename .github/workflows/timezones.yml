@@ -24,7 +24,7 @@ jobs:
         run: php bin/timezones.php
 
       - name: Open a pull request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           branch: chore/windows-timezones
           commit-message: 'chore(timezones): update Windows timezones from CLDR'
