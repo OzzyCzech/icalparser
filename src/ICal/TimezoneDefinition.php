@@ -7,9 +7,9 @@ use om\ICal\Timezone\ResolvedTimezone;
 use om\ICal\Timezone\VTimezoneResolver;
 
 /**
- * VTIMEZONE (RFC 5545, section 3.6.5).
+ * A VTIMEZONE component (RFC 5545, section 3.6.5).
  */
-final class TimeZone {
+final class TimezoneDefinition {
 
 	/**
 	 * @internal use Calendar::timezones()

@@ -31,7 +31,8 @@
 		"check": [
 			"@test",
 			"@phpstan"
-		]
+		],
+		"timezones": "php bin/timezones.php"
 	},
 	"require-dev": {
 		"nette/tester": "^2.6.1",

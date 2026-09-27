@@ -132,10 +132,10 @@ final class Calendar {
 	}
 
 	/**
-	 * @return list<TimeZone>
+	 * @return list<TimezoneDefinition>
 	 */
 	public function timezones(): array {
-		return array_map(fn(Component $component): TimeZone => new TimeZone($component, $this), $this->component->components('VTIMEZONE'));
+		return array_map(fn(Component $component): TimezoneDefinition => new TimezoneDefinition($component, $this), $this->component->components('VTIMEZONE'));
 	}
 
 	/**
