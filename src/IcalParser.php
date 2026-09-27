@@ -173,7 +173,6 @@ class IcalParser {
 	 * @return array
 	 */
 	public function parseRecurrences($event): array {
-		$recurring = new Recurrence($event['RRULE']);
 		$exclusions = [];
 		$additions = [];
 
@@ -201,22 +200,29 @@ class IcalParser {
 			}
 		}
 
-		$until = $recurring->getUntil();
-		if ($until === false) {
-			//forever... limit to 3 years from now
-			$end = new DateTime('now');
-			$end->add(new DateInterval('P3Y')); // + 3 years
-			$recurring->setUntil($end);
+		// remember current tz
+		$default_timezone = date_default_timezone_get();
+
+		if (empty($event['RRULE'])) {
+			// RDATE without RRULE: DTSTART and the additional dates only
+			$recurrenceTimestamps = array_values(array_diff(array_unique([$event['DTSTART']->getTimestamp(), ...$additions]), $exclusions));
+			sort($recurrenceTimestamps);
+		} else {
+			$recurring = new Recurrence($event['RRULE']);
 			$until = $recurring->getUntil();
+			if ($until === false) {
+				//forever... limit to 3 years from now
+				$end = new DateTime('now');
+				$end->add(new DateInterval('P3Y')); // + 3 years
+				$recurring->setUntil($end);
+				$until = $recurring->getUntil();
+			}
+
+			$tzName = $event['DTSTART']->getTimezone()->getName();
+			date_default_timezone_set($tzName === 'Z' ? 'UTC' : $tzName);
+			$frequency = new Freq($recurring->rrule, $event['DTSTART']->getTimestamp(), $exclusions, $additions);
+			$recurrenceTimestamps = $frequency->getAllOccurrences();
 		}
-
-        // remember current tz
-        $default_timezone = date_default_timezone_get();
-
-        $tzName = $event['DTSTART']->getTimezone()->getName();
-		date_default_timezone_set($tzName === 'Z' ? 'UTC' : $tzName);
-		$frequency = new Freq($recurring->rrule, $event['DTSTART']->getTimestamp(), $exclusions, $additions);
-		$recurrenceTimestamps = $frequency->getAllOccurrences();
 
 		// This guard only works on WEEKLY, because the others have no fixed time interval
 		// There may still be a bug with the others

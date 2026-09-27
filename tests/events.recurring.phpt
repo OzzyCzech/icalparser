@@ -329,3 +329,14 @@ test('Recurring instances bi-weekly', function () {
 	Assert::equal('14.2.2023 05:00:00', $events[1]['DTSTART']->format('j.n.Y H:i:s'));
 	Assert::equal('28.2.2023 05:00:00', $events[2]['DTSTART']->format('j.n.Y H:i:s'));
 });
+test('RDATE without RRULE', function () {
+	$cal = new IcalParser();
+	$cal->parseFile(__DIR__ . '/cal/rdate_without_rrule.ics');
+	$events = $cal->getEvents()->sorted();
+	Assert::equal(4, $events->count());
+	Assert::equal('15.4.2016 21:00:00', $events[0]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('16.12.2016 21:00:00', $events[1]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('23.12.2016 21:00:00', $events[2]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('30.12.2016 21:00:00', $events[3]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::equal('17.12.2016 04:00:00', $events[1]['DTEND']->format('j.n.Y H:i:s'));
+});
