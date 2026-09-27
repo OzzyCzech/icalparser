@@ -21,6 +21,7 @@ use Exception;
  */
 class Recurrence {
 
+	/** @var array<string, mixed> */
 	public array $rrule;
 	protected mixed $freq;
 	protected mixed $until;
@@ -39,6 +40,7 @@ class Recurrence {
 	/**
 	 * A list of the properties that can have comma-separated lists for values.
 	 */
+	/** @var list<string> */
 	protected array $listProperties = [
 		'bysecond', 'byminute', 'byhour', 'byday', 'bymonthday',
 		'byyearday', 'byweekno', 'bymonth', 'bysetpos',
@@ -49,6 +51,7 @@ class Recurrence {
 	 *
 	 * @param array $rrule an om\icalparser row array which will be parsed to get the
 	 * desired information.
+	 * @param array<string, mixed> $rrule
 	 */
 	public function __construct(array $rrule) {
 		$this->parseRrule($rrule);
@@ -57,6 +60,8 @@ class Recurrence {
 	/**
 	 * Parses an 'RRULE' array and sets the member variables of this object.
 	 * Expects a string that looks like this:  'FREQ=WEEKLY;INTERVAL=2;BYDAY=SU,TU,WE'
+	 *
+	 * @param array<string, mixed> $rrule
 	 */
 	protected function parseRrule(array $rrule): void {
 		$this->rrule = $rrule;

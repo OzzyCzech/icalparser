@@ -36,7 +36,9 @@ class IcalParser {
 
 	/** Timezone of floating dates: the last X-WR-TIMEZONE or TZID property seen. */
 	public ?DateTimeZone $timezone = null;
+	/** @var array<string, mixed>|null */
 	public ?array $data = null;
+	/** @var array<string, int> */
 	protected array $counters = [];
 
 	private readonly ParserOptions $options;
@@ -71,6 +73,9 @@ class IcalParser {
 	 * @throws RuntimeException when the file cannot be read
 	 * @throws InvalidArgumentException when the content is not iCalendar data
 	 */
+	/**
+	 * @return array<string, mixed>|null
+	 */
 	public function parseFile(string $file, ?callable $callback = null): ?array {
 		$content = @file_get_contents($file);
 		if ($content === false) {
@@ -87,6 +92,7 @@ class IcalParser {
 	 * ($row, $key, $middle, $value, $section, $counter) and the method returns null.
 	 *
 	 * @param bool $add if true the parsed string is added to existing data
+	 * @return array<string, mixed>|null
 	 * @throws InvalidArgumentException when the content is not iCalendar data
 	 */
 	public function parseString(string $string, ?callable $callback = null, bool $add = false): ?array {
@@ -183,22 +189,37 @@ class IcalParser {
 		return (['X-CATEGORIES' => 'X-CATEGORIES', 'CATEGORIES' => 'CATEGORIES'])[$key] ?? null;
 	}
 
+	/**
+	 * @return array<int, array<string, mixed>>
+	 */
 	public function getAlarms(): array {
 		return $this->data['VALARM'] ?? [];
 	}
 
+	/**
+	 * @return array<int, array<string, mixed>>
+	 */
 	public function getTimezone(): array {
 		return $this->getTimezones();
 	}
 
+	/**
+	 * @return array<int, array<string, mixed>>
+	 */
 	public function getTimezones(): array {
 		return $this->data['VTIMEZONE'] ?? [];
 	}
 
+	/**
+	 * @return array<int, array<string, mixed>>
+	 */
 	public function getTodos(): array {
 		return array_values($this->data['VTODO'] ?? []);
 	}
 
+	/**
+	 * @return array<int, array<string, mixed>>
+	 */
 	public function getJournals(): array {
 		return array_values($this->data['VJOURNAL'] ?? []);
 	}
@@ -207,6 +228,7 @@ class IcalParser {
 	 * Return sorted event list as ArrayObject
 	 *
 	 * @deprecated use IcalParser::getEvents()->sorted() instead
+	 * @return ArrayObject<int, array<string, mixed>>
 	 */
 	public function getSortedEvents(): ArrayObject {
 		return $this->getEvents()->sorted();
@@ -214,6 +236,7 @@ class IcalParser {
 
 	/**
 	 * @deprecated use IcalParser::getEvents()->reversed() instead
+	 * @return ArrayObject<int, array<string, mixed>>
 	 */
 	public function getReverseSortedEvents(): ArrayObject {
 		return $this->getEvents()->reversed();
@@ -239,7 +262,8 @@ class IcalParser {
 			$duration = $this->duration($event, $meta);
 			if (!array_key_exists('RECURRENCES', $event)) {
 				if (!array_key_exists('DTEND', $event) && $duration !== null) {
-					$event['DTEND'] = DateTime::createFromInterface($start)->add($duration);
+					$end = DateTime::createFromInterface($start);
+					$event['DTEND'] = $end->add($duration);
 				}
 				$events->append($event);
 				continue;
@@ -248,12 +272,16 @@ class IcalParser {
 			$event['RECURRING'] = true;
 			$duration ??= new DateInterval('PT0S');
 			foreach ($event['RECURRENCES'] as $index => $date) {
+				if (!$date instanceof DateTimeInterface) {
+					continue;
+				}
 				$instance = $event;
 				if ($index !== 0) {
 					unset($instance['RECURRENCES']);
 				}
-				$instance['DTSTART'] = clone $date;
-				$instance['DTEND'] = (clone $date)->add($duration);
+				$instance['DTSTART'] = DateTime::createFromInterface($date);
+				$end = DateTime::createFromInterface($date);
+				$instance['DTEND'] = $end->add($duration);
 				$instance['RECURRENCE_INSTANCE'] = $index;
 				$events->append($instance);
 			}
@@ -265,6 +293,7 @@ class IcalParser {
 	 * Store a property of a component in the public data array.
 	 */
 	private function store(string $section, int $counter, string $key, mixed $middle, mixed $value, string $raw): void {
+		$this->data ??= [];
 		$component = &$this->data[$section][$counter];
 
 		// Multiple entries are collected in an array under a separate key,
@@ -275,7 +304,7 @@ class IcalParser {
 
 		if ($this->isMultipleKeyWithCommaSeparation($key)) {
 			// split on commas not preceded by backslash, then unescape
-			foreach (preg_split('/(?<!\\\\),/', $raw) as $item) {
+			foreach (preg_split('/(?<!\\\\),/', $raw) ?: [] as $item) {
 				$component[$key][] = trim(strtr($item, self::TEXT_ESCAPES));
 			}
 			return;
@@ -413,21 +442,18 @@ class IcalParser {
 		}
 
 		$timestamps = [];
-		$accepted = false;
-		try {
-			foreach (new Expander($rule, $start, $horizon, $this->options->maxOccurrences) as $timestamp) {
-				$accepted = $from === null || $timestamp >= $from;
-				if ($accepted) {
-					$timestamps[] = $timestamp;
+		$limit = $this->options->maxOccurrences;
+		foreach (new Expander($rule, $start, $horizon, PHP_INT_MAX) as $timestamp) {
+			if ($from !== null && $timestamp < $from) {
+				continue;
+			}
+			if (count($timestamps) >= $limit) {
+				if ($this->options->strict) {
+					throw new RuntimeException("Recurrence occurrence limit of $limit exceeded.");
 				}
+				break;
 			}
-		} catch (RuntimeException $e) {
-			if ($this->options->strict) {
-				throw $e;
-			}
-			if ($accepted) {
-				array_pop($timestamps); // the occurrence over the limit
-			}
+			$timestamps[] = $timestamp;
 		}
 		return $timestamps;
 	}
@@ -482,7 +508,7 @@ class IcalParser {
 	}
 
 	/**
-	 * @param list<DateTimeInterface|list<DateTimeInterface>> $dates
+	 * @param array<mixed> $dates EXDATES or RDATES: dates and lists of dates
 	 * @return list<int>
 	 */
 	private static function timestamps(array $dates): array {
@@ -645,7 +671,7 @@ class IcalParser {
 
 	private function findTimezone(string $value): ?DateTimeZone {
 		$value = trim($value, " \t'\"");
-		$parts = array_values(array_filter(preg_split('#[/\\\\]#', $value)));
+		$parts = array_values(array_filter(preg_split('#[/\\\\]#', $value) ?: []));
 		$count = count($parts);
 		if ($count < 2) {
 			// no slashes - try as-is via windowsTimezones lookup

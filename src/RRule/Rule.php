@@ -215,7 +215,7 @@ final readonly class Rule {
 			if (!preg_match('/^([+-]?\d{1,2})?(MO|TU|WE|TH|FR|SA|SU)$/D', $item, $match)) {
 				throw new InvalidArgumentException("Invalid BYDAY value: $item");
 			}
-			$ordinal = (int) ($match[1] ?? 0);
+			$ordinal = (int) $match[1]; // an empty ordinal means every weekday
 			if ($ordinal < -53 || $ordinal > 53) {
 				throw new InvalidArgumentException("BYDAY value out of range: $item");
 			}

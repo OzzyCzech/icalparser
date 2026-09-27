@@ -265,8 +265,8 @@ final class Expander implements IteratorAggregate {
 		$days = match ($freq) {
 			Frequency::Yearly => $this->yearDays($year),
 			Frequency::Monthly => $this->monthDaysOf($year, $month),
-			Frequency::Weekly => array_filter(range($periodDays, $periodDays + 6), $this->matchesDay(...)),
-			default => $this->matchesDay($periodDays) ? [$periodDays] : [],
+			Frequency::Weekly => array_values(array_filter(range($periodDays, $periodDays + 6), $this->matchesDayNumber(...))),
+			default => $this->matchesDayNumber($periodDays) ? [$periodDays] : [],
 		};
 		if ($days === []) {
 			return [];
@@ -350,13 +350,15 @@ final class Expander implements IteratorAggregate {
 		return $result;
 	}
 
-	private function matchesDay(int $days, ?int $year = null, ?int $month = null, ?int $day = null): bool {
+	private function matchesDayNumber(int $days): bool {
 		if (!$this->hasDayFilter) {
 			return true;
 		}
-		if ($year === null) {
-			[$year, $month, $day] = self::civilFromDays($days);
-		}
+		[$year, $month, $day] = self::civilFromDays($days);
+		return $this->matchesDay($days, $year, $month, $day);
+	}
+
+	private function matchesDay(int $days, int $year, int $month, int $day): bool {
 		if ($this->months !== [] && !isset($this->months[$month])) {
 			return false;
 		}

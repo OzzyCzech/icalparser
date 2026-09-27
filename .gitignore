@@ -3,3 +3,4 @@ composer.lock
 /vendor/
 tests/output/
 /docs/
+coverage.html

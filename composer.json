@@ -25,9 +25,16 @@
 		}
 	},
 	"scripts": {
-		"test": "tester tests -s -p php"
+		"test": "tester tests -s -p php",
+		"phpstan": "phpstan analyse --no-progress",
+		"coverage": "tester tests -s -p phpdbg --coverage coverage.html --coverage-src src",
+		"check": [
+			"@test",
+			"@phpstan"
+		]
 	},
 	"require-dev": {
-		"nette/tester": "^2.6.1"
+		"nette/tester": "^2.6.1",
+		"phpstan/phpstan": "^2.1"
 	}
 }

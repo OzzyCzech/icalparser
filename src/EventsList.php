@@ -10,6 +10,7 @@ use ArrayObject;
  *
  * @license BSD-3-Clause
  * @author Roman Ožana <roman@ozana.cz>
+ * @extends ArrayObject<int, array<string, mixed>>
  */
 class EventsList extends ArrayObject {
 

@@ -158,7 +158,7 @@ class Freq {
 		}
 		$added = $this->added;
 		$index = 0;
-		$last = null;
+		$last = PHP_INT_MIN;
 		$count = 0;
 		$expander = new Expander($this->rule, $this->localDate($this->start), limit: $this->maxOccurrences);
 		foreach ($expander as $timestamp) {
@@ -175,7 +175,7 @@ class Freq {
 	/**
 	 * @return Generator<int, int>
 	 */
-	private function emit(int $timestamp, ?int &$last, int &$count): Generator {
+	private function emit(int $timestamp, int &$last, int &$count): Generator {
 		if ($timestamp !== $last && !isset($this->excluded[$timestamp])) {
 			if (++$count > $this->maxOccurrences) {
 				throw new RuntimeException('Recurrence occurrence limit exceeded.');
