@@ -86,6 +86,17 @@ final readonly class DateTimeValue implements Stringable {
 		return new self(DateTimeType::Floating, self::wallClock($local), $tzid);
 	}
 
+	/**
+	 * Whether parse() accepts the value, without creating objects.
+	 */
+	public static function isValid(string $value, bool $date = false): bool {
+		$value = strtoupper(trim($value));
+		return (bool) preg_match('/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})(Z)?)?$/D', $value, $match, PREG_UNMATCHED_AS_NULL)
+			&& checkdate((int) $match[2], (int) $match[3], (int) $match[1])
+			&& ($match[4] === null || ((int) $match[4] < 24 && (int) $match[5] < 60 && (int) $match[6] <= 60))
+			&& !($date && $match[4] !== null);
+	}
+
 	public function isDate(): bool {
 		return $this->type === DateTimeType::Date;
 	}

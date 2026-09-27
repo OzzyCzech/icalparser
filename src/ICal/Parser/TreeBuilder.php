@@ -39,40 +39,40 @@ final class TreeBuilder {
 	}
 
 	/**
-	 * @param iterable<ContentLine> $lines
+	 * @param iterable<ContentLine|array{string, string, string, int}> $lines content lines, or rows of Tokenizer::rows()
 	 * @return Generator<string, Component>
 	 */
 	public function build(iterable $lines): Generator {
 		$calendars = 0;
 		foreach ($lines as $line) {
-			if ($line->isBegin()) {
-				$name = $line->componentName();
-				if ($this->stack === [] && $name !== 'VCALENDAR') {
-					$this->problem('syntax.missing-calendar', "$name outside of VCALENDAR, an implicit VCALENDAR was added.", $line->line);
-					$this->open('VCALENDAR', $line->line);
-				}
-				// a new event (task, ...) ends components left open, e.g. in truncated feeds
-				while (isset(self::CALENDAR_CHILDREN[$name]) && count($this->stack) > 1) {
-					$this->problem('syntax.missing-end', "END:{$this->current()} is missing before BEGIN:$name, the component was closed.", $line->line);
-					yield from $this->close();
-				}
-				$this->open($name, $line->line);
-				continue;
-			}
+			[$name, $parameters, $value, $number] = $line instanceof ContentLine ? [$line->name, $line->rawParameters, $line->value, $line->line] : $line;
 
-			if ($line->isEnd()) {
-				$name = $line->componentName();
-				$depth = $this->depthOf($name);
+			if (($name === 'BEGIN' || $name === 'END') && $parameters === '') {
+				$component = strtoupper(trim($value));
+				if ($name === 'BEGIN') {
+					if ($this->stack === [] && $component !== 'VCALENDAR') {
+						$this->problem('syntax.missing-calendar', "$component outside of VCALENDAR, an implicit VCALENDAR was added.", $number);
+						$this->open('VCALENDAR', $number);
+					}
+					// a new event (task, ...) ends components left open, e.g. in truncated feeds
+					while (isset(self::CALENDAR_CHILDREN[$component]) && count($this->stack) > 1) {
+						$this->problem('syntax.missing-end', "END:{$this->current()} is missing before BEGIN:$component, the component was closed.", $number);
+						yield from $this->close();
+					}
+					$this->open($component, $number);
+					continue;
+				}
+
+				$depth = $this->depthOf($component);
 				if ($depth === null) {
-					$this->problem('syntax.unexpected-end', "END:$name without BEGIN:$name was ignored.", $line->line);
+					$this->problem('syntax.unexpected-end', "END:$component without BEGIN:$component was ignored.", $number);
 					continue;
 				}
 				while (count($this->stack) - 1 > $depth) {
-					$open = $this->current();
-					$this->problem('syntax.missing-end', "END:$open is missing, the component was closed.", $line->line);
+					$this->problem('syntax.missing-end', "END:{$this->current()} is missing, the component was closed.", $number);
 					yield from $this->close();
 				}
-				if ($name === 'VCALENDAR') {
+				if ($component === 'VCALENDAR') {
 					$calendars++;
 				}
 				yield from $this->close();
@@ -80,13 +80,13 @@ final class TreeBuilder {
 			}
 
 			if ($this->stack === []) {
-				$this->problem('syntax.outside-calendar', "$line->name outside of VCALENDAR was ignored.", $line->line, $line->name);
+				$this->problem('syntax.outside-calendar', "$name outside of VCALENDAR was ignored.", $number, $name);
 				continue;
 			}
 			if (++$this->propertyCount > $this->limits->maxProperties) {
-				throw ResourceLimitException::create('limit.properties', "More than {$this->limits->maxProperties} properties.", $line->line, $line->name);
+				throw ResourceLimitException::create('limit.properties', "More than {$this->limits->maxProperties} properties.", $number, $name);
 			}
-			$this->stack[array_key_last($this->stack)]['properties'][] = Property::fromContentLine($line);
+			$this->stack[array_key_last($this->stack)]['properties'][] = new Property($name, $parameters, $value, $number);
 		}
 
 		while ($this->stack !== []) {

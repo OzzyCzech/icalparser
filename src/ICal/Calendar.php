@@ -150,8 +150,10 @@ final class Calendar {
 				$occurrences[] = $occurrence;
 			}
 		}
+		// sort by the instant, dates and floating times in the floating timezone (or the one of $from)
 		$timezone = $this->floatingTimezone() ?? $from->getTimezone();
-		usort($occurrences, static fn(Occurrence $a, Occurrence $b): int => $a->startTime($timezone) <=> $b->startTime($timezone));
+		$keys = array_map(static fn(Occurrence $occurrence): int => $occurrence->start->toDateTime($timezone, $timezone)->getTimestamp(), $occurrences);
+		array_multisort($keys, SORT_NUMERIC, array_keys($occurrences), $occurrences);
 		return $occurrences;
 	}
 

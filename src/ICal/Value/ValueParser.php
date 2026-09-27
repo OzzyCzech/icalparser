@@ -209,8 +209,13 @@ final class ValueParser {
 	public function diagnose(Property $property): array {
 		$this->problems = [];
 		try {
-			$this->value($property);
-			return $this->problems;
+			$type = self::type($property);
+			if ($type === 'DATE-TIME' || $type === 'DATE') {
+				$this->checkDates($property); // the same checks as dateTimes(), without creating objects
+			} elseif ($type !== 'CAL-ADDRESS' && $type !== 'URI' && $type !== 'TEXT') {
+				$this->value($property);
+			}
+			return $this->problems ?? [];
 		} finally {
 			$this->problems = null;
 		}
@@ -226,8 +231,25 @@ final class ValueParser {
 		return $this->timezones[$tzid];
 	}
 
-	private function parseDate(string $value, Property $property): ?DateTimeValue {
+	private function checkDates(Property $property): void {
 		$tzid = $property->parameter('TZID');
+		if ($tzid !== null) {
+			$this->timezone($tzid);
+		}
+		foreach (explode(',', $property->value) as $item) {
+			$value = $this->normalizeDate(explode('/', $item, 2)[0], $property, $date);
+			if (!DateTimeValue::isValid($value, $date)) {
+				$this->fail(InvalidValueException::create('value.invalid-date-time', 'Invalid DATE-TIME value: ' . $value, rawValue: $value), $property);
+			}
+		}
+	}
+
+	/**
+	 * Repairs of the permissive mode: a date with "Z", VALUE=DATE with a time. Reports leap seconds.
+	 *
+	 * @param-out bool $date whether the value is read as a DATE
+	 */
+	private function normalizeDate(string $value, Property $property, ?bool &$date): string {
 		if (!$this->strict && preg_match('/^\s*\d{8}Z\s*$/Di', $value)) {
 			$value = substr(trim($value), 0, 8); // a date with "Z" (written by Google) is a date
 			$this->problem('value.nonstandard', "The date $value has a \"Z\" suffix, it was read as a date.");
@@ -240,13 +262,14 @@ final class ValueParser {
 		if (preg_match('/T\d{4}60Z?$/Di', trim($value))) {
 			$this->problem('value.nonstandard', "The leap second of $value was read as second 59.");
 		}
+		return $value;
+	}
+
+	private function parseDate(string $value, Property $property): ?DateTimeValue {
+		$tzid = $property->parameter('TZID');
+		$value = $this->normalizeDate($value, $property, $date);
 		try {
-			return DateTimeValue::parse(
-				$value,
-				$date,
-				$tzid,
-				$tzid === null ? null : $this->timezone($tzid)?->timezone,
-			);
+			return DateTimeValue::parse($value, $date, $tzid, $tzid === null ? null : $this->timezone($tzid)?->timezone);
 		} catch (InvalidValueException $e) {
 			return $this->fail($e, $property);
 		}

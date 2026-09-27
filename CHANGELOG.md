@@ -85,7 +85,8 @@ See [UPGRADING.md](UPGRADING.md).
 
 Compared with 4.1.3 on the sample calendars: expanding recurring events is about 4x faster, parsing a 27 MB calendar
 with 50 000 events is about 20 % faster with lower peak memory, and sorting 50 000 events is about 13x faster.
-The new API converts values lazily and streams files with constant memory.
+The new API parses the same 27 MB calendar in 1.1 s with value checks (0.95 s without, 226 MB), streams it in 0.5 s
+with 2 MB of memory, and converts values lazily.
 
 ### Tests and tooling
 

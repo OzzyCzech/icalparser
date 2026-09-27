@@ -21,6 +21,10 @@ final class Event extends Item {
 	 * From DTEND or DURATION; one day for all-day events, zero otherwise.
 	 */
 	public function duration(): DateInterval {
+		return $this->remember('duration', $this->calculateDuration(...));
+	}
+
+	private function calculateDuration(): DateInterval {
 		$start = $this->start();
 		$end = $this->date('DTEND');
 		if ($start !== null && $end !== null) {

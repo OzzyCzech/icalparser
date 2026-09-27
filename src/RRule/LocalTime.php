@@ -16,18 +16,19 @@ final class LocalTime {
 	 * @param int $local the wall-clock time as seconds since 1970-01-01 00:00 (as if it were UTC)
 	 */
 	public static function timestamp(DateTimeZone $timezone, int $local): int {
-		$probe = new DateTime('@0');
+		static $probe;
+		$probe ??= new DateTime('@0');
 		$offsetAt = static fn(int $timestamp): int => $timezone->getOffset($probe->setTimestamp($timestamp));
 
+		// there is at most one transition within two days
 		$before = $offsetAt($local - 2 * 86400);
 		$after = $offsetAt($local + 2 * 86400);
-		$offsets = [$before => true, $after => true];
-		foreach ($timezone->getTransitions($local - 2 * 86400, $local + 2 * 86400) ?: [] as $transition) {
-			$offsets[$transition['offset']] = true;
+		if ($before === $after && $offsetAt($local - $before) === $before) {
+			return $local - $before;
 		}
 
 		$valid = [];
-		foreach (array_keys($offsets) as $offset) {
+		foreach ([$before, $after] as $offset) {
 			$timestamp = $local - $offset;
 			if ($offsetAt($timestamp) === $offset) {
 				$valid[] = $timestamp;
@@ -36,8 +37,7 @@ final class LocalTime {
 		if ($valid !== []) {
 			return min($valid); // the first of repeated times
 		}
-		// a nonexistent time: interpreted with the offset before the gap (there is at most
-		// one transition within two days)
+		// a nonexistent time is interpreted with the offset before the gap
 		return $local - $before;
 	}
 }

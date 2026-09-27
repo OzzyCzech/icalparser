@@ -105,7 +105,7 @@ final readonly class Parser {
 		$reported = 0;
 		$shell = null;       // properties and VTIMEZONE components of the current calendar
 		$calendar = null;
-		foreach ($builder->build(Tokenizer::tokenize($lines, $builder->invalidLine(...))) as $kind => $component) {
+		foreach ($builder->build(Tokenizer::rows($lines, $builder->invalidLine(...))) as $kind => $component) {
 			foreach (array_slice($builder->warnings(), $reported) as $warning) {
 				$onWarning !== null && $onWarning($warning);
 				$reported++;
@@ -144,7 +144,7 @@ final readonly class Parser {
 
 		$calendars = [];
 		$children = [];
-		foreach ($builder->build(Tokenizer::tokenize($lines($warn), $builder->invalidLine(...))) as $kind => $component) {
+		foreach ($builder->build(Tokenizer::rows($lines($warn), $builder->invalidLine(...))) as $kind => $component) {
 			if ($kind === 'component') {
 				$children[] = $component;
 				continue;

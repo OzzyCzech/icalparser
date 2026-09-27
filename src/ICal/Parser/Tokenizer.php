@@ -30,6 +30,26 @@ final class Tokenizer {
 	}
 
 	/**
+	 * Content lines as [name, raw parameters, raw value, line number] without creating objects.
+	 *
+	 * @internal used by the parser
+	 * @param iterable<int, string> $lines
+	 * @param ?callable(string, int): void $invalid
+	 * @return Generator<int, array{string, string, string, int}>
+	 */
+	public static function rows(iterable $lines, ?callable $invalid = null): Generator {
+		foreach ($lines as $number => $line) {
+			$parts = ContentLine::split($line);
+			if ($parts !== null) {
+				$parts[] = $number;
+				yield $parts;
+			} elseif ($invalid !== null) {
+				$invalid($line, $number);
+			}
+		}
+	}
+
+	/**
 	 * @param ?callable(string, int): void $invalid
 	 * @return Generator<int, ContentLine>
 	 */

@@ -19,6 +19,8 @@ use om\RRule\Rule;
  * so occurrencesBetween() returns the complete series.
  */
 abstract class Item {
+	/** @var array<string, mixed> typed values already converted (the component is immutable) */
+	private array $memo = [];
 	/**
 	 * @param list<Item> $overrides
 	 * @internal use Calendar::events() and similar methods
@@ -90,7 +92,7 @@ abstract class Item {
 	}
 
 	public function isCancelled(): bool {
-		return $this->status() === 'CANCELLED';
+		return $this->remember('cancelled', fn() => $this->status() === 'CANCELLED');
 	}
 
 	/**
@@ -148,7 +150,7 @@ abstract class Item {
 	}
 
 	public function start(): ?DateTimeValue {
-		return $this->date('DTSTART');
+		return $this->remember('start', fn() => $this->date('DTSTART'));
 	}
 
 	public function isAllDay(): bool {
@@ -204,7 +206,7 @@ abstract class Item {
 	}
 
 	public function recurrenceId(): ?DateTimeValue {
-		return $this->date('RECURRENCE-ID');
+		return $this->remember('recurrenceId', fn() => $this->date('RECURRENCE-ID'));
 	}
 
 	/**
@@ -353,6 +355,18 @@ abstract class Item {
 				return;
 			}
 		}
+	}
+
+	/**
+	 * @template T
+	 * @param callable(): T $calculate
+	 * @return T
+	 */
+	protected function remember(string $key, callable $calculate): mixed {
+		if (!array_key_exists($key, $this->memo)) {
+			$this->memo[$key] = $calculate();
+		}
+		return $this->memo[$key];
 	}
 
 	protected function has(string $name): bool {

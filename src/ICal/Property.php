@@ -47,6 +47,9 @@ final class Property implements Stringable {
 	}
 
 	public function parameter(string $name): ?string {
+		if ($this->parsed === null && ($this->rawParameters === '' || stripos($this->rawParameters, $name) === false)) {
+			return null; // no need to parse the parameters
+		}
 		return $this->parameters->get($name);
 	}
 
