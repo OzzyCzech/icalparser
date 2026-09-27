@@ -63,12 +63,13 @@ See [UPGRADING.md](UPGRADING.md).
 
 ### Fixed
 
-- `RDATE` without `RRULE` no longer fails with `TypeError`
+- `RDATE` without `RRULE` no longer fails with `TypeError` and adds no yearly occurrences (#37)
 - `RDATE` values are always part of the recurrence set (one was lost together with `COUNT`)
 - a `RECURRENCE-ID` replaces only the matching instance of the same UID, compared as an instant in any timezone
   (4.1.3 compared strings for all events, so it could hide instances of other events or a wrong instance)
 - an excluded or overridden first occurrence is no longer returned with the original `DTSTART`
 - series with `COUNT` reaching beyond the 3 year horizon are complete (4.1.3 failed with `TypeError`)
+- yearly rules in January return every year, not only the first occurrence (#59)
 - rules the previous engine expanded incorrectly, for example negative weekday ordinals (`BYDAY=-2MO` returned
   every third Monday), `BYHOUR` combined with `BYMINUTE` (minutes were lost) and `INTERVAL` of weekly rules
   (worked around in the parser only partially); `Freq` with a string rule no longer loops forever

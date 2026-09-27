@@ -1,0 +1,41 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "timezone": "Asia/Kolkata",
+            "timezones": [
+                "Asia/Kolkata => Asia/Kolkata (Iana)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "078c1612-01c5-4021-9b11-cca336b64f04",
+                    "summary": "Jan Year",
+                    "start": "2023-01-01 (date)",
+                    "end": "2023-01-02 (date)",
+                    "rrules": [
+                        "FREQ=YEARLY;BYMONTHDAY=1;BYMONTH=1"
+                    ],
+                    "x-properties": [
+                        "X-MICROSOFT-CDO-ALLDAYEVENT"
+                    ],
+                    "occurrences": [
+                        "2023-01-01 (date) – 2023-01-02 (date)",
+                        "2024-01-01 (date) – 2024-01-02 (date)",
+                        "2025-01-01 (date) – 2025-01-02 (date)",
+                        "2026-01-01 (date) – 2026-01-02 (date)",
+                        "2027-01-01 (date) – 2027-01-02 (date)",
+                        "2028-01-01 (date) – 2028-01-02 (date)",
+                        "2029-01-01 (date) – 2029-01-02 (date)",
+                        "2030-01-01 (date) – 2030-01-02 (date)",
+                        "2031-01-01 (date) – 2031-01-02 (date)",
+                        "2032-01-01 (date) – 2032-01-02 (date)"
+                    ]
+                }
+            ],
+            "issues": [
+                "ERROR VTIMEZONE: VTIMEZONE needs a STANDARD or DAYLIGHT component. [timezone.no-observance]"
+            ]
+        }
+    ]
+}
