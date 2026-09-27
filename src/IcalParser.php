@@ -10,6 +10,7 @@ use DateTimeInterface;
 use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
+use om\Parser\ContentLine;
 use om\RRule\Expander;
 use om\RRule\Rule;
 use RuntimeException;
@@ -46,10 +47,7 @@ class IcalParser {
 	protected array $counters = [];
 
 	private readonly ParserOptions $options;
-	/** @var array<string, string> */
-	private array $windowsTimezones;
-	/** @var array<string, DateTimeZone|false> */
-	private array $timezoneCache = [];
+	private readonly TimezoneResolver $timezones;
 
 	/**
 	 * Parser details of components that are not part of the public data:
@@ -68,7 +66,7 @@ class IcalParser {
 
 	public function __construct(?ParserOptions $options = null) {
 		$this->options = $options ?? new ParserOptions();
-		$this->windowsTimezones = $this->options->windowsTimezones ?? [];
+		$this->timezones = new TimezoneResolver($this->options->windowsTimezones ?? []);
 	}
 
 	/**
@@ -544,39 +542,27 @@ class IcalParser {
 	 * @return array{string, mixed, mixed, string, string}|null [key, middle, value, raw value, line]
 	 */
 	private function parseRow(string $row): ?array {
-		$nameLength = strcspn($row, ';:');
-		if ($nameLength === 0 || $nameLength === strlen($row) || strspn($row, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_', 0, $nameLength) !== $nameLength) {
+		$line = ContentLine::split($row);
+		if ($line === null) {
 			return null;
 		}
-		$key = strtoupper(substr($row, 0, $nameLength));
-
-		$middle = '';
-		$valueStart = $nameLength + 1;
-		if ($row[$nameLength] === ';') {
-			$colon = self::valueSeparator($row, $nameLength);
-			if ($colon === null) {
-				return null;
-			}
-			$middle = substr($row, $nameLength + 1, $colon - $nameLength - 1);
-			$valueStart = $colon + 1;
-		}
-		$raw = (string) substr($row, $valueStart);
+		[$key, $middle, $raw] = $line;
 		$value = $raw;
 		$timezone = null;
 
 		if ($key === 'X-WR-TIMEZONE' || $key === 'TZID') {
-			$resolved = $this->resolveTimezone($value);
+			$resolved = $this->timezones->resolve($value);
 			if ($resolved !== null) {
 				$value = $resolved->getName();
 				$this->timezone = $resolved;
 			}
 		}
 
-		if ($middle !== '' && ($params = self::parseParameters($middle)) !== []) {
+		if ($middle !== '' && ($params = ContentLine::parameters($middle)) !== []) {
 			$middle = [];
 			foreach ($params as $name => $paramValue) {
 				if ($name === 'TZID') {
-					$resolved = $this->resolveTimezone($paramValue);
+					$resolved = $this->timezones->resolve($paramValue);
 					$middle[$name] = $resolved ?? $paramValue;
 					$timezone = $resolved;
 				} elseif ($name === 'ENCODING') {
@@ -623,49 +609,6 @@ class IcalParser {
 		return [$key, $middle, $value, $raw, $row];
 	}
 
-	/**
-	 * Position of the colon that separates parameters from the value; colons inside quoted
-	 * parameter values (e.g. ALTREP="http://...") are skipped.
-	 */
-	private static function valueSeparator(string $row, int $offset): ?int {
-		$colon = strpos($row, ':', $offset);
-		$quote = strpos($row, '"', $offset);
-		if ($colon === false) {
-			return null;
-		}
-		if ($quote === false || $quote > $colon) {
-			return $colon;
-		}
-		$length = strlen($row);
-		$quoted = false;
-		for ($i = $quote; $i < $length; $i++) {
-			if ($row[$i] === '"') {
-				$quoted = !$quoted;
-			} elseif ($row[$i] === ':' && !$quoted) {
-				return $i;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Parse "NAME=value;NAME2="quoted;value"" into [NAME => value]; parameter names are
-	 * case-insensitive, quotes around values are removed.
-	 *
-	 * @return array<string, string>
-	 */
-	private static function parseParameters(string $middle): array {
-		preg_match_all('/([^=;]+)=((?:"[^"]*"|[^";])*)/', $middle, $matches, PREG_SET_ORDER);
-		$params = [];
-		foreach ($matches as [, $name, $value]) {
-			if (str_contains($value, '"')) {
-				$value = str_replace('"', '', $value);
-			}
-			$params[strtoupper(trim($name))] = $value;
-		}
-		return $params;
-	}
-
 	private static function createDate(string $value, ?DateTimeZone $timezone): ?DateTime {
 		try {
 			// Fast path for UTC values like 20240105T100000Z: resolving the "Z" abbreviation
@@ -677,45 +620,6 @@ class IcalParser {
 				return (new DateTime(substr($value, 0, 15), $utc))->setTimezone($zulu);
 			}
 			return new DateTime($value, $timezone);
-		} catch (Exception) {
-			return null;
-		}
-	}
-
-	/**
-	 * Extract and resolve timezone from a TZID or X-WR-TIMEZONE value.
-	 * Handles Windows names, prefixed values (e.g. /mozilla.org/.../Europe/Paris) and
-	 * multi-segment IANA zones (e.g. America/Argentina/Buenos_Aires).
-	 */
-	private function resolveTimezone(string $value): ?DateTimeZone {
-		$cached = $this->timezoneCache[$value] ??= $this->findTimezone($value) ?? false;
-		return $cached ?: null;
-	}
-
-	private function findTimezone(string $value): ?DateTimeZone {
-		$value = trim($value, " \t'\"");
-		$parts = array_values(array_filter(preg_split('#[/\\\\]#', $value) ?: []));
-		$count = count($parts);
-		if ($count < 2) {
-			// no slashes - try as-is via windowsTimezones lookup
-			return self::createTimezone($this->windowsTimezones[$value] ?? $value);
-		}
-
-		// try building timezone paths from the end, shortest first
-		// e.g. for "/mozilla.org/20070129_1/Europe/Paris": try "Europe/Paris" ✓
-		// e.g. for "America/Argentina/Buenos_Aires": "Argentina/Buenos_Aires" ✗, "America/Argentina/Buenos_Aires" ✓
-		for ($length = 2; $length <= $count; $length++) {
-			$candidate = implode('/', array_slice($parts, $count - $length));
-			if ($timezone = self::createTimezone($this->windowsTimezones[$candidate] ?? $candidate)) {
-				return $timezone;
-			}
-		}
-		return null;
-	}
-
-	private static function createTimezone(string $name): ?DateTimeZone {
-		try {
-			return new DateTimeZone($name);
 		} catch (Exception) {
 			return null;
 		}
