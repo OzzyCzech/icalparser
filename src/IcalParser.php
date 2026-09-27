@@ -191,7 +191,9 @@ class IcalParser {
 	 * @throws InvalidArgumentException for an invalid RRULE in strict mode
 	 */
 	public function parseRecurrences(array $event): array {
-		return $this->recurrences($event, []);
+		// details such as a date-only UNTIL or EXDATE are known for events of the parsed data
+		$counter = array_search($event, $this->data['VEVENT'] ?? [], true);
+		return $this->recurrences($event, $counter === false ? [] : $this->meta['VEVENT'][$counter] ?? []);
 	}
 
 	public function isMultipleKey(string $key): ?string {

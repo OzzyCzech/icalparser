@@ -39,7 +39,8 @@ bugs; the results of affected calendars differ from 4.1.3.
 - `parseFile()` throws `RuntimeException` when the file cannot be read; invalid input keeps previously parsed data
 - `IcalParser::$timezone` is reset for every calendar that is not appended
 - `Freq` is an adapter over the new engine: invalid rules throw `InvalidArgumentException`, `maxOccurrences` limits
-  the expansion, `Freq::$debug` has no effect and `lastOccurrence()` returns `false` for an empty set
+  the expansion, `Freq::$debug` has no effect, `lastOccurrence()` returns `false` for an empty set and
+  `previousOccurrence()` returns `false` when there is no earlier occurrence (4.1.3 returned DTSTART)
 
 ### Fixed
 

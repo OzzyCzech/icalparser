@@ -105,6 +105,13 @@ $cal = new IcalParser(new ParserOptions(
 ));
 ```
 
+### Limitations
+
+- custom `VTIMEZONE` definitions are not evaluated; a `TZID` must be an IANA or Windows timezone name
+  (possibly with a prefix such as `/mozilla.org/…/Europe/Prague`), otherwise the calendar timezone is used
+- `RECURRENCE-ID;RANGE=THISANDFUTURE` overrides only the single instance
+- a `DTSTART` in a daylight saving gap is moved by PHP, so its occurrences use the moved local time
+
 You can run example with [PHP Built-in web server](https://www.php.net/manual/en/features.commandline.webserver.php) as follow:
 
 ```shell

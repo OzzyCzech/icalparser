@@ -28,7 +28,7 @@ use RuntimeException;
 final class Expander implements IteratorAggregate {
 	/** Stop searching after this many consecutive periods without any candidate. */
 	public const int MAX_EMPTY_PERIODS = 100000;
-	private const int MAX_DAYS = 2932896; // 10000-01-01
+	private const int MAX_DAYS = 2932897; // 10000-01-01, the first day that is not expanded
 
 	private readonly DateTimeZone $timezone;
 	private readonly ?int $fixedOffset;
@@ -101,12 +101,10 @@ final class Expander implements IteratorAggregate {
 		}
 		$until ??= PHP_INT_MAX;
 
-		if ($startTs > $until) {
-			return;
-		}
+		// DTSTART is always the first instance, even when UNTIL or the horizon is earlier
 		yield $startTs;
 		$emitted = 1;
-		if ($rule->count !== null && $emitted >= $rule->count) {
+		if ($startTs > $until || ($rule->count !== null && $emitted >= $rule->count)) {
 			return;
 		}
 
@@ -126,12 +124,22 @@ final class Expander implements IteratorAggregate {
 			Frequency::Secondly => $hour * 3600 + $minute * 60 + $second,
 			default => 0,
 		};
+		$step = $interval * match ($freq) {
+			Frequency::Hourly => 3600,
+			Frequency::Minutely => 60,
+			default => 1,
+		};
+		$subDaily = !$freq->isCoarserThan(Frequency::Hourly);
+		$last = $startTs;
 		$emptyPeriods = 0;
 
 		while (true) {
-			$candidates = $this->candidates($freq, $year, $month, $periodDays, $periodSeconds);
+			// sub-daily periods of a day (or hour) that cannot match are skipped at once
+			$skip = $subDaily ? $this->secondsToSkip($freq, $periodDays, $periodSeconds) : 0;
+			$candidates = $skip === 0 ? $this->candidates($freq, $year, $month, $periodDays, $periodSeconds) : [];
+
 			if ($candidates === []) {
-				if (++$emptyPeriods > self::MAX_EMPTY_PERIODS) {
+				if (++$emptyPeriods > self::MAX_EMPTY_PERIODS || $this->periodStart($freq, $year, $month, $periodDays, $periodSeconds) > $until) {
 					return;
 				}
 			} else {
@@ -140,14 +148,19 @@ final class Expander implements IteratorAggregate {
 					$candidates = $this->applySetPos($candidates);
 				}
 				foreach ($candidates as [$days, $time]) {
+					if ($days >= self::MAX_DAYS) {
+						return;
+					}
 					$ts = $this->toTimestamp($days, $time);
 					if ($ts > $until) {
 						return;
 					}
-					if ($ts <= $startTs) {
+					// skips times before DTSTART and wall-clock times repeated by a DST transition
+					if ($ts <= $last) {
 						continue;
 					}
 					yield $ts;
+					$last = $ts;
 					if (++$emitted > $this->limit) {
 						throw new RuntimeException('Recurrence occurrence limit exceeded.');
 					}
@@ -173,11 +186,7 @@ final class Expander implements IteratorAggregate {
 					$periodDays += $interval;
 					break;
 				default:
-					$periodSeconds += $interval * match ($freq) {
-						Frequency::Hourly => 3600,
-						Frequency::Minutely => 60,
-						default => 1,
-					};
+					$periodSeconds += $skip > 0 ? intdiv($skip + $step - 1, $step) * $step : $step;
 					$periodDays += intdiv($periodSeconds, 86400);
 					$periodSeconds %= 86400;
 			}
@@ -185,6 +194,35 @@ final class Expander implements IteratorAggregate {
 				return;
 			}
 		}
+	}
+
+	/**
+	 * For sub-daily rules: seconds until the next day (or hour, or minute) that may match,
+	 * 0 when the current period may produce an occurrence.
+	 */
+	private function secondsToSkip(Frequency $freq, int $days, int $seconds): int {
+		if (!$this->matchesDayNumber($days)) {
+			return 86400 - $seconds;
+		}
+		if ($freq !== Frequency::Hourly && $this->hours !== [] && !in_array(intdiv($seconds, 3600), $this->hours, true)) {
+			return 3600 - $seconds % 3600;
+		}
+		if ($freq === Frequency::Secondly && $this->minutes !== [] && !in_array(intdiv($seconds % 3600, 60), $this->minutes, true)) {
+			return 60 - $seconds % 60;
+		}
+		return 0;
+	}
+
+	/**
+	 * Earliest possible instant of a period (a day early, to be safe with any UTC offset).
+	 */
+	private function periodStart(Frequency $freq, int $year, int $month, int $days, int $seconds): int {
+		$first = match ($freq) {
+			Frequency::Yearly => self::daysFromCivil($year, 1, 1),
+			Frequency::Monthly => self::daysFromCivil($year, $month, 1),
+			default => $days,
+		};
+		return ($first - 1) * 86400 + $seconds;
 	}
 
 	/**
@@ -471,11 +509,13 @@ final class Expander implements IteratorAggregate {
 			return $timestamp;
 		}
 
+		// A new object resolves ambiguous times (DST fall-back) to the first occurrence as
+		// RFC 5545 requires; nonexistent times (DST gap) move forward by the gap.
 		[$year, $month, $day] = self::civilFromDays($days);
-		$timestamp = $this->probe
-			->setDate($year, $month, $day)
-			->setTime(intdiv($secondsOfDay, 3600), intdiv($secondsOfDay % 3600, 60), $secondsOfDay % 60)
-			->getTimestamp();
+		[$hour, $minute, $second] = [intdiv($secondsOfDay, 3600), intdiv($secondsOfDay % 3600, 60), $secondsOfDay % 60];
+		$timestamp = $year >= 0 && $year <= 9999
+			? (new DateTimeImmutable(sprintf('%04d-%02d-%02d %02d:%02d:%02d', $year, $month, $day, $hour, $minute, $second), $this->timezone))->getTimestamp()
+			: $this->probe->setDate($year, $month, $day)->setTime($hour, $minute, $second)->getTimestamp();
 		$this->rememberOffset($timestamp);
 		return $timestamp;
 	}
@@ -495,7 +535,7 @@ final class Expander implements IteratorAggregate {
 				break;
 			}
 		}
-		$this->offset = $this->timezone->getOffset($this->probe);
+		$this->offset = $this->timezone->getOffset($this->probe->setTimestamp($timestamp));
 		$this->offsetFrom = $previous + 86400;
 		$this->offsetUntil = $next - 86400;
 	}

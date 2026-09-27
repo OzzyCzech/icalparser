@@ -156,7 +156,7 @@ test('Floating and date-only UNTIL use the timezone of DTSTART', function () {
 });
 
 test('Expander edge cases', function () {
-	Assert::same([], expand('FREQ=DAILY;UNTIL=20251231T000000Z'), 'UNTIL before DTSTART');
+	Assert::same(['2026-01-01 09:00:00'], expand('FREQ=DAILY;UNTIL=20251231T000000Z'), 'DTSTART is the first instance even after UNTIL');
 	Assert::same(['2026-01-01 09:00:00'], expand('FREQ=DAILY;COUNT=1'));
 	Assert::same(['2026-01-01 09:00:00'], expand('FREQ=MINUTELY;BYSECOND=60'), 'a leap second cannot be represented');
 	Assert::same(['2026-01-01 09:00:00', '2026-02-01 09:00:00'], expand('FREQ=MONTHLY;COUNT=2'));
@@ -178,4 +178,45 @@ test('Expander calendar helpers', function () {
 		Assert::same([$year, $month, $day], Expander::civilFromDays($days), $date);
 		Assert::same((int) (new DateTimeImmutable($date . 'T00:00:00Z'))->format('N'), Expander::weekday($days), $date);
 	}
+});
+
+test('Regressions found in review', function () {
+	$newYork = new DateTimeZone('America/New_York');
+	$local = function (string $rule, string $start, DateTimeZone $zone, int $take = 10): array {
+		$result = [];
+		foreach (new Expander(Rule::fromString($rule), new DateTimeImmutable($start, $zone)) as $timestamp) {
+			$result[] = (new DateTimeImmutable('@' . $timestamp))->setTimezone($zone)->format('Y-m-d H:i T');
+			if (count($result) >= $take) {
+				break;
+			}
+		}
+		return $result;
+	};
+
+	// ambiguous times (DST fall-back) resolve to the first occurrence
+	Assert::same(
+		['2014-11-02 01:30 EDT', '2015-11-01 01:30 EDT', '2016-11-06 01:30 EDT'],
+		$local('FREQ=YEARLY;BYMONTH=11;BYDAY=1SU;COUNT=3', '2014-11-02 01:30', $newYork),
+	);
+
+	// sub-daily rules do not repeat an instant across a DST gap
+	Assert::same(
+		['2024-03-10 00:00 EST', '2024-03-10 01:00 EST', '2024-03-10 03:00 EDT', '2024-03-10 04:00 EDT', '2024-03-10 05:00 EDT'],
+		$local('FREQ=HOURLY;COUNT=5', '2024-03-10 00:00', $newYork),
+	);
+
+	// sub-daily rules skip days and hours that cannot match
+	Assert::same(['2024-01-01 00:00:00', '2024-06-01 00:00:00', '2024-06-01 00:01:00'], expand('FREQ=MINUTELY;BYMONTH=6;COUNT=3', '2024-01-01T00:00:00Z'));
+	Assert::same(['2024-01-02 00:00:00', '2024-01-08 00:00:00', '2024-01-08 00:00:01'], expand('FREQ=SECONDLY;BYDAY=MO;COUNT=3', '2024-01-02T00:00:00Z'));
+	Assert::same(['2024-01-01 00:00:00', '2024-01-01 10:00:00', '2024-01-01 10:00:30'], expand('FREQ=SECONDLY;INTERVAL=30;BYHOUR=10;COUNT=3', '2024-01-01T00:00:00Z'));
+
+	// the last expanded day is 9999-12-31
+	Assert::same(['9999-12-30 10:00:00', '9999-12-31 10:00:00'], expand('FREQ=DAILY', '9999-12-30T10:00:00Z'));
+	Assert::same(['9999-12-25 10:00:00'], expand('FREQ=WEEKLY', '9999-12-25T10:00:00Z'));
+
+	// impossible rules stop at the horizon
+	$started = hrtime(true);
+	$rule = Rule::fromString('FREQ=YEARLY;BYWEEKNO=53;BYDAY=MO;BYYEARDAY=1');
+	Assert::count(1, iterator_to_array(new Expander($rule, new DateTimeImmutable('2026-01-01T00:00:00Z'), strtotime('2029-01-01T00:00:00Z'))));
+	Assert::true((hrtime(true) - $started) < 1e8, 'less than 100 ms');
 });

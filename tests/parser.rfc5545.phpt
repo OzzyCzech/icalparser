@@ -200,6 +200,15 @@ test('A COUNT series is complete even beyond the horizon for unbounded rules', f
 	Assert::same(['2026', '2027', '2028', '2029', '2030', '2031'], starts($parser, 'Y'));
 });
 
+test('An unbounded event starting after the horizon keeps its first instance', function () {
+	$now = new DateTimeImmutable('2026-01-01T00:00:00Z');
+	$event = "BEGIN:VEVENT\r\nDTSTART:20400101T100000Z\r\nRRULE:FREQ=WEEKLY\r\nEND:VEVENT";
+	Assert::same(['2040-01-01 10:00'], starts(parse($event, new ParserOptions(now: $now))));
+	Assert::same(['2040-01-01 10:00'], starts(parse($event, new ParserOptions(untilInterval: null, now: $now))));
+	$until = "BEGIN:VEVENT\r\nDTSTART;TZID=Europe/Prague:20240110T100000\r\nRRULE:FREQ=DAILY;UNTIL=20240110T080000Z\r\nEND:VEVENT";
+	Assert::same(['2024-01-10 10:00'], starts(parse($until)), 'UNTIL before DTSTART keeps DTSTART as in 4.1.3');
+});
+
 test('shiftEventDates skips old occurrences of unbounded rules', function () {
 	$options = new ParserOptions(untilInterval: new DateInterval('P1W'), shiftEventDates: new DateInterval('P3D'), now: new DateTimeImmutable('2026-01-10T00:00:00Z'));
 	$parser = parse("BEGIN:VEVENT\r\nDTSTART:19700101T090000Z\r\nRRULE:FREQ=DAILY\r\nEND:VEVENT", $options);
@@ -227,4 +236,8 @@ test('parseRecurrences() expands a parsed event', function () {
 	$dates = $parser->parseRecurrences($parser->data['VEVENT'][0]);
 	Assert::same(['2026-01-01', '2026-01-31', '2026-02-28'], array_map(fn($date) => $date->format('Y-m-d'), $dates));
 	Assert::exception(fn() => $parser->parseRecurrences(['RRULE' => ['FREQ' => 'DAILY']]), InvalidArgumentException::class);
+
+	$parser = parse("BEGIN:VEVENT\r\nDTSTART;TZID=America/New_York:20240101T100000\r\nRRULE:FREQ=DAILY;UNTIL=20240103\r\nEXDATE;VALUE=DATE:20240102\r\nEND:VEVENT");
+	$dates = array_map(fn($date) => $date->format('Y-m-d'), $parser->parseRecurrences($parser->data['VEVENT'][0]));
+	Assert::same(['2024-01-01', '2024-01-03'], $dates, 'same result as the parsed RECURRENCES');
 });
