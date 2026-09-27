@@ -6,6 +6,7 @@ use om\IcalParser;
 use om\ParserOptions;
 use om\Recurrence;
 use Tester\Assert;
+
 use function tests\test;
 
 require_once __DIR__ . '/../bootstrap.php';

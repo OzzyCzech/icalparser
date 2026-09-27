@@ -16,6 +16,7 @@ use om\ICal\Parser\ParseLimits;
 use om\ICal\Parser\ParserMode;
 use om\ICal\Parser\ParseWarning;
 use Tester\Assert;
+
 use function tests\test;
 
 require_once __DIR__ . '/../bootstrap.php';

@@ -1,0 +1,13 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+    ],
+    "calendars": [
+        {
+            "issues": [
+                "ERROR VCALENDAR.PRODID: PRODID is required. [component.missing-property]",
+                "ERROR VCALENDAR.VERSION: VERSION is required. [component.missing-property]"
+            ]
+        }
+    ]
+}

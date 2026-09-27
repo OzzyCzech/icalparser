@@ -1,0 +1,44 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+    ],
+    "calendars": [
+        {
+            "name": "School Board",
+            "method": "PUBLISH",
+            "timezone": "America/Chicago",
+            "timezones": [
+                "America/Chicago => America/Chicago (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "kpgr4590djmi89l3sv51gmalrc@google.com",
+                    "summary": "Regular Board Meeting",
+                    "start": "2015-08-10 18:30:00 -05:00 (America/Chicago = America/Chicago)",
+                    "end": "2015-08-10 21:00:00 -05:00 (America/Chicago = America/Chicago)",
+                    "rrules": [
+                        "FREQ=MONTHLY;UNTIL=20180709T233000Z;BYDAY=2MO"
+                    ],
+                    "overrides": 1,
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "aliceisd.net_7hatmpq9uek3a1h6if0r0sn5bc@group.calendar.google.com REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2015-08-10 18:30:00 -05:00 (America/Chicago = America/Chicago) – 2015-08-10 21:00:00 -05:00 (America/Chicago = America/Chicago)",
+                        "2015-09-14 18:30:00 -05:00 (America/Chicago = America/Chicago) – 2015-09-14 21:00:00 -05:00 (America/Chicago = America/Chicago)",
+                        "2015-10-12 18:30:00 -05:00 (America/Chicago = America/Chicago) – 2015-10-12 21:00:00 -05:00 (America/Chicago = America/Chicago)",
+                        "2015-11-09 18:30:00 -06:00 (America/Chicago = America/Chicago) – 2015-11-09 21:00:00 -06:00 (America/Chicago = America/Chicago)",
+                        "2015-12-14 18:30:00 -06:00 (America/Chicago = America/Chicago) – 2015-12-14 21:00:00 -06:00 (America/Chicago = America/Chicago)",
+                        "2016-01-11 18:30:00 -06:00 (America/Chicago = America/Chicago) – 2016-01-11 21:00:00 -06:00 (America/Chicago = America/Chicago)",
+                        "2016-02-08 18:30:00 -06:00 (America/Chicago = America/Chicago) – 2016-02-08 21:00:00 -06:00 (America/Chicago = America/Chicago)",
+                        "2016-03-14 18:30:00 -05:00 (America/Chicago = America/Chicago) – 2016-03-14 21:00:00 -05:00 (America/Chicago = America/Chicago)",
+                        "2016-04-11 18:30:00 -05:00 (America/Chicago = America/Chicago) – 2016-04-11 21:00:00 -05:00 (America/Chicago = America/Chicago)",
+                        "2016-05-09 18:30:00 -05:00 (America/Chicago = America/Chicago) – 2016-05-09 21:00:00 -05:00 (America/Chicago = America/Chicago)"
+                    ]
+                }
+            ]
+        }
+    ]
+}

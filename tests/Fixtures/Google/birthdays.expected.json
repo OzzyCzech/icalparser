@@ -1,0 +1,52 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "name": "Birthdays",
+            "method": "PUBLISH",
+            "timezone": "UTC",
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "BIRTHDAY_leap@google.com",
+                    "summary": "Leap day birthday",
+                    "start": "2024-02-29 (date)",
+                    "end": "2024-03-01 (date)",
+                    "rrules": [
+                        "FREQ=YEARLY"
+                    ],
+                    "x-properties": [
+                        "X-GOOGLE-CALENDAR-CONTENT-ICON",
+                        "X-GOOGLE-CALENDAR-CONTENT-DISPLAY"
+                    ],
+                    "occurrences": [
+                        "2024-02-29 (date) – 2024-03-01 (date)",
+                        "2028-02-29 (date) – 2028-03-01 (date)",
+                        "2032-02-29 (date) – 2032-03-01 (date)",
+                        "2036-02-29 (date) – 2036-03-01 (date)",
+                        "2040-02-29 (date) – 2040-03-01 (date)",
+                        "2044-02-29 (date) – 2044-03-01 (date)",
+                        "2048-02-29 (date) – 2048-03-01 (date)",
+                        "2052-02-29 (date) – 2052-03-01 (date)",
+                        "2056-02-29 (date) – 2056-03-01 (date)",
+                        "2060-02-29 (date) – 2060-03-01 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "BIRTHDAY_rdate@google.com",
+                    "summary": "Birthday with Google style RDATE",
+                    "start": "2026-12-10 (date)",
+                    "end": "2026-12-11 (date)",
+                    "rrules": [
+                        "FREQ=DAILY;COUNT=1"
+                    ],
+                    "occurrences": [
+                        "2026-12-10 (date) – 2026-12-11 (date)",
+                        "2027-12-10 (date) – 2027-12-11 (date)"
+                    ]
+                }
+            ]
+        }
+    ]
+}

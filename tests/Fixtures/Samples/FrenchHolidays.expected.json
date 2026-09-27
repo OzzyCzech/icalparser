@@ -1,0 +1,565 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+    ],
+    "calendars": [
+        {
+            "timezones": [
+                "/mozilla.org/20070129_1/Europe/Paris => Europe/Paris (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "5d1ae55f-3910-4de9-8b65-d652768fb2f2",
+                    "summary": "Lundi de Pâques",
+                    "start": "2007-04-09 (date)",
+                    "end": "2007-04-10 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2007-04-09 (date) – 2007-04-10 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "9e19b119-f077-4ae9-934e-cb62322ca81f",
+                    "summary": "Ascension",
+                    "start": "2008-05-01 (date)",
+                    "end": "2008-05-02 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2008-05-01 (date) – 2008-05-02 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "c6a930d6-4ed5-45d8-bb3d-d3587a32b8aa",
+                    "summary": "Jour de l'an",
+                    "start": "2007-01-01 (date)",
+                    "end": "2007-01-02 (date)",
+                    "rrules": [
+                        "FREQ=YEARLY"
+                    ],
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2007-01-01 (date) – 2007-01-02 (date)",
+                        "2008-01-01 (date) – 2008-01-02 (date)",
+                        "2009-01-01 (date) – 2009-01-02 (date)",
+                        "2010-01-01 (date) – 2010-01-02 (date)",
+                        "2011-01-01 (date) – 2011-01-02 (date)",
+                        "2012-01-01 (date) – 2012-01-02 (date)",
+                        "2013-01-01 (date) – 2013-01-02 (date)",
+                        "2014-01-01 (date) – 2014-01-02 (date)",
+                        "2015-01-01 (date) – 2015-01-02 (date)",
+                        "2016-01-01 (date) – 2016-01-02 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "f439c81b-fd09-4b40-a629-3a9663dd29ff",
+                    "summary": "Fête du Travail",
+                    "start": "2007-05-01 (date)",
+                    "end": "2007-05-02 (date)",
+                    "rrules": [
+                        "FREQ=YEARLY"
+                    ],
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2007-05-01 (date) – 2007-05-02 (date)",
+                        "2008-05-01 (date) – 2008-05-02 (date)",
+                        "2009-05-01 (date) – 2009-05-02 (date)",
+                        "2010-05-01 (date) – 2010-05-02 (date)",
+                        "2011-05-01 (date) – 2011-05-02 (date)",
+                        "2012-05-01 (date) – 2012-05-02 (date)",
+                        "2013-05-01 (date) – 2013-05-02 (date)",
+                        "2014-05-01 (date) – 2014-05-02 (date)",
+                        "2015-05-01 (date) – 2015-05-02 (date)",
+                        "2016-05-01 (date) – 2016-05-02 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "b1c0e1ed-a09f-4fc2-aab1-170d3f661f13",
+                    "summary": "Armistice 1945",
+                    "start": "2007-05-08 (date)",
+                    "end": "2007-05-09 (date)",
+                    "rrules": [
+                        "FREQ=YEARLY"
+                    ],
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2007-05-08 (date) – 2007-05-09 (date)",
+                        "2008-05-08 (date) – 2008-05-09 (date)",
+                        "2009-05-08 (date) – 2009-05-09 (date)",
+                        "2010-05-08 (date) – 2010-05-09 (date)",
+                        "2011-05-08 (date) – 2011-05-09 (date)",
+                        "2012-05-08 (date) – 2012-05-09 (date)",
+                        "2013-05-08 (date) – 2013-05-09 (date)",
+                        "2014-05-08 (date) – 2014-05-09 (date)",
+                        "2015-05-08 (date) – 2015-05-09 (date)",
+                        "2016-05-08 (date) – 2016-05-09 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "5468e1a0-9dda-4fd2-88c0-dc3e727c1183",
+                    "summary": "Ascension",
+                    "start": "2007-05-17 (date)",
+                    "end": "2007-05-18 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2007-05-17 (date) – 2007-05-18 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "67a89bb6-9ad4-461b-951c-c4c8482d8618",
+                    "summary": "Lundi de Pentecôte",
+                    "start": "2007-05-28 (date)",
+                    "end": "2007-05-29 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2007-05-28 (date) – 2007-05-29 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "00eb3adc-c059-47c8-a1c0-4ca7048051b9",
+                    "summary": "Fête Nationale",
+                    "start": "2007-07-14 (date)",
+                    "end": "2007-07-15 (date)",
+                    "rrules": [
+                        "FREQ=YEARLY"
+                    ],
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2007-07-14 (date) – 2007-07-15 (date)",
+                        "2008-07-14 (date) – 2008-07-15 (date)",
+                        "2009-07-14 (date) – 2009-07-15 (date)",
+                        "2010-07-14 (date) – 2010-07-15 (date)",
+                        "2011-07-14 (date) – 2011-07-15 (date)",
+                        "2012-07-14 (date) – 2012-07-15 (date)",
+                        "2013-07-14 (date) – 2013-07-15 (date)",
+                        "2014-07-14 (date) – 2014-07-15 (date)",
+                        "2015-07-14 (date) – 2015-07-15 (date)",
+                        "2016-07-14 (date) – 2016-07-15 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "854e5499-9276-4a96-9be3-bcbaa7caafcf",
+                    "summary": "Assomption",
+                    "start": "2007-08-15 (date)",
+                    "end": "2007-08-16 (date)",
+                    "rrules": [
+                        "FREQ=YEARLY"
+                    ],
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2007-08-15 (date) – 2007-08-16 (date)",
+                        "2008-08-15 (date) – 2008-08-16 (date)",
+                        "2009-08-15 (date) – 2009-08-16 (date)",
+                        "2010-08-15 (date) – 2010-08-16 (date)",
+                        "2011-08-15 (date) – 2011-08-16 (date)",
+                        "2012-08-15 (date) – 2012-08-16 (date)",
+                        "2013-08-15 (date) – 2013-08-16 (date)",
+                        "2014-08-15 (date) – 2014-08-16 (date)",
+                        "2015-08-15 (date) – 2015-08-16 (date)",
+                        "2016-08-15 (date) – 2016-08-16 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "725c8c16-c37a-49f0-9d2e-dc976d6c3ea5",
+                    "summary": "Toussaint",
+                    "start": "2007-11-01 (date)",
+                    "end": "2007-11-02 (date)",
+                    "rrules": [
+                        "FREQ=YEARLY"
+                    ],
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2007-11-01 (date) – 2007-11-02 (date)",
+                        "2008-11-01 (date) – 2008-11-02 (date)",
+                        "2009-11-01 (date) – 2009-11-02 (date)",
+                        "2010-11-01 (date) – 2010-11-02 (date)",
+                        "2011-11-01 (date) – 2011-11-02 (date)",
+                        "2012-11-01 (date) – 2012-11-02 (date)",
+                        "2013-11-01 (date) – 2013-11-02 (date)",
+                        "2014-11-01 (date) – 2014-11-02 (date)",
+                        "2015-11-01 (date) – 2015-11-02 (date)",
+                        "2016-11-01 (date) – 2016-11-02 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "5218f724-6b66-434d-a8c5-138dfed64e07",
+                    "summary": "Armistice 1918",
+                    "start": "2007-11-11 (date)",
+                    "end": "2007-11-12 (date)",
+                    "rrules": [
+                        "FREQ=YEARLY"
+                    ],
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2007-11-11 (date) – 2007-11-12 (date)",
+                        "2008-11-11 (date) – 2008-11-12 (date)",
+                        "2009-11-11 (date) – 2009-11-12 (date)",
+                        "2010-11-11 (date) – 2010-11-12 (date)",
+                        "2011-11-11 (date) – 2011-11-12 (date)",
+                        "2012-11-11 (date) – 2012-11-12 (date)",
+                        "2013-11-11 (date) – 2013-11-12 (date)",
+                        "2014-11-11 (date) – 2014-11-12 (date)",
+                        "2015-11-11 (date) – 2015-11-12 (date)",
+                        "2016-11-11 (date) – 2016-11-12 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "18617cde-2d15-46c6-900f-b3341a7b7f98",
+                    "summary": "Noël",
+                    "start": "2007-12-25 (date)",
+                    "end": "2007-12-26 (date)",
+                    "rrules": [
+                        "FREQ=YEARLY"
+                    ],
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2007-12-25 (date) – 2007-12-26 (date)",
+                        "2008-12-25 (date) – 2008-12-26 (date)",
+                        "2009-12-25 (date) – 2009-12-26 (date)",
+                        "2010-12-25 (date) – 2010-12-26 (date)",
+                        "2011-12-25 (date) – 2011-12-26 (date)",
+                        "2012-12-25 (date) – 2012-12-26 (date)",
+                        "2013-12-25 (date) – 2013-12-26 (date)",
+                        "2014-12-25 (date) – 2014-12-26 (date)",
+                        "2015-12-25 (date) – 2015-12-26 (date)",
+                        "2016-12-25 (date) – 2016-12-26 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "19d50a52-f5a9-4d70-8fd7-a2caa97f6959",
+                    "summary": "Lundi de Pâques",
+                    "start": "2008-03-24 (date)",
+                    "end": "2008-03-25 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2008-03-24 (date) – 2008-03-25 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "18c90b99-edfa-4418-9bc7-992a07384967",
+                    "summary": "Lundi de Pâques",
+                    "start": "2009-04-13 (date)",
+                    "end": "2009-04-14 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2009-04-13 (date) – 2009-04-14 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "b989d129-8f2f-42be-a027-183f6d81eb40",
+                    "summary": "Ascension",
+                    "start": "2009-05-21 (date)",
+                    "end": "2009-05-22 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2009-05-21 (date) – 2009-05-22 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "7c6fe35c-44a5-450b-aea6-dd2baef78f06",
+                    "summary": "Lundi de Pentecôte",
+                    "start": "2009-06-01 (date)",
+                    "end": "2009-06-02 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2009-06-01 (date) – 2009-06-02 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "98c1c381-8632-45ce-9b11-10757face7c4",
+                    "summary": "Lundi de Pâques",
+                    "start": "2010-04-05 (date)",
+                    "end": "2010-04-06 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2010-04-05 (date) – 2010-04-06 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "aaeb1ba5-60f0-4e49-a25a-c0ff949acdd9",
+                    "summary": "Ascension",
+                    "start": "2010-05-13 (date)",
+                    "end": "2010-05-14 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2010-05-13 (date) – 2010-05-14 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "1f68f978-969e-4791-a7e3-cb3011134a34",
+                    "summary": "Lundi de Pentecôte",
+                    "start": "2010-05-24 (date)",
+                    "end": "2010-05-25 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2010-05-24 (date) – 2010-05-25 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "fa0d4b5b-8eeb-4b98-b35c-b6a547b96953",
+                    "summary": "Ascension",
+                    "start": "2011-06-02 (date)",
+                    "end": "2011-06-03 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2011-06-02 (date) – 2011-06-03 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "5be6194a-9fbd-45da-8e3c-568cac66b997",
+                    "summary": "Lundi de Pentecôte",
+                    "start": "2011-06-13 (date)",
+                    "end": "2011-06-14 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2011-06-13 (date) – 2011-06-14 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "4162d242-5468-4007-8814-10286b9589a0",
+                    "summary": "Lundi de Pâques",
+                    "start": "2012-04-09 (date)",
+                    "end": "2012-04-10 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2012-04-09 (date) – 2012-04-10 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "6d368a35-6b6d-4ec1-9f48-97c53b25502e",
+                    "summary": "Ascension",
+                    "start": "2012-05-17 (date)",
+                    "end": "2012-05-18 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2012-05-17 (date) – 2012-05-18 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "e8913a3d-3e84-447d-afb4-f0b082948449",
+                    "summary": "Lundi de Pentecôte",
+                    "start": "2012-05-28 (date)",
+                    "end": "2012-05-29 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2012-05-28 (date) – 2012-05-29 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "ebc79872-a185-4641-bc22-1092d5139efb",
+                    "summary": "Lundi de Pâques",
+                    "start": "2013-04-01 (date)",
+                    "end": "2013-04-02 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2013-04-01 (date) – 2013-04-02 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "9714bd39-429b-433c-ab5c-5fd6a67e658e",
+                    "summary": "Ascension",
+                    "start": "2013-05-09 (date)",
+                    "end": "2013-05-10 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2013-05-09 (date) – 2013-05-10 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "79f5f02f-e92d-417f-9637-9e2a88840583",
+                    "summary": "Lundi de Pentecôte",
+                    "start": "2013-05-20 (date)",
+                    "end": "2013-05-21 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2013-05-20 (date) – 2013-05-21 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "172dcce6-6f95-4c1f-ada9-e8bf2a7e8245",
+                    "summary": "Lundi de Pâques",
+                    "start": "2014-04-21 (date)",
+                    "end": "2014-04-22 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2014-04-21 (date) – 2014-04-22 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "6625ed89-bf9f-478a-9796-c3dc203ab5e6",
+                    "summary": "Ascension",
+                    "start": "2014-05-29 (date)",
+                    "end": "2014-05-30 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2014-05-29 (date) – 2014-05-30 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "7abad826-ab68-447f-81b2-1e04a4c2ef88",
+                    "summary": "Lundi de Pentecôte",
+                    "start": "2014-06-09 (date)",
+                    "end": "2014-06-10 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2014-06-09 (date) – 2014-06-10 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "cf42813f-4a74-422b-aa19-90dcefccc92d",
+                    "summary": "Lundi de Pâques",
+                    "start": "2015-04-06 (date)",
+                    "end": "2015-04-07 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2015-04-06 (date) – 2015-04-07 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "e7d30f2b-d546-4b7e-8780-0754a46e6970",
+                    "summary": "Ascension",
+                    "start": "2015-05-14 (date)",
+                    "end": "2015-05-15 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2015-05-14 (date) – 2015-05-15 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "a8ccc771-4e8b-4594-ae30-33e9ce384ac9",
+                    "summary": "Lundi de Pentecôte",
+                    "start": "2015-05-25 (date)",
+                    "end": "2015-05-26 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2015-05-25 (date) – 2015-05-26 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "419f1bff-a820-4d07-bf4e-1a6ec139e3df",
+                    "summary": "Lundi de Pentecôte",
+                    "start": "2008-05-12 (date)",
+                    "end": "2008-05-13 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2008-05-12 (date) – 2008-05-13 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "570d9fe7-cdc9-4fdf-9794-909edf520383",
+                    "summary": "Lundi de Pâques",
+                    "start": "2011-04-25 (date)",
+                    "end": "2011-04-26 (date)",
+                    "categories": [
+                        "Jours fériés"
+                    ],
+                    "occurrences": [
+                        "2011-04-25 (date) – 2011-04-26 (date)"
+                    ]
+                }
+            ]
+        }
+    ]
+}

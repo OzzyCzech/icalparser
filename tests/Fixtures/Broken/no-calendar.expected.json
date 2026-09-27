@@ -1,0 +1,27 @@
+{
+    "warnings": [
+        "line 1: VEVENT outside of VCALENDAR, an implicit VCALENDAR was added. [syntax.missing-calendar]",
+        "END:VCALENDAR is missing at the end of the input, the component was closed. [syntax.missing-end]"
+    ],
+    "calendars": [
+        {
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "no-calendar",
+                    "summary": "No VCALENDAR wrapper",
+                    "start": "2026-01-05 10:00:00 UTC",
+                    "end": "2026-01-05 10:00:00 UTC",
+                    "occurrences": [
+                        "2026-01-05 10:00:00 UTC – 2026-01-05 10:00:00 UTC"
+                    ]
+                }
+            ],
+            "issues": [
+                "ERROR VCALENDAR.PRODID: PRODID is required. [component.missing-property]",
+                "ERROR VCALENDAR.VERSION: VERSION is required. [component.missing-property]",
+                "ERROR VEVENT.DTSTAMP: DTSTAMP is required. [component.missing-property]"
+            ]
+        }
+    ]
+}

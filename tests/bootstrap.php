@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tests;
 
@@ -15,7 +15,7 @@ use Closure;
 use Tester\Environment;
 
 function test($description, Closure $fn): void {
-	printf("• %s%s%s", $description, PHP_EOL, $fn());
+	printf('• %s%s%s', $description, PHP_EOL, $fn());
 }
 
 Environment::setup();

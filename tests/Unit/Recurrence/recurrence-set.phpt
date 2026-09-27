@@ -11,6 +11,7 @@ use om\RRule\Expander;
 use om\RRule\RecurrenceSet;
 use om\RRule\Rule;
 use Tester\Assert;
+
 use function tests\test;
 
 require_once __DIR__ . '/../../bootstrap.php';

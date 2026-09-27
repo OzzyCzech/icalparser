@@ -1,0 +1,35 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "timezones": [
+                "Australia/Melbourne => Australia/Melbourne (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "fastmail-7c2d9e1a-0b3f-4c5d-8e9f-a1b2c3d4e5f6",
+                    "summary": "Parkrun",
+                    "start": "2026-03-28 08:00:00 +11:00 (Australia/Melbourne = Australia/Melbourne)",
+                    "end": "2026-03-28 09:30:00 +11:00 (Australia/Melbourne = Australia/Melbourne)",
+                    "rrules": [
+                        "FREQ=WEEKLY;COUNT=4;BYDAY=SA"
+                    ],
+                    "alarms": [
+                        "DISPLAY -PT30M"
+                    ],
+                    "x-properties": [
+                        "X-JMAP-LOCATIONID",
+                        "X-JMAP-USEDEFAULTALERTS"
+                    ],
+                    "occurrences": [
+                        "2026-03-28 08:00:00 +11:00 (Australia/Melbourne = Australia/Melbourne) – 2026-03-28 09:30:00 +11:00 (Australia/Melbourne = Australia/Melbourne)",
+                        "2026-04-04 08:00:00 +11:00 (Australia/Melbourne = Australia/Melbourne) – 2026-04-04 09:30:00 +11:00 (Australia/Melbourne = Australia/Melbourne)",
+                        "2026-04-11 08:00:00 +10:00 (Australia/Melbourne = Australia/Melbourne) – 2026-04-11 09:30:00 +10:00 (Australia/Melbourne = Australia/Melbourne)",
+                        "2026-04-18 08:00:00 +10:00 (Australia/Melbourne = Australia/Melbourne) – 2026-04-18 09:30:00 +10:00 (Australia/Melbourne = Australia/Melbourne)"
+                    ]
+                }
+            ]
+        }
+    ]
+}

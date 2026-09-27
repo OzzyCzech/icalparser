@@ -1,11 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author PC Drew <pc@soprisapps.com>
  */
 
 use om\IcalParser;
 use Tester\Assert;
-use Tester\Environment;
+
 use function tests\test;
 
 require_once __DIR__ . '/../bootstrap.php';

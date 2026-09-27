@@ -1,0 +1,26 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "name": "URL",
+            "timezones": [
+                "Europe/Berlin => Europe/Berlin (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "20191106T093607Z-791992399@marudot.com",
+                    "summary": "Example event",
+                    "start": "2019-11-01 (date)",
+                    "end": "2019-11-02 (date)",
+                    "occurrences": [
+                        "2019-11-01 (date) – 2019-11-02 (date)"
+                    ]
+                }
+            ],
+            "issues": [
+                "ERROR VCALENDAR.PRODID: PRODID is required. [component.missing-property]"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,40 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "tz-a",
+                    "summary": "Denver",
+                    "start": "2026-01-01 10:00:00 -07:00 (America/Denver = America/Denver)",
+                    "end": "2026-01-01 10:00:00 -07:00 (America/Denver = America/Denver)",
+                    "rrules": [
+                        "FREQ=DAILY;COUNT=2"
+                    ],
+                    "occurrences": [
+                        "2026-01-01 10:00:00 -07:00 (America/Denver = America/Denver) – 2026-01-01 10:00:00 -07:00 (America/Denver = America/Denver)",
+                        "2026-01-02 10:00:00 -07:00 (America/Denver = America/Denver) – 2026-01-02 10:00:00 -07:00 (America/Denver = America/Denver)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "tz-b",
+                    "summary": "Floating after a zoned series",
+                    "start": "2026-01-01 10:00:00 (floating)",
+                    "end": "2026-01-01 10:00:00 (floating)",
+                    "rrules": [
+                        "FREQ=DAILY;COUNT=2"
+                    ],
+                    "occurrences": [
+                        "2026-01-01 10:00:00 (floating) – 2026-01-01 10:00:00 (floating)",
+                        "2026-01-02 10:00:00 (floating) – 2026-01-02 10:00:00 (floating)"
+                    ]
+                }
+            ],
+            "issues": [
+                "WARNING VEVENT.DTSTART (line 7): TZID \"America/Denver\" has no VTIMEZONE definition. [timezone.not-defined]"
+            ]
+        }
+    ]
+}

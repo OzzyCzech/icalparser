@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2004-2022 Roman Ožana (https://ozana.cz)
  *
@@ -8,6 +8,7 @@
 
 use om\IcalParser;
 use Tester\Assert;
+
 use function tests\test;
 
 require_once __DIR__ . '/../bootstrap.php';
@@ -31,4 +32,3 @@ test('Multiple lines description', function () {
 	Assert::same('30.6.2012 06:00:00', $first['DTSTART']->format('j.n.Y H:i:s'));
 	Assert::same("Here is a description that spans multiple lines!\n\nThis should be on a new line as well because the description contains newline characters.", $first['DESCRIPTION']);
 });
-

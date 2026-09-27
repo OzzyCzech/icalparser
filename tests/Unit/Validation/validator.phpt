@@ -11,6 +11,7 @@ use om\ICal\Validation\Issue;
 use om\ICal\Validation\Severity;
 use om\ICal\Validation\Validator;
 use Tester\Assert;
+
 use function tests\test;
 
 require_once __DIR__ . '/../../bootstrap.php';

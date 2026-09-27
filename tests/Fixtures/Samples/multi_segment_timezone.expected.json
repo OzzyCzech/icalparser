@@ -1,0 +1,40 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+    ],
+    "calendars": [
+        {
+            "timezone": "America/Argentina/Buenos_Aires",
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "summary": "Test event",
+                    "start": "2024-01-01 12:00:00 -05:00 (America/Indiana/Indianapolis = America/Indiana/Indianapolis)",
+                    "end": "2024-01-01 13:00:00 -05:00 (America/Indiana/Indianapolis = America/Indiana/Indianapolis)",
+                    "occurrences": [
+                        "2024-01-01 12:00:00 -05:00 (America/Indiana/Indianapolis = America/Indiana/Indianapolis) – 2024-01-01 13:00:00 -05:00 (America/Indiana/Indianapolis = America/Indiana/Indianapolis)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "summary": "Test event with invalid timezone",
+                    "start": "2024-02-01 12:00:00 -03:00 (Argentina/Buenos_Aires = America/Argentina/Buenos_Aires)",
+                    "end": "2024-02-01 13:00:00 -03:00 (Argentina/Buenos_Aires = America/Argentina/Buenos_Aires)",
+                    "occurrences": [
+                        "2024-02-01 12:00:00 -03:00 (Argentina/Buenos_Aires = America/Argentina/Buenos_Aires) – 2024-02-01 13:00:00 -03:00 (Argentina/Buenos_Aires = America/Argentina/Buenos_Aires)"
+                    ]
+                }
+            ],
+            "issues": [
+                "ERROR VEVENT.DTSTAMP: DTSTAMP is required. [component.missing-property]",
+                "ERROR VEVENT.UID: UID is required. [component.missing-property]",
+                "WARNING VEVENT.DTSTART (line 6): TZID \"America/Indiana/Indianapolis\" has no VTIMEZONE definition. [timezone.not-defined]",
+                "WARNING VEVENT.DTEND (line 7): TZID \"America/Indiana/Indianapolis\" has no VTIMEZONE definition. [timezone.not-defined]",
+                "ERROR VEVENT.DTSTAMP: DTSTAMP is required. [component.missing-property]",
+                "ERROR VEVENT.UID: UID is required. [component.missing-property]",
+                "WARNING VEVENT.DTSTART (line 11): TZID \"Argentina/Buenos_Aires\" has no VTIMEZONE definition. [timezone.not-defined]",
+                "WARNING VEVENT.DTEND (line 12): TZID \"Argentina/Buenos_Aires\" has no VTIMEZONE definition. [timezone.not-defined]"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,41 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+    ],
+    "calendars": [
+        {
+            "name": "SB-1213",
+            "method": "PUBLISH",
+            "timezone": "America/Denver",
+            "timezones": [
+                "America/New_York => America/New_York (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "h9i3hjtisl53goaljdcdb681fc@google.com",
+                    "summary": "B",
+                    "start": "2016-08-17 (date)",
+                    "end": "2016-08-18 (date)",
+                    "rrules": [
+                        "FREQ=DAILY;UNTIL=20170601;INTERVAL=2"
+                    ],
+                    "overrides": 32,
+                    "status": "CONFIRMED",
+                    "occurrences": [
+                        "2016-08-17 (date) – 2016-08-18 (date)",
+                        "2016-08-19 (date) – 2016-08-20 (date)",
+                        "2016-08-23 (date) – 2016-08-24 (date)",
+                        "2016-08-25 (date) – 2016-08-26 (date)",
+                        "2016-08-29 (date) – 2016-08-30 (date)",
+                        "2016-08-31 (date) – 2016-09-01 (date)",
+                        "2016-09-02 (date) – 2016-09-03 (date)",
+                        "2016-09-07 (date) – 2016-09-08 (date) [B]",
+                        "2016-09-09 (date) – 2016-09-10 (date) [B]",
+                        "2016-09-13 (date) – 2016-09-14 (date) [B]"
+                    ]
+                }
+            ]
+        }
+    ]
+}

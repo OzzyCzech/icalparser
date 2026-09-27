@@ -11,6 +11,7 @@ use om\ICal\Parameters;
 use om\ICal\Parser\LineReader;
 use om\ICal\Parser\Tokenizer;
 use Tester\Assert;
+
 use function tests\test;
 
 require_once __DIR__ . '/../../bootstrap.php';

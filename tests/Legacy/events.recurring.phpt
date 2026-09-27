@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author PC Drew <pc@schoolblocks.com>
  * @author Roman Ožana <roman@ozana.cz>
@@ -6,6 +6,7 @@
 
 use om\IcalParser;
 use Tester\Assert;
+
 use function tests\test;
 
 require_once __DIR__ . '/../bootstrap.php';
@@ -16,11 +17,11 @@ test('Recurring instances finite', function () {
 	$cal->parseFile(__DIR__ . '/../Fixtures/Samples/recur_instances_finite.ics');
 	$events = $cal->getEvents()->sorted();
 
-// DTSTART;TZID=America/Los_Angeles:20121002T100000
-// DTEND;TZID=America/Los_Angeles:20121002T103000
-// RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=1TU;UNTIL=20121231T100000
-// RDATE;TZID=America/Los_Angeles:20121110T100000
-// RDATE;TZID=America/Los_Angeles:20121105T100000
+	// DTSTART;TZID=America/Los_Angeles:20121002T100000
+	// DTEND;TZID=America/Los_Angeles:20121002T103000
+	// RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=1TU;UNTIL=20121231T100000
+	// RDATE;TZID=America/Los_Angeles:20121110T100000
+	// RDATE;TZID=America/Los_Angeles:20121105T100000
 	Assert::equal(5, $events->count());
 	Assert::equal('2.10.2012 10:00:00', $events[0]['DTSTART']->format('j.n.Y H:i:s'));
 	Assert::equal('5.11.2012 10:00:00', $events[1]['DTSTART']->format('j.n.Y H:i:s'));
@@ -101,7 +102,7 @@ test('Recurrent event with modifications at single date', function () {
 	// the date 8.8.2016 should be modified
 	$modifiedEvent = $events->offsetGet(0);
 	Assert::hasNotKey('RECURRENCES', $modifiedEvent);
-// the 12th entry is the modified event, related to the remaining recurring events
+	// the 12th entry is the modified event, related to the remaining recurring events
 	Assert::same('8.8.2016', $modifiedEvent['DTSTART']->format('j.n.Y'));
 	Assert::notContains($modifiedEvent['DTSTART'], $recurrences);
 });
@@ -110,11 +111,11 @@ test('Recuring instances with modifications and interval', function () {
 	$cal = new IcalParser();
 	$results = $cal->parseFile(__DIR__ . '/../Fixtures/Samples/recur_instances_with_modifications_and_interval.ics');
 
-// Build the cache of RECURRENCE-IDs and EXDATES first, so that we can properly determine the interval
+	// Build the cache of RECURRENCE-IDs and EXDATES first, so that we can properly determine the interval
 	$eventCache = [];
 	foreach ($results['VEVENT'] as $event) {
-		$eventSequence = empty($event['SEQUENCE']) ? "0" : $event['SEQUENCE'];
-		$eventRecurrenceID = empty($event['RECURRENCE-ID']) ? "0" : $event['RECURRENCE-ID'];
+		$eventSequence = empty($event['SEQUENCE']) ? '0' : $event['SEQUENCE'];
+		$eventRecurrenceID = empty($event['RECURRENCE-ID']) ? '0' : $event['RECURRENCE-ID'];
 		$eventCache[$event['UID']][$eventRecurrenceID][$eventSequence] = $event;
 	}
 	$trueEvents = [];
@@ -124,7 +125,7 @@ test('Recuring instances with modifications and interval', function () {
 		} else {
 			$eventUID = $event['UID'];
 			foreach ($event['RECURRENCES'] as $recurrence) {
-				$eventRecurrenceID = $recurrence->format("Ymd");
+				$eventRecurrenceID = $recurrence->format('Ymd');
 				if (empty($eventCache[$eventUID][$eventRecurrenceID])) {
 					$trueEvents[$eventRecurrenceID] = ['DTSTART' => $recurrence];
 				} else {
@@ -140,7 +141,7 @@ test('Recuring instances with modifications and interval', function () {
 		$trueEvents,
 		static function ($a, $b): int {
 			return ($a['DTSTART'] > $b['DTSTART']) ? 1 : -1;
-		}
+		},
 	);
 
 	$events = $cal->getEvents()->sorted()->getArrayCopy();
@@ -148,16 +149,16 @@ test('Recuring instances with modifications and interval', function () {
 	Assert::false(empty($events[0]['RECURRENCES']));
 	Assert::equal(count($trueEvents), count($events));
 	foreach ($trueEvents as $index => $trueEvent) {
-		Assert::equal($trueEvent['DTSTART']->format("Ymd"), $events[$index]['DTSTART']->format("Ymd"));
+		Assert::equal($trueEvent['DTSTART']->format('Ymd'), $events[$index]['DTSTART']->format('Ymd'));
 	}
 
 });
 
 test('Modifications to first recurrence handled correctly', function () {
 	$cal = new IcalParser();
-// There is still an issue that needs to be resolved when modifications are made to the initial event that is the
-// base of the recurrences.  The below ICS file has a great edge case example: one event, no recurrences in the
-// recurring ruleset, and a modification to the initial event.
+	// There is still an issue that needs to be resolved when modifications are made to the initial event that is the
+	// base of the recurrences.  The below ICS file has a great edge case example: one event, no recurrences in the
+	// recurring ruleset, and a modification to the initial event.
 	$results = $cal->parseFile(__DIR__ . '/../Fixtures/Samples/recur_instances_with_modifications_to_first_day.ics');
 	$events = $cal->getEvents()->sorted()->getArrayCopy();
 	Assert::true(empty($events[0]['RECURRENCES'])); // edited event
@@ -299,7 +300,7 @@ test('Weekly recurring event missing day (issue #38)', function () {
 });
 
 test('Recurring instances bi-weekly', function () {
-// https://github.com/OzzyCzech/icalparser/issues/61
+	// https://github.com/OzzyCzech/icalparser/issues/61
 	$cal = new IcalParser();
 
 	$cal->parseFile(__DIR__ . '/../Fixtures/Samples/rrule_interval.ics');
@@ -307,9 +308,9 @@ test('Recurring instances bi-weekly', function () {
 
 	var_dump($events[0]['RECURRENCES']);
 
-// DTSTART;TZID=America/Los_Angeles:20230131T050000
-// DTEND;TZID=America/Los_Angeles:20230131T060000
-// RRULE:FREQ=WEEKLY;WKST=MO;UNTIL=20230228T090000;INTERVAL=2;BYDAY=TU
+	// DTSTART;TZID=America/Los_Angeles:20230131T050000
+	// DTEND;TZID=America/Los_Angeles:20230131T060000
+	// RRULE:FREQ=WEEKLY;WKST=MO;UNTIL=20230228T090000;INTERVAL=2;BYDAY=TU
 	Assert::equal(3, count($events[0]['RECURRENCES']));
 	Assert::equal(3, $events->count());
 	Assert::equal('31.1.2023 05:00:00', $events[0]['DTSTART']->format('j.n.Y H:i:s'));

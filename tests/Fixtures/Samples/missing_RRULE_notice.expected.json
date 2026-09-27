@@ -1,0 +1,34 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+    ],
+    "calendars": [
+        {
+            "name": "URL",
+            "timezones": [
+                "Europe/Berlin => Europe/Berlin (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "111",
+                    "summary": "xxx",
+                    "start": "2016-04-15 21:00:00 +02:00 (Europe/Berlin = Europe/Berlin)",
+                    "end": "2016-04-16 04:00:00 +02:00 (Europe/Berlin = Europe/Berlin)",
+                    "categories": [
+                        "Party"
+                    ],
+                    "occurrences": [
+                        "2016-04-15 21:00:00 +02:00 (Europe/Berlin = Europe/Berlin) – 2016-04-16 04:00:00 +02:00 (Europe/Berlin = Europe/Berlin)",
+                        "2016-12-16 21:00:00 +01:00 (Europe/Berlin = Europe/Berlin) – 2016-12-17 04:00:00 +01:00 (Europe/Berlin = Europe/Berlin)",
+                        "2016-12-23 21:00:00 +01:00 (Europe/Berlin = Europe/Berlin) – 2016-12-24 04:00:00 +01:00 (Europe/Berlin = Europe/Berlin)",
+                        "2016-12-30 21:00:00 +01:00 (Europe/Berlin = Europe/Berlin) – 2016-12-31 04:00:00 +01:00 (Europe/Berlin = Europe/Berlin)"
+                    ]
+                }
+            ],
+            "issues": [
+                "ERROR VCALENDAR.PRODID: PRODID is required. [component.missing-property]"
+            ]
+        }
+    ]
+}

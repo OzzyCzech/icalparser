@@ -1,0 +1,47 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+    ],
+    "calendars": [
+        {
+            "timezones": [
+                "America/Los_Angeles => America/Los_Angeles (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "1334F9B7-6136-444E-A58D-472564C6AA73",
+                    "summary": "sahaja <> frashed",
+                    "start": "2012-03-26 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                    "end": "2012-03-26 11:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                    "rrules": [
+                        "FREQ=WEEKLY;UNTIL=20120730T065959Z",
+                        "FREQ=MONTHLY;UNTIL=20120730T065959Z;BYDAY=SU"
+                    ],
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "jlal@mozilla.com REQ-PARTICIPANT/NEEDS-ACTION"
+                    ],
+                    "alarms": [
+                        "DISPLAY -PT5M"
+                    ],
+                    "occurrences": [
+                        "2012-03-26 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-03-26 11:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-04-01 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-04-01 11:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-04-02 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-04-02 11:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-04-08 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-04-08 11:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-04-09 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-04-09 11:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-04-15 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-04-15 11:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-04-16 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-04-16 11:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-04-22 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-04-22 11:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-04-23 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-04-23 11:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-04-29 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-04-29 11:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles)"
+                    ]
+                }
+            ],
+            "issues": [
+                "WARNING VEVENT.RRULE (line 24): RRULE should not occur more than once. [recurrence.multiple-rrule]"
+            ]
+        }
+    ]
+}

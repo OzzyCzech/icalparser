@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2004-2022 Roman Ožana (https://ozana.cz)
  *
@@ -8,6 +8,7 @@
 
 use om\IcalParser;
 use Tester\Assert;
+
 use function tests\test;
 
 require_once __DIR__ . '/../bootstrap.php';

@@ -1,0 +1,38 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "timezones": [
+                "Europe/Prague => Europe/Prague (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "5E7B1B7A-3C9F-4B2E-9D1A-2F0C8E6A4B11",
+                    "summary": "Koncert",
+                    "start": "2026-03-20 19:00:00 +01:00 (Europe/Prague = Europe/Prague)",
+                    "end": "2026-03-20 20:00:00 +01:00 (Europe/Prague = Europe/Prague)",
+                    "alarms": [
+                        "AUDIO -PT1H",
+                        "NONE 1976-04-01 00:55:45 UTC"
+                    ],
+                    "x-properties": [
+                        "X-APPLE-TRAVEL-ADVISORY-BEHAVIOR",
+                        "X-APPLE-STRUCTURED-LOCATION",
+                        "X-APPLE-CREATOR-IDENTITY"
+                    ],
+                    "occurrences": [
+                        "2026-03-20 19:00:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-03-20 20:00:00 +01:00 (Europe/Prague = Europe/Prague)"
+                    ]
+                },
+                {
+                    "type": "VTODO",
+                    "uid": "D1E2F3A4-B5C6-4D7E-8F9A-0B1C2D3E4F5A",
+                    "summary": "Buy tickets",
+                    "end": "2026-03-15 (date)",
+                    "status": "NEEDS-ACTION"
+                }
+            ]
+        }
+    ]
+}

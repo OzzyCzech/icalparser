@@ -25,17 +25,43 @@
 		}
 	},
 	"scripts": {
-		"test": "tester tests -s -p php",
-		"phpstan": "phpstan analyse --no-progress",
-		"coverage": "tester tests -s -p phpdbg --coverage coverage.html --coverage-src src",
-		"check": [
+		"test": "tester tests/Unit tests/Legacy -s -p php -d memory_limit=1G",
+		"test:integration": "tester tests/Integration -s -p php -d memory_limit=1G",
+		"test:fuzz": "tester tests/Fuzz -s -p php -d memory_limit=1G",
+		"test:differential": "tester tests/Differential -s -p php -d memory_limit=1G",
+		"test:all": [
 			"@test",
-			"@phpstan"
+			"@test:integration",
+			"@test:fuzz"
 		],
-		"timezones": "php bin/timezones.php"
+		"analyse": "phpstan analyse --no-progress",
+		"phpstan": "@analyse",
+		"cs": "php-cs-fixer fix --dry-run --diff",
+		"cs:fix": "php-cs-fixer fix",
+		"coverage": "tester tests/Unit tests/Legacy tests/Integration tests/Fuzz -s -p php -d memory_limit=1G --coverage coverage.html --coverage-src src",
+		"timezones": "php bin/timezones.php",
+		"check": [
+			"@test:all",
+			"@analyse",
+			"@cs"
+		]
 	},
 	"require-dev": {
 		"nette/tester": "^2.6.1",
-		"phpstan/phpstan": "^2.1"
+		"phpstan/phpstan": "^2.1",
+		"sabre/vobject": "^4.5",
+		"friendsofphp/php-cs-fixer": "^3"
+	},
+	"scripts-descriptions": {
+		"test": "Unit tests and tests of the array based IcalParser",
+		"test:integration": "Public API, parser modes and golden files of tests/Fixtures",
+		"test:fuzz": "Corrupted and pathological input",
+		"test:differential": "Comparison with sabre/vobject and python-dateutil (set ICALPARSER_PYTHON)",
+		"analyse": "PHPStan",
+		"cs": "Check the coding standard",
+		"cs:fix": "Fix the coding standard",
+		"coverage": "HTML coverage report (needs pcov, xdebug or phpdbg)",
+		"timezones": "Update the Windows timezone map from CLDR",
+		"check": "All tests, static analysis and coding standard"
 	}
 }

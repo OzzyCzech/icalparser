@@ -1,10 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Marc Vachette <marc.vachette@gmail.com>
  */
 
 use om\IcalParser;
 use Tester\Assert;
+
 use function tests\test;
 
 require_once __DIR__ . '/../bootstrap.php';

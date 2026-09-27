@@ -1,0 +1,29 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+    ],
+    "calendars": [
+        {
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "test-issue-75",
+                    "summary": "Twice Weekly Event",
+                    "rrules": [
+                        "FREQ=WEEKLY;UNTIL=20260131T235959Z;BYDAY=TU,TH"
+                    ],
+                    "status": "CONFIRMED",
+                    "x-properties": [
+                        "X-MICROSOFT-CDO-ALLDAYEVENT",
+                        "X-MICROSOFT-CDO-BUSYSTATUS"
+                    ]
+                }
+            ],
+            "issues": [
+                "ERROR VEVENT.DTSTART (line 10): Invalid value \"20260101T100000\". [value.invalid]",
+                "ERROR VEVENT.DTEND (line 11): Invalid value \"20260101T110000\". [value.invalid]",
+                "ERROR VEVENT.RRULE: A recurring component requires DTSTART. [recurrence.without-start]"
+            ]
+        }
+    ]
+}

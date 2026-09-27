@@ -1,0 +1,58 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "fold",
+                    "summary": "Ambiguous local time resolves to the first occurrence",
+                    "start": "2014-11-02 01:30:00 -04:00 (America/New_York = America/New_York)",
+                    "end": "2014-11-02 01:30:00 -04:00 (America/New_York = America/New_York)",
+                    "rrules": [
+                        "FREQ=YEARLY;COUNT=3;BYDAY=1SU;BYMONTH=11"
+                    ],
+                    "occurrences": [
+                        "2014-11-02 01:30:00 -04:00 (America/New_York = America/New_York) – 2014-11-02 01:30:00 -04:00 (America/New_York = America/New_York)",
+                        "2015-11-01 01:30:00 -04:00 (America/New_York = America/New_York) – 2015-11-01 01:30:00 -04:00 (America/New_York = America/New_York)",
+                        "2016-11-06 01:30:00 -04:00 (America/New_York = America/New_York) – 2016-11-06 01:30:00 -04:00 (America/New_York = America/New_York)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "gap",
+                    "summary": "Hourly over the spring gap",
+                    "start": "2024-03-10 00:00:00 -05:00 (America/New_York = America/New_York)",
+                    "end": "2024-03-10 00:00:00 -05:00 (America/New_York = America/New_York)",
+                    "rrules": [
+                        "FREQ=HOURLY;COUNT=5"
+                    ],
+                    "occurrences": [
+                        "2024-03-10 00:00:00 -05:00 (America/New_York = America/New_York) – 2024-03-10 00:00:00 -05:00 (America/New_York = America/New_York)",
+                        "2024-03-10 01:00:00 -05:00 (America/New_York = America/New_York) – 2024-03-10 01:00:00 -05:00 (America/New_York = America/New_York)",
+                        "2024-03-10 03:00:00 -04:00 (America/New_York = America/New_York) – 2024-03-10 03:00:00 -04:00 (America/New_York = America/New_York)",
+                        "2024-03-10 04:00:00 -04:00 (America/New_York = America/New_York) – 2024-03-10 04:00:00 -04:00 (America/New_York = America/New_York)",
+                        "2024-03-10 05:00:00 -04:00 (America/New_York = America/New_York) – 2024-03-10 05:00:00 -04:00 (America/New_York = America/New_York)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "setpos",
+                    "summary": "BYSETPOS selecting nothing ends",
+                    "start": "2026-01-01 09:00:00 UTC",
+                    "end": "2026-01-01 09:00:00 UTC",
+                    "rrules": [
+                        "FREQ=WEEKLY;COUNT=15;BYSETPOS=-3"
+                    ],
+                    "occurrences": [
+                        "2026-01-01 09:00:00 UTC – 2026-01-01 09:00:00 UTC"
+                    ]
+                }
+            ],
+            "issues": [
+                "WARNING VEVENT.DTSTART (line 7): TZID \"America/New_York\" has no VTIMEZONE definition. [timezone.not-defined]",
+                "WARNING VEVENT.DTSTART (line 14): TZID \"America/New_York\" has no VTIMEZONE definition. [timezone.not-defined]"
+            ]
+        }
+    ]
+}

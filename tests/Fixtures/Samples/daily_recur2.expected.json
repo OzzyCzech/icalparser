@@ -1,0 +1,33 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+    ],
+    "calendars": [
+        {
+            "name": "calmozilla1@gmail.com",
+            "timezone": "America/Los_Angeles",
+            "timezones": [
+                "America/Los_Angeles => America/Los_Angeles (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "37mfdqtlcrrvbil9b3n7vicb1t@google.com",
+                    "summary": "Late Start, SMS",
+                    "start": "2017-08-21 (date)",
+                    "end": "2017-08-22 (date)",
+                    "rrules": [
+                        "FREQ=WEEKLY;UNTIL=20170911;BYDAY=MO"
+                    ],
+                    "status": "CONFIRMED",
+                    "occurrences": [
+                        "2017-08-21 (date) – 2017-08-22 (date)",
+                        "2017-08-28 (date) – 2017-08-29 (date)",
+                        "2017-09-04 (date) – 2017-09-05 (date)",
+                        "2017-09-11 (date) – 2017-09-12 (date)"
+                    ]
+                }
+            ]
+        }
+    ]
+}

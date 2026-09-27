@@ -1,7 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 use om\IcalParser;
 use Tester\Assert;
+
 use function tests\test;
 
 require_once __DIR__ . '/../bootstrap.php';

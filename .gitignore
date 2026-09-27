@@ -1,6 +1,7 @@
 .idea
 composer.lock
 /vendor/
-tests/output/
+tests/**/output/
 /docs/
 coverage.html
+.php-cs-fixer.cache
