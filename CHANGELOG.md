@@ -48,7 +48,7 @@ bugs; the results of affected calendars differ from 4.1.3.
 - a `RECURRENCE-ID` replaces only the matching instance of the same UID, compared as an instant in any timezone
   (4.1.3 compared strings for all events, so it could hide instances of other events or a wrong instance)
 - an excluded or overridden first occurrence is no longer returned with the original `DTSTART`
-- series with `COUNT` are not truncated by the 3 year horizon
+- series with `COUNT` reaching beyond the 3 year horizon are complete (4.1.3 failed with `TypeError`)
 - rules the previous engine expanded incorrectly, for example negative weekday ordinals (`BYDAY=-2MO` returned
   every third Monday), `BYHOUR` combined with `BYMINUTE` (minutes were lost) and `INTERVAL` of weekly rules
   (worked around in the parser only partially); `Freq` with a string rule no longer loops forever

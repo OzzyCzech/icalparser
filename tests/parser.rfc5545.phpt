@@ -195,6 +195,11 @@ test('Unbounded rules use a fixed horizon from ParserOptions::$now', function ()
 	Assert::count(3, parse("BEGIN:VEVENT\r\nDTSTART:20251229T090000Z\r\nRRULE:FREQ=DAILY\r\nEND:VEVENT", $options)->getEvents());
 });
 
+test('A COUNT series is complete even beyond the horizon for unbounded rules', function () {
+	$parser = parse("BEGIN:VEVENT\r\nDTSTART:20260101T100000Z\r\nRRULE:FREQ=YEARLY;COUNT=6\r\nEND:VEVENT", new ParserOptions(now: new DateTimeImmutable('2026-01-01')));
+	Assert::same(['2026', '2027', '2028', '2029', '2030', '2031'], starts($parser, 'Y'));
+});
+
 test('shiftEventDates skips old occurrences of unbounded rules', function () {
 	$options = new ParserOptions(untilInterval: new DateInterval('P1W'), shiftEventDates: new DateInterval('P3D'), now: new DateTimeImmutable('2026-01-10T00:00:00Z'));
 	$parser = parse("BEGIN:VEVENT\r\nDTSTART:19700101T090000Z\r\nRRULE:FREQ=DAILY\r\nEND:VEVENT", $options);
