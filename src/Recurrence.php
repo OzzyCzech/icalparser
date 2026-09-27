@@ -18,6 +18,8 @@ use Exception;
  * @author Steven Oxley
  * @author Michael Kahn (C) 2013
  * @license http://creativecommons.org/licenses/by-sa/2.5/dk/deed.en_GB CC-BY-SA-DK
+ *
+ * @deprecated 5.0 use om\RRule\Rule, see UPGRADING.md
  */
 class Recurrence {
 	/** @var array<string, mixed> */

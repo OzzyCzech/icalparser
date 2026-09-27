@@ -12,6 +12,8 @@ use Exception;
  * Handles Windows names (e.g. "W. Europe Standard Time"), prefixed values
  * (e.g. "/mozilla.org/20070129_1/Europe/Paris") and multi-segment IANA zones
  * (e.g. "America/Argentina/Buenos_Aires"). Results are cached.
+ *
+ * @internal used by IcalParser and AliasTimezoneResolver
  */
 final class TimezoneResolver {
 	/** @var array<string, DateTimeZone|false> */
@@ -28,23 +30,6 @@ final class TimezoneResolver {
 	public function resolve(string $value): ?DateTimeZone {
 		$timezone = $this->cache[$value] ??= $this->find($value) ?? false;
 		return $timezone ?: null;
-	}
-
-	/**
-	 * Use the given timezone for a TZID, e.g. one defined by a VTIMEZONE component.
-	 * Names that already resolve to a PHP timezone are kept.
-	 */
-	public function register(string $tzid, DateTimeZone $timezone): void {
-		if ($this->resolve($tzid) === null) {
-			$this->cache[$tzid] = $timezone;
-		}
-	}
-
-	/**
-	 * @return array<string, string>
-	 */
-	public function windowsTimezones(): array {
-		return $this->windowsTimezones;
 	}
 
 	private function find(string $value): ?DateTimeZone {

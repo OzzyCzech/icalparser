@@ -101,6 +101,18 @@ test('A definition without transitions is a fixed offset', function () {
 	Assert::same('+05:30', (new VTimezoneResolver())->resolve('India', $calendar)->timezone->getName());
 });
 
+test('A definition with RDATE transitions', function () {
+	$calendar = calendarWith(implode("\r\n", [
+		'BEGIN:VTIMEZONE', 'TZID:Rdates',
+		'BEGIN:STANDARD', 'DTSTART:19701025T030000', 'TZOFFSETFROM:+0200', 'TZOFFSETTO:+0100', 'RDATE:20241027T030000,20251026T030000,20261025T030000,20271031T030000', 'END:STANDARD',
+		'BEGIN:DAYLIGHT', 'DTSTART:19700329T020000', 'TZOFFSETFROM:+0100', 'TZOFFSETTO:+0200', 'RDATE:20240331T020000,20250330T020000,20260329T020000,20270328T020000', 'END:DAYLIGHT',
+		'END:VTIMEZONE',
+	]));
+	$resolved = (new VTimezoneResolver(reference: new DateTimeImmutable('2026-06-01')))->resolve('Rdates', $calendar);
+	Assert::same(7200, (new DateTimeImmutable('2026-07-01', $resolved->timezone))->getOffset());
+	Assert::same(3600, (new DateTimeImmutable('2026-12-01', $resolved->timezone))->getOffset());
+});
+
 test('Invalid definitions are not resolved', function () {
 	$calendar = calendarWith("BEGIN:VTIMEZONE\r\nTZID:Broken\r\nBEGIN:STANDARD\r\nDTSTART:x\r\nTZOFFSETFROM:+01\r\nTZOFFSETTO:bad\r\nEND:STANDARD\r\nEND:VTIMEZONE");
 	Assert::null((new VTimezoneResolver())->resolve('Broken', $calendar));

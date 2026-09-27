@@ -20,6 +20,8 @@ use RuntimeException;
  *
  * Originally based on https://github.com/coopTilleuls/intouch-iCalendar.git (Freq.php)
  * by Morten Fangel (C) 2008 and Michael Kahn (C) 2013, CC-BY-SA-DK.
+ *
+ * @deprecated 5.0 use om\RRule\Expander or om\RRule\RecurrenceSet, see UPGRADING.md
  */
 class Freq {
 	/** @deprecated has no effect */

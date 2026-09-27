@@ -2,9 +2,28 @@
 
 ## 5.0.0 (unreleased)
 
-Version 5 keeps the public API of version 4 (`IcalParser`, `EventsList`, `Freq`, `Recurrence`, `ParserOptions`)
-and the shape of the parsed data. It replaces the recurrence engine and the content line parser, which fixes many
-bugs; the results of affected calendars differ from 4.1.3.
+Version 5 adds a new, layered API (`om\ICal`) and keeps the array based API of version 4 (`IcalParser`, `EventsList`,
+`Freq`, `Recurrence`, `ParserOptions`) with the shape of its data, now deprecated. Both use a new recurrence engine and
+content line parser, which fixes many bugs; the results of affected calendars differ from 4.1.3.
+See [UPGRADING.md](UPGRADING.md).
+
+### New API
+
+- `ICal::parse()`, `ICal::parseFile()`, `ICal::stream()` and the configurable `ICal::parser()` with
+  `ParserMode::Strict` / `Permissive`, `ParseLimits`, `RecurrenceLimits` and a `ParseResult` with structured warnings
+- syntax layer: `ContentLine`, `Parameters`, `LineReader` (streams in chunks), `Tokenizer`
+- immutable generic model `Component` / `Property` keeping unknown and X- properties; typed facades `Calendar`, `Event`,
+  `Todo`, `Journal`, `FreeBusy`, `Alarm`, `TimezoneDefinition`
+- `DateTimeValue` keeps DATE, floating, UTC and zoned times apart; floating times need an explicit timezone
+- `ValueParser` for all RFC 5545 value types
+- timezone resolvers: VTIMEZONE definitions (custom Outlook/Exchange zones are matched to IANA timezones), IANA names,
+  aliases (CLDR Windows names, Outlook display names, prefixed and shortened names, intl), fallback
+- series: overrides grouped by UID, moved, cancelled and `RANGE=THISANDFUTURE` instances, lazy `occurrencesBetween()`
+  and `occurrences(limit)`
+- `Validator` with severities, `Serializer` with UTF-8 safe folding
+- exceptions with error code, line, property and raw value (`SyntaxException`, `InvalidValueException`,
+  `InvalidRecurrenceRuleException`, `TimezoneResolutionException`, `ResourceLimitException`, `ValidationException`)
+- documentation in `docs/`, examples in `examples/`
 
 ### Added
 
@@ -54,8 +73,22 @@ bugs; the results of affected calendars differ from 4.1.3.
   every third Monday), `BYHOUR` combined with `BYMINUTE` (minutes were lost) and `INTERVAL` of weekly rules
   (worked around in the parser only partially); `Freq` with a string rule no longer loops forever
 - the process default timezone is never changed during expansion
+- ambiguous local times (DST fall-back) are their first occurrence and nonexistent times (DST gap) use the offset before
+  the gap, as RFC 5545 requires; PHP alone is not consistent
+- sub-daily rules no longer repeat an instant over a DST gap and skip days and hours that cannot match
+- impossible rules end after an empty 400-year Gregorian cycle; BYSETPOS selecting nothing no longer loops
+- the Windows timezone map is generated from CLDR (`UTC` is `Etc/UTC`, `Pacific Standard Time (Mexico)` is
+  `America/Tijuana`, 40 new names); Outlook display names are kept in a separate file
 
 ### Performance
 
 Compared with 4.1.3 on the sample calendars: expanding recurring events is about 4x faster, parsing a 27 MB calendar
 with 50 000 events is about 20 % faster with lower peak memory, and sorting 50 000 events is about 13x faster.
+The new API converts values lazily and streams files with constant memory.
+
+### Tests and tooling
+
+- a fixture corpus (RFC 5545 examples, Google, Apple, Outlook, Exchange, Nextcloud and Fastmail style calendars, broken
+  input, regressions) with golden files
+- property-based, fuzz and pathological input tests; differential tests against sabre/vobject and python-dateutil
+- PHPStan level 8, PHP CS Fixer, CI jobs for tests, coding standard and differential tests

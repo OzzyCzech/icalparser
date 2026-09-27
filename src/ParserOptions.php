@@ -10,6 +10,8 @@ use InvalidArgumentException;
 
 /**
  * Configuration of {@see IcalParser}.
+ *
+ * @deprecated 5.0 configure om\ICal::parser() instead, see UPGRADING.md
  */
 class ParserOptions {
 	public function __construct(

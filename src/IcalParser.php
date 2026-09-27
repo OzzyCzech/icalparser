@@ -11,6 +11,7 @@ use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
 use om\ICal\ContentLine;
+use om\ICal\Value\Duration;
 use om\RRule\RecurrenceSet;
 use om\RRule\Rule;
 use RuntimeException;
@@ -22,6 +23,8 @@ use RuntimeException;
  *
  * @license BSD-3-Clause
  * @author Roman Ožana <roman@ozana.cz>
+ *
+ * @deprecated 5.0 use om\ICal::parse() or om\ICal::parser(), see UPGRADING.md
  */
 class IcalParser {
 	private const array DATE_PROPERTIES = ['DTSTAMP' => true, 'LAST-MODIFIED' => true, 'CREATED' => true, 'DTSTART' => true, 'DTEND' => true, 'DUE' => true, 'COMPLETED' => true];
@@ -493,13 +496,7 @@ class IcalParser {
 	 * Parse a DURATION value (RFC 5545, section 3.3.6), e.g. "PT1H30M", "-P1W" or "P1DT12H".
 	 */
 	public static function parseDuration(string $value): ?DateInterval {
-		if (!preg_match('/^([+-])?P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/D', strtoupper(trim($value)), $match) || !preg_match('/\d/', $value)) {
-			return null;
-		}
-		$days = (int) ($match[2] ?? 0) * 7 + (int) ($match[3] ?? 0);
-		$interval = new DateInterval(sprintf('P%dDT%dH%dM%dS', $days, (int) ($match[4] ?? 0), (int) ($match[5] ?? 0), (int) ($match[6] ?? 0)));
-		$interval->invert = ($match[1] ?? '') === '-' ? 1 : 0;
-		return $interval;
+		return Duration::parse($value);
 	}
 
 	/**

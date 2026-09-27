@@ -7,8 +7,6 @@ use DateTimeZone;
 use Generator;
 use om\ICal\Calendar;
 use om\ICal\Component;
-use om\ICal\Exception\InvalidValueException;
-use om\ICal\Exception\SyntaxException;
 use om\ICal\Exception\TimezoneResolutionException;
 use om\ICal\Item;
 use om\ICal\Property;
@@ -146,9 +144,6 @@ final readonly class Parser {
 			$this->check($calendar, $builder);
 			$calendars[] = $calendar;
 		}
-		if ($calendars === [] && $this->mode === ParserMode::Strict) {
-			throw SyntaxException::create('syntax.no-calendar', 'The input contains no VCALENDAR component.');
-		}
 		return new ParseResult($calendars, $builder->warnings());
 	}
 
@@ -174,10 +169,7 @@ final readonly class Parser {
 				$builder->warn('timezone.unresolved', "Unknown timezone \"$tzid\", its times are floating.", $property->line, $property->name);
 			}
 			if ($strict && isset(ValueParser::TYPES[$property->name])) {
-				$value = $values->value($property);
-				if ($value === null || $value === []) {
-					throw InvalidValueException::create('value.invalid', "Invalid value of $property->name", $property->line, $property->name, $property->value);
-				}
+				$values->value($property); // throws InvalidValueException in strict mode
 			}
 		}
 	}

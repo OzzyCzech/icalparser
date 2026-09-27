@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-use om\IcalParser;
-use om\ParserOptions;
+use om\ICal;
+use om\ICal\Occurrence;
+use om\ICal\Parser\ParserMode;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -16,20 +17,15 @@ $to = $from->modify('+3 months');
 
 $title = 'Calendar';
 $error = null;
-$events = [];
+$occurrences = [];
+$warnings = [];
 try {
-	// unbounded recurring events are expanded only until the end of the shown period
-	$calendar = new IcalParser(new ParserOptions(untilInterval: new DateInterval('P3M')));
-	$calendar->parseFile($source);
-	$title = $calendar->data['X-WR-CALNAME'] ?? $title;
-
-	foreach ($calendar->getEvents()->sorted() as $event) {
-		$start = $event['DTSTART'] ?? null;
-		$end = $event['DTEND'] ?? $start;
-		if ($start instanceof DateTimeInterface && $end >= $from && $start < $to) {
-			$events[] = $event;
-		}
-	}
+	$result = ICal::parser()->mode(ParserMode::Permissive)->parseFile($source);
+	$calendar = $result->calendar();
+	$warnings = $result->warnings();
+	$title = $calendar->name() ?? $title;
+	// recurring events are expanded lazily, only for the shown period
+	$occurrences = $calendar->occurrencesBetween($from, $to);
 } catch (Throwable $e) {
 	$error = $e->getMessage();
 }
@@ -38,12 +34,12 @@ function e(mixed $value): string {
 	return htmlspecialchars((string) $value, ENT_QUOTES);
 }
 
-function when(array $event): string {
-	$start = DateTimeImmutable::createFromInterface($event['DTSTART']);
-	$end = DateTimeImmutable::createFromInterface($event['DTEND'] ?? $start);
-	if ($start->format('His') === '000000' && $end->format('His') === '000000') { // all-day event, DTEND is exclusive
-		$last = $end->modify('-1 day');
-		return $last > $start ? $start->format('j M') . ' – ' . $last->format('j M Y') : $start->format('j M Y');
+function when(Occurrence $occurrence): string {
+	$start = $occurrence->start;
+	$end = $occurrence->end;
+	if ($occurrence->isAllDay()) { // the end of an all-day event is exclusive
+		$last = $end->add(DateInterval::createFromDateString('-1 day'));
+		return $last->format('Ymd') > $start->format('Ymd') ? $start->format('j M') . ' – ' . $last->format('j M Y') : $start->format('j M Y');
 	}
 	return $start->format('j M Y, H:i') . ' – ' . $end->format($end->format('Ymd') === $start->format('Ymd') ? 'H:i' : 'j M Y, H:i');
 }
@@ -70,7 +66,7 @@ function when(array $event): string {
 
 <?php if ($error !== null): ?>
 	<p class="error">The calendar cannot be read: <?= e($error) ?></p>
-<?php elseif ($events === []): ?>
+<?php elseif ($occurrences === []): ?>
 	<p>No events in this period.</p>
 <?php else: ?>
 	<table>
@@ -78,18 +74,22 @@ function when(array $event): string {
 		<tr><th>When</th><th>Event</th></tr>
 		</thead>
 		<tbody>
-		<?php foreach ($events as $event): ?>
+		<?php foreach ($occurrences as $occurrence): ?>
 			<tr>
-				<td><?= e(when($event)) ?></td>
+				<td><?= e(when($occurrence)) ?></td>
 				<td>
-					<?= e($event['SUMMARY'] ?? '(no title)') ?>
-					<?php if (!empty($event['RECURRING'])): ?><span class="muted">↻</span><?php endif ?>
-					<?php if (!empty($event['LOCATION'])): ?><br><span class="muted"><?= e($event['LOCATION']) ?></span><?php endif ?>
+					<?= e($occurrence->summary() ?? '(no title)') ?>
+					<?php if ($occurrence->isRecurring()): ?><span class="muted" title="recurring">↻</span><?php endif ?>
+					<?php if ($occurrence->isModified()): ?><span class="muted">(changed)</span><?php endif ?>
+					<?php if ($occurrence->item->location()): ?><br><span class="muted"><?= e($occurrence->item->location()) ?></span><?php endif ?>
 				</td>
 			</tr>
 		<?php endforeach ?>
 		</tbody>
 	</table>
+<?php endif ?>
+<?php if ($warnings !== []): ?>
+	<p class="muted">The calendar was repaired: <?= e(implode('; ', array_map('strval', $warnings))) ?></p>
 <?php endif ?>
 </body>
 </html>

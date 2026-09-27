@@ -305,6 +305,16 @@ test('Streaming returns items one by one with the timezones seen before', functi
 		Assert::type(Event::class, $item);
 	}
 	Assert::same(['syntax.line-ending'], $warnings);
+
+	$stream = fopen('php://memory', 'r+b');
+	fwrite($stream, "BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nUID:a\r\nDTSTART:20260101T100000\r\nEND:VEVENT\r\nX-WR-TIMEZONE:Asia/Tokyo\r\nBEGIN:VEVENT\r\nUID:b\r\nDTSTART:20260101T100000\r\nEND:VEVENT\r\ngarbage\r\nEND:VCALENDAR\r\n");
+	rewind($stream);
+	$warnings = [];
+	$zones = array_map(fn(Event $event) => $event->calendar()->floatingTimezone()?->getName(), iterator_to_array(ICal::parser()->stream($stream, function ($warning) use (&$warnings) {
+		$warnings[] = $warning->code;
+	}), false));
+	Assert::same([null, 'Asia/Tokyo'], $zones, 'calendar properties seen so far apply');
+	Assert::same(['syntax.invalid-line'], $warnings);
 });
 
 test('Creating a calendar and serializing it', function () {

@@ -6,142 +6,157 @@
 
 # PHP iCal Parser
 
-An iCalendar parser that converts calendar data ([RFC 5545](https://www.rfc-editor.org/rfc/rfc5545)) into PHP arrays
-and expands recurring events into single instances.
+A lightweight and robust iCalendar ([RFC 5545](https://www.rfc-editor.org/rfc/rfc5545)) parser for PHP.
 
-## How to install
+- reads real-world `.ics` files from Google Calendar, Apple Calendar, Outlook, Exchange, Nextcloud, Fastmail and others,
+  repairs damaged files and reports every repair
+- keeps unknown and X- properties, writes calendars back
+- keeps the meaning of dates, floating, UTC and zoned times, resolves Windows timezones and custom VTIMEZONE definitions
+- expands recurring events lazily: the complete RRULE (including BYSETPOS and BYWEEKNO), RDATE, EXDATE and
+  RECURRENCE-ID overrides (moved, cancelled and THISANDFUTURE)
+- safe for untrusted input: strict and permissive mode, resource limits, streaming of large files
 
-The recommended way to is via Composer:
+## Install
 
-```shell script
+```shell
 composer require om/icalparser
 ```
 
-## Usage and example
+## Usage
 
 ```php
-<?php
-use om\IcalParser;
-require_once '../vendor/autoload.php';
+use om\ICal;
 
-$cal = new IcalParser();
-$results = $cal->parseFile(
-	'https://www.google.com/calendar/ical/cs.czech%23holiday%40group.v.calendar.google.com/public/basic.ics'
-);
+$calendar = ICal::parseFile('calendar.ics'); // or ICal::parse($content)
 
-foreach ($cal->getEvents()->sorted() as $event) {
-	printf('%s - %s' . PHP_EOL, $event['DTSTART']->format('j.n.Y'), $event['SUMMARY']);
+foreach ($calendar->events() as $event) {
+	echo $event->summary(), ' ', $event->start()?->format('Y-m-d H:i'), PHP_EOL;
+}
+
+// every instance of every event in a period, sorted, with moved and cancelled instances applied
+$from = new DateTimeImmutable('2026-01-01');
+$to = new DateTimeImmutable('2026-02-01');
+foreach ($calendar->occurrencesBetween($from, $to) as $occurrence) {
+	printf("%s %s%s\n", $occurrence->startTime()->format('j. n. H:i'), $occurrence->summary(), $occurrence->isModified() ? ' (changed)' : '');
 }
 ```
 
-`parseFile()` accepts a path or any URL supported by PHP stream wrappers, `parseString()` accepts the calendar content.
-Both return the parsed data; pass `add: true` to `parseString()` to append another calendar to the data parsed before.
+Events, tasks (`todos()`), journal entries (`journals()`) and free/busy components (`freeBusy()`) have typed getters:
+`uid()`, `summary()`, `description()`, `location()`, `start()`, `end()`, `duration()`, `status()`, `categories()`,
+`organizer()`, `attendees()`, `alarms()`, `recurrenceRule()` and more. Any property, including unknown ones, is available too:
 
-Each property of each component is available using the property name (in capital letters) as a key.
-Dates (`DTSTART`, `DTEND`, `DTSTAMP`, `CREATED`, `LAST-MODIFIED`, `DUE`, `COMPLETED`, `EXDATE`, `RDATE`) are `DateTime`
-objects in their timezone; text values are unescaped. There are some special cases:
-
-- multiple attendees with individual parameters: use `ATTENDEES` as key to get all attendees in the following scheme:
 ```php
-[
-	[
-		'ROLE' => 'REQ-PARTICIPANT',
-		'PARTSTAT' => 'NEEDS-ACTION',
-		'CN' => 'John Doe',
-		'VALUE' => 'mailto:john.doe@example.org'
-	],
-	[
-		'ROLE' => 'REQ-PARTICIPANT',
-		'PARTSTAT' => 'NEEDS-ACTION',
-		'CN' => 'Test Example',
-		'VALUE' => 'mailto:test@example.org'
-	]
-]
+$event->property('X-APPLE-STRUCTURED-LOCATION')?->parameter('X-TITLE');
+$event->value('X-MICROSOFT-CDO-BUSYSTATUS'); // typed value, see docs/values.md
 ```
-- organizer's name: the *CN* parameter of the organizer property can be retrieved using the key `ORGANIZER-CN`
-- `ATTACHMENTS`, `EXDATES` and `RDATES` collect all values of properties that may occur more than once
-- `CATEGORIES` is a list of categories
 
-Other components are available as well: `getAlarms()`, `getTimezones()`, `getTodos()` and `getJournals()`.
+### Dates and times
 
-### Events and recurring events
+`start()`, `end()` and the occurrences return `DateTimeValue`, which keeps the difference between
+`20261010` (a date), `20261010T100000` (floating), `20261010T100000Z` (UTC) and `TZID=Europe/Prague:20261010T100000` (zoned).
+Floating times and dates are never converted with the PHP default timezone:
 
-`getEvents()` returns an `EventsList` (an `ArrayObject`) with every recurring event expanded into single instances;
-`sorted()` orders them oldest first, `reversed()` newest first, events without a date come last.
+```php
+$start = $event->start();
+$start->format('Y-m-d H:i');                           // the local value, always
+$start->toDateTime();                                  // the instant; needs a timezone for dates and floating times
+$start->toDateTime(new DateTimeZone('Europe/Prague')); // in a given timezone
+$start->isDate(); $start->isFloating(); $start->isUtc(); $start->isZoned();
+```
 
-- the recurrence set is built from `RRULE`, `RDATE` and `EXDATE` as defined by RFC 5545,
-  all rule parts are supported including `BYSETPOS`, `BYWEEKNO`, `BYYEARDAY` and `WKST`
-- an instance modified by another `VEVENT` with the same `UID` and a `RECURRENCE-ID` is replaced by that event
-- recurring instances contain `RECURRING => true` and a zero-based `RECURRENCE_INSTANCE`
-- every event with a start has `DTEND`: from `DTEND`, from `DURATION`, or one day for all-day events
-- rules without `UNTIL` or `COUNT` are expanded 3 years into the future (see options below)
-- an invalid `RRULE` is ignored, so the event keeps just its `DTSTART` (and `RDATE`)
+The timezone of dates and floating times is X-WR-TIMEZONE of the calendar or the one configured with
+`ICal::parser()->floatingTimezone(...)`. See [values and timezones](docs/values.md).
 
-The recurrence engine is available on its own as well:
+### Recurring events
+
+```php
+foreach ($event->occurrencesBetween($from, $to) as $occurrence) { /* ... */ }
+foreach ($event->occurrences(limit: 10) as $occurrence) { /* ... */ }
+```
+
+Occurrences are generated lazily and only for a window or up to a limit; there is no unlimited expansion.
+The recurrence engine can be used on its own:
 
 ```php
 use om\RRule\Expander;
 use om\RRule\Rule;
 
-$rule = Rule::fromString('FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1;COUNT=3');
-$start = new DateTimeImmutable('2026-01-30 09:00', new DateTimeZone('Europe/Prague'));
-foreach (new Expander($rule, $start) as $timestamp) {
-	echo date('Y-m-d', $timestamp), PHP_EOL; // last workday of the month
+$rule = Rule::fromString('FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1;COUNT=3'); // the last workday
+foreach (new Expander($rule, new DateTimeImmutable('2026-01-30 09:00', new DateTimeZone('Europe/Prague'))) as $timestamp) {
+	echo date('Y-m-d', $timestamp), PHP_EOL;
 }
 ```
 
-### Options
+See [recurrence](docs/recurrence.md).
+
+### Strict and permissive parsing
 
 ```php
-use om\IcalParser;
-use om\ParserOptions;
+use om\ICal\Parser\ParserMode;
 
-$cal = new IcalParser(new ParserOptions(
-	untilInterval: new DateInterval('P1Y'),   // expand unbounded rules 1 year ahead (default 3 years)
-	shiftEventDates: new DateInterval('P1M'), // skip occurrences of unbounded rules older than 1 month
-	now: new DateTimeImmutable('2026-01-01'), // fixed "now" for reproducible results
-	maxOccurrences: 10000,                    // occurrences per event (default 100 000)
-	strict: true,                             // throw on invalid RRULE instead of ignoring it
-));
+$result = ICal::parser()->mode(ParserMode::Permissive)->parseFile('feed.ics');
+$calendar = $result->calendar();
+foreach ($result->warnings() as $warning) {
+	echo $warning, PHP_EOL; // line 12: END:VEVENT is missing, the component was closed. [syntax.missing-end]
+}
 ```
 
-### Limitations
+The permissive mode (default) repairs damaged files and reports each repair as a warning. The strict mode throws an
+exception with an error code, line, property and raw value. Limits of the input and of recurrence expansion protect
+against pathological files. See [parsing, warnings and limits](docs/parsing.md) and [validation](docs/validation.md).
 
-- custom `VTIMEZONE` definitions are not evaluated; a `TZID` must be an IANA or Windows timezone name
-  (possibly with a prefix such as `/mozilla.org/…/Europe/Prague`), otherwise the calendar timezone is used
-- `RECURRENCE-ID;RANGE=THISANDFUTURE` overrides only the single instance
-- a `DTSTART` in a daylight saving gap is moved by PHP, so its occurrences use the moved local time
+### Large files
 
-### Example
-
-The [example](example/index.php) lists upcoming events of a sample calendar
-([example/calendar.ics](example/calendar.ics)) with recurring, moved, all-day and multi-day events.
-Run it with the [PHP built-in web server](https://www.php.net/manual/en/features.commandline.webserver.php)
-and open http://localhost:8000:
-
-```shell
-php -S localhost:8000 -t example
+```php
+foreach (ICal::stream('huge.ics') as $item) { // events, tasks, ... one by one, constant memory
+	echo $item->summary(), PHP_EOL;
+}
 ```
 
-## Upgrading
+### Writing
 
-Version 5 keeps the API of version 4 and fixes many recurrence and parsing bugs, so the results can differ.
-See [CHANGELOG.md](CHANGELOG.md) for the full list.
+```php
+use om\ICal\Calendar;
+use om\ICal\Component;
+use om\ICal\Property;
 
-## Requirements
+$event = new Component('VEVENT', [
+	Property::create('UID', 'meeting-1@example.org'),
+	Property::create('DTSTAMP', '20260101T000000Z'),
+	Property::create('DTSTART', '20260105T093000', ['TZID' => 'Europe/Prague']),
+	Property::create('SUMMARY', 'Standup'),
+]);
+echo Calendar::create()->withComponent($event)->serialize();
+```
 
-- PHP version see `composer.json`
+Parsed calendars are serialized with all their properties, lines are folded at 75 octets.
+
+## Examples
+
+The [examples](examples) directory contains a web page listing upcoming events of a sample calendar
+(`php -S localhost:8000 -t examples`) and command line scripts for streaming, validation and writing.
+
+## Upgrading from version 4
+
+The array based `IcalParser` of version 4 is still available and deprecated; it keeps its output and fixes many bugs.
+See [UPGRADING.md](UPGRADING.md) and [CHANGELOG.md](CHANGELOG.md).
 
 ## Development
 
-iCal parser uses [Nette Tester](https://github.com/nette/tester) and [PHPStan](https://phpstan.org/).
+iCal parser uses [Nette Tester](https://github.com/nette/tester), [PHPStan](https://phpstan.org/) and
+[PHP CS Fixer](https://cs.symfony.com/).
 
-```shell script
+```shell
 composer install
-composer test      # tests
-composer phpstan   # static analysis
-composer coverage  # coverage report (requires pcov, xdebug or phpdbg)
+composer test               # unit tests and tests of the version 4 API
+composer test:integration   # public API, parser modes, golden files of tests/Fixtures
+composer test:fuzz          # corrupted and pathological input
+composer test:differential  # comparison with sabre/vobject and python-dateutil (set ICALPARSER_PYTHON)
+composer analyse            # PHPStan
+composer cs                 # coding standard (cs:fix fixes it)
+composer check              # all of the above except differential tests
 ```
 
-Every calendar in `tests/cal` has a snapshot of the parser output in `tests/snapshots`.
-After an intended change of the output, regenerate them with `UPDATE_SNAPSHOTS=1 composer test` and review the diff.
+Every calendar in `tests/Fixtures` has a golden file with the normalized output. After an intended change,
+regenerate them with `UPDATE_SNAPSHOTS=1 composer test:integration` and review the diff. Every bug gets a fixture
+in `tests/Fixtures/Regression` or a test.

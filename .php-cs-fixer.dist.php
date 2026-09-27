@@ -5,7 +5,7 @@ declare(strict_types=1);
  * Coding standard of the project: PER-CS with tabs and opening braces on the same line.
  */
 $finder = (new PhpCsFixer\Finder())
-	->in([__DIR__ . '/src', __DIR__ . '/tests', __DIR__ . '/bin', __DIR__ . '/example'])
+	->in([__DIR__ . '/src', __DIR__ . '/tests', __DIR__ . '/bin', __DIR__ . '/examples'])
 	->name(['*.php', '*.phpt'])
 	->exclude(['output']);
 
