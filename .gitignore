@@ -6,3 +6,4 @@ tests/**/output/
 coverage.html
 .php-cs-fixer.cache
 /.venv/
+/build/

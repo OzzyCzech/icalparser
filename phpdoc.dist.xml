@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdocumentor configVersion="3" xmlns="https://www.phpdoc.org">
+	<title>PHP iCal Parser</title>
+	<paths>
+		<output>build/site/api</output>
+		<cache>build/phpdoc-cache</cache>
+	</paths>
+	<version number="latest">
+		<api>
+			<source dsn=".">
+				<path>src</path>
+			</source>
+			<ignore>
+				<path>src/WindowsTimezones.php</path>
+			</ignore>
+			<visibility>public</visibility>
+			<visibility>protected</visibility>
+			<default-package-name>om\icalparser</default-package-name>
+		</api>
+	</version>
+</phpdocumentor>

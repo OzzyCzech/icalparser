@@ -7,6 +7,7 @@
 # PHP iCal Parser
 
 A lightweight and robust iCalendar ([RFC 5545](https://www.rfc-editor.org/rfc/rfc5545)) parser for PHP.
+Documentation: [ozzyczech.github.io/icalparser](https://ozzyczech.github.io/icalparser/)
 
 - reads real-world `.ics` files from Google Calendar, Apple Calendar, Outlook, Exchange, Nextcloud, Fastmail and others,
   repairs damaged files and reports every repair
@@ -161,6 +162,10 @@ composer check              # all of the above except differential tests
 
 The differential test needs Python with dateutil and is skipped without it:
 `python3 -m venv .venv && .venv/bin/pip install python-dateutil`, then run it with `ICALPARSER_PYTHON=.venv/bin/python`.
+
+The documentation at [ozzyczech.github.io/icalparser](https://ozzyczech.github.io/icalparser/) is built from `docs/*.md` by
+[MkDocs](https://www.mkdocs.org/) and from the docblocks of `src/` by [phpDocumentor](https://www.phpdoc.org/)
+(`.github/workflows/docs.yml`). Preview it with `pip install -r docs/requirements.txt && mkdocs serve`.
 
 Every calendar in `tests/Fixtures` has a golden file with the normalized output. After an intended change,
 regenerate them with `UPDATE_SNAPSHOTS=1 composer test:integration` and review the diff. Every bug gets a fixture
