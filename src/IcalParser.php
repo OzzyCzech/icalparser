@@ -5,31 +5,71 @@ namespace om;
 
 use ArrayObject;
 use DateInterval;
-use DateInvalidTimeZoneException;
 use DateTime;
+use DateTimeInterface;
 use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
+use om\RRule\Expander;
+use om\RRule\Rule;
 use RuntimeException;
 
 /**
+ * iCalendar (RFC 5545) parser producing PHP arrays.
+ *
  * Copyright (c) Roman Ožana (https://ozana.cz)
  *
  * @license BSD-3-Clause
  * @author Roman Ožana <roman@ozana.cz>
  */
 class IcalParser {
+	private const array DATE_PROPERTIES = ['DTSTAMP', 'LAST-MODIFIED', 'CREATED', 'DTSTART', 'DTEND', 'DUE', 'COMPLETED'];
+
+	/** Properties of the TEXT value type (RFC 5545, section 3.3.11) that are unescaped. */
+	private const array TEXT_PROPERTIES = [
+		'CALSCALE', 'METHOD', 'PRODID', 'VERSION', 'CATEGORIES', 'CLASS', 'COMMENT', 'DESCRIPTION',
+		'LOCATION', 'RESOURCES', 'STATUS', 'SUMMARY', 'TRANSP', 'TZID', 'TZNAME', 'CONTACT',
+		'RELATED-TO', 'UID', 'ACTION', 'REQUEST-STATUS', 'URL',
+	];
+
+	private const array TEXT_ESCAPES = ['\\\\' => '\\', '\\N' => "\n", '\\n' => "\n", '\\;' => ';', '\\,' => ','];
+
+	/** Timezone of floating dates: the last X-WR-TIMEZONE or TZID property seen. */
 	public ?DateTimeZone $timezone = null;
 	public ?array $data = null;
 	protected array $counters = [];
-	private array $windowsTimezones;
 
-	public function __construct() {
-		$this->windowsTimezones = require __DIR__ . '/WindowsTimezones.php'; // load Windows timezones from separate file
+	private readonly ParserOptions $options;
+	/** @var array<string, string> */
+	private array $windowsTimezones;
+	/** @var array<string, DateTimeZone|false> */
+	private array $timezoneCache = [];
+
+	/**
+	 * Parser details of components that are not part of the public data:
+	 * date-only flags, raw RRULE and RECURRENCE-ID timezone.
+	 *
+	 * @var array<string, array<int, array<string, mixed>>>
+	 */
+	private array $meta = [];
+
+	/**
+	 * Overridden instances (VEVENT with RECURRENCE-ID) by UID.
+	 *
+	 * @var array<string, list<array{value: string, timezone: ?DateTimeZone}>>
+	 */
+	private array $overrides = [];
+
+	public function __construct(?ParserOptions $options = null) {
+		$this->options = $options ?? new ParserOptions();
+		$this->windowsTimezones = $this->options->windowsTimezones ?? [];
 	}
 
 	/**
-	 * @throws Exception
+	 * Parse a file or any stream wrapper URL.
+	 *
+	 * @throws RuntimeException when the file cannot be read
+	 * @throws InvalidArgumentException when the content is not iCalendar data
 	 */
 	public function parseFile(string $file, ?callable $callback = null): ?array {
 		$content = @file_get_contents($file);
@@ -41,424 +81,105 @@ class IcalParser {
 	}
 
 	/**
-	 * @param boolean $add if true the parsed string is added to existing data
-	 * @throws Exception
+	 * Parse iCalendar data.
+	 *
+	 * With a callback, rows are not stored; the callback receives every property row as
+	 * ($row, $key, $middle, $value, $section, $counter) and the method returns null.
+	 *
+	 * @param bool $add if true the parsed string is added to existing data
+	 * @throws InvalidArgumentException when the content is not iCalendar data
 	 */
 	public function parseString(string $string, ?callable $callback = null, bool $add = false): ?array {
-		if (!str_contains($string, 'BEGIN:VCALENDAR')) {
+		if (stripos($string, 'BEGIN:VCALENDAR') === false) {
 			throw new InvalidArgumentException('Invalid ICAL data format');
 		}
 
-		if ($add === false) {
-			// delete old data
+		if ($add === false || $this->data === null) {
 			$this->data = [];
 			$this->counters = [];
+			$this->meta = [];
+			$this->overrides = [];
+			$this->timezone = null;
+		}
+
+		// Normalize line breaks and unfold lines (RFC 5545, section 3.1)
+		$string = str_replace(["\r\n", "\r"], "\n", $string);
+		$string = str_replace(["\n ", "\n\t"], '', $string);
+		if (str_starts_with($string, "\u{FEFF}")) {
+			$string = substr($string, 3);
 		}
 
 		$section = 'VCALENDAR';
-		$sections = [];
-
-		// Replace \r\n with \n
-		$string = str_replace("\r\n", "\n", $string);
-
-		// Unfold multi-line strings
-		$string = str_replace(["\n ", "\n\t"], '', $string);
+		$parents = [];
 
 		foreach (explode("\n", $string) as $row) {
+			if ($row === '') {
+				continue;
+			}
 
-			switch ($row) {
-				case '':
-				case 'BEGIN:VCALENDAR':
-					continue 2;
-				case 'BEGIN:DAYLIGHT':
-				case 'BEGIN:VALARM':
-				case 'BEGIN:VTIMEZONE':
-				case 'BEGIN:VFREEBUSY':
-				case 'BEGIN:VJOURNAL':
-				case 'BEGIN:STANDARD':
-				case 'BEGIN:VTODO':
-				case 'BEGIN:VEVENT':
-					$sections[] = $section;
-					$section = substr($row, 6);
+			if (strncasecmp($row, 'BEGIN:', 6) === 0) {
+				$component = strtoupper(trim(substr($row, 6)));
+				if ($component !== 'VCALENDAR') {
+					$parents[] = $section;
+					$section = $component;
 					$this->counters[$section] = isset($this->counters[$section]) ? $this->counters[$section] + 1 : 0;
 					if ($callback === null) {
 						$this->data[$section][$this->counters[$section]] = [];
 					}
-					continue 2; // while
-				case 'END:VEVENT':
-					$section = substr($row, 4);
-					$currCounter = $this->counters[$section];
-					$event = $this->data[$section][$currCounter] ?? [];
-					if (isset($event['RECURRENCE-ID'], $event['UID'])) {
-						$this->data['_RECURRENCE_IDS'][$event['UID']][$event['RECURRENCE-ID']] = $event;
-					}
-					$section = array_pop($sections) ?? 'VCALENDAR';
-					continue 2; // while
-				case 'END:DAYLIGHT':
-				case 'END:VALARM':
-				case 'END:VTIMEZONE':
-				case 'END:VFREEBUSY':
-				case 'END:VJOURNAL':
-				case 'END:STANDARD':
-				case 'END:VTODO':
-					$section = array_pop($sections) ?? 'VCALENDAR';
-					continue 2; // while
-
-				case 'END:VCALENDAR':
-					$veventSection = 'VEVENT';
-					if (!empty($this->data[$veventSection])) {
-						foreach ($this->data[$veventSection] as $currCounter => $event) {
-							if (!empty($event['RRULE']) || !empty($event['RDATE']) || !empty($event['EXDATE'])) {
-								$recurrences = $this->parseRecurrences($event);
-								$this->data[$veventSection][$currCounter]['RECURRENCES'] = $recurrences;
-
-								if (!empty($event['UID'])) {
-									$this->data["_RECURRENCE_COUNTERS_BY_UID"][$event['UID']] = $currCounter;
-								}
-							}
-						}
-					}
-					continue 2; // while
-			}
-
-			[$key, $middle, $value] = $this->parseRow($row);
-			if ($key === false) {
+				}
 				continue;
 			}
 
-			if ($callback) {
-				// call user function for processing line
-				$callback($row, $key, $middle, $value, $section, $this->counters[$section] ?? 0);
-			} else {
-				if ($section === 'VCALENDAR') {
-					$this->data[$key] = $value;
-				} else {
-
-					// use an array since there can be multiple entries for this key.  This does not
-					// break the current implementation--it leaves the original key alone and adds
-					// a new one specifically for the array of values.
-
-					if ($newKey = $this->isMultipleKey((string) $key)) {
-						$this->data[$section][$this->counters[$section]][$newKey][] = $value;
+			if (strncasecmp($row, 'END:', 4) === 0) {
+				$component = strtoupper(trim(substr($row, 4)));
+				if ($component !== 'VCALENDAR') {
+					if ($component === 'VEVENT' && $callback === null && isset($this->counters['VEVENT'])) {
+						$this->registerOverride($this->counters['VEVENT']);
 					}
-
-					// CATEGORIES can be multiple also but there is special case that there are comma separated categories
-
-					if ($this->isMultipleKeyWithCommaSeparation($key)) {
-
-						if (str_contains($value, ',')) {
-							// split on commas not preceded by backslash
-							$values = array_map('trim', preg_split('/(?<!\\\\),/', $value));
-						} else {
-							$values = [$value];
-						}
-
-						foreach ($values as $value) {
-							$this->data[$section][$this->counters[$section]][$key][] = $value;
-						}
-
-					} else {
-						if ($key === 'ORGANIZER') {
-							foreach ((is_array($middle) ? $middle : []) as $midKey => $midVal) {
-								$this->data[$section][$this->counters[$section]][$key . '-' . $midKey] = $midVal;
-							}
-						}
-						if (in_array($key, ['ATTENDEE', 'ORGANIZER'])) {
-							$value = $value['VALUE'];    // backwards compatibility (leaves ATTENDEE entry as it was)
-						}
-						$this->data[$section][$this->counters[$section]][$key] = $value;
-					}
-
+					$section = array_pop($parents) ?? 'VCALENDAR';
 				}
+				continue;
+			}
 
+			$row = $this->parseRow($row);
+			if ($row === null) {
+				continue;
+			}
+			[$key, $middle, $value, $raw, $line] = $row;
+
+			if ($callback) {
+				$callback($line, $key, $middle, $value, $section, $this->counters[$section] ?? 0);
+			} elseif ($section === 'VCALENDAR') {
+				$this->data[$key] = $value;
+			} else {
+				$this->store($section, $this->counters[$section], $key, $middle, $value, $raw);
 			}
 		}
 
-		return ($callback) ? null : $this->data;
+		if ($callback) {
+			return null;
+		}
+
+		$this->expandRecurringEvents();
+		return $this->data;
 	}
 
 	/**
-	 * @param $event
-	 * @throws Exception
-	 * @return array
+	 * Expand the recurrence set of an event (RRULE, RDATE and EXDATE) into DateTime objects.
+	 *
+	 * @param array<string, mixed> $event parsed VEVENT
+	 * @return list<DateTime>
+	 * @throws InvalidArgumentException for an invalid RRULE in strict mode
 	 */
 	public function parseRecurrences(array $event): array {
-		$recurring = new Recurrence($event['RRULE'] ?? []);
-		$exclusions = [];
-		$additions = [];
-
-		if (!empty($event['EXDATES'])) {
-			foreach ($event['EXDATES'] as $exDate) {
-				if (is_array($exDate)) {
-					foreach ($exDate as $singleExDate) {
-						$exclusions[] = $singleExDate->getTimestamp();
-					}
-				} else {
-					$exclusions[] = $exDate->getTimestamp();
-				}
-			}
-		}
-
-		if (!empty($event['RDATES'])) {
-			foreach ($event['RDATES'] as $rDate) {
-				if (is_array($rDate)) {
-					foreach ($rDate as $singleRDate) {
-						$additions[] = $singleRDate->getTimestamp();
-					}
-				} else {
-					$additions[] = $rDate->getTimestamp();
-				}
-			}
-		}
-
-		if (isset($event['RRULE']) && $recurring->getUntil() === false && $recurring->getCount() === false) {
-			//forever... limit to 3 years from now
-			$end = new DateTime('now');
-			$end->add(new DateInterval('P3Y')); // + 3 years
-			$recurring->setUntil($end);
-		}
-
-		$defaultTimezone = date_default_timezone_get();
-		$tzName = $event['DTSTART']->getTimezone()->getName();
-		try {
-			date_default_timezone_set($tzName === 'Z' ? 'UTC' : $tzName);
-			$recurrenceTimestamps = isset($event['RRULE'])
-				? (new Freq($recurring->rrule, $event['DTSTART']->getTimestamp()))->getAllOccurrences()
-				: [$event['DTSTART']->getTimestamp()];
-		} finally {
-			date_default_timezone_set($defaultTimezone);
-		}
-
-		// This guard only works on WEEKLY, because the others have no fixed time interval
-		// There may still be a bug with the others
-		if (isset($event['RRULE']['INTERVAL']) && $recurring->getFreq() === "WEEKLY") {
-			$interval = (int) $event['RRULE']['INTERVAL'];
-			if ($interval > 1) {
-				$replacementList = [];
-				$wkst = $recurring->getWkst() ?: 'MO';
-				$wkstMap = ['SU' => 0, 'MO' => 1, 'TU' => 2, 'WE' => 3, 'TH' => 4, 'FR' => 5, 'SA' => 6];
-				$wkstIndex = $wkstMap[$wkst] ?? 1;
-
-				$getStartOfWeek = function ($ts) use ($event, $wkstIndex) {
-					$dt = new DateTime('now', $event['DTSTART']->getTimezone());
-					$dt->setTimestamp($ts);
-					$dt->setTime(0, 0, 0);
-					$w = (int) $dt->format('w');
-					$diff = $w - $wkstIndex;
-					if ($diff < 0)
-						$diff += 7;
-					$dt->modify("-{$diff} days");
-					return $dt->getTimestamp();
-				};
-
-				$startOfWeekStart = $getStartOfWeek($event['DTSTART']->getTimestamp());
-
-				foreach ($recurrenceTimestamps as $timestamp) {
-					$startOfWeekCurrent = $getStartOfWeek($timestamp);
-					$diffWeeks = (int) round(($startOfWeekCurrent - $startOfWeekStart) / 604800);
-
-					if ($diffWeeks % $interval == 0) {
-						$replacementList[] = $timestamp;
-					}
-				}
-
-				$recurrenceTimestamps = $replacementList;
-			}
-		}
-
-		// Apply set operations after RRULE filtering: RDATE is independent of INTERVAL,
-		// and EXDATE takes precedence over both generated and explicitly added dates.
-		$recurrenceTimestamps = array_values(array_unique(array_diff(
-			array_merge($recurrenceTimestamps, $additions), $exclusions,
-		)));
-		sort($recurrenceTimestamps, SORT_NUMERIC);
-		$overrides = $this->data['_RECURRENCE_IDS'][$event['UID'] ?? ''] ?? [];
-		$recurrences = [];
-		foreach ($recurrenceTimestamps as $recurrenceTimestamp) {
-			$tmp = new DateTime('now', $event['DTSTART']->getTimezone());
-			$tmp->setTimestamp($recurrenceTimestamp);
-
-			$recurrenceIDDate = $tmp->format('Ymd');
-			$recurrenceIDDateTime = $tmp->format('Ymd\THis');
-			if (empty($overrides[$recurrenceIDDate]) && empty($overrides[$recurrenceIDDateTime])) {
-				$gmtCheck = new DateTime('now', new DateTimeZone('UTC'));
-				$gmtCheck->setTimestamp($recurrenceTimestamp);
-				$recurrenceIDDateTimeZ = $gmtCheck->format('Ymd\THis\Z');
-				if (empty($overrides[$recurrenceIDDateTimeZ])) {
-					$recurrences[] = $tmp;
-				}
-			}
-		}
-
-		return $recurrences;
-	}
-
-	/**
-	 * @throws DateInvalidTimeZoneException
-	 */
-	private function parseRow(string $row): array {
-		preg_match('#^([\w-]+);?([\w-]+="[^"]*"|.*?):(.*)$#i', $row, $matches);
-
-		$key = false;
-		$middle = null;
-		$value = null;
-
-		if ($matches) {
-			$key = $matches[1];
-			$middle = $matches[2];
-			$value = $matches[3];
-			$timezone = null;
-
-			if ($key === 'X-WR-TIMEZONE' || $key === 'TZID') {
-				$resolved = $this->resolveTimezone($value);
-				if ($resolved !== null) {
-					$value = $resolved->getName();
-					$this->timezone = $resolved;
-				}
-			}
-
-			// have some middle part ?
-			if ($middle && preg_match_all('#(?<key>[^=;]+)=(?<value>[^;]+)#', $middle, $matches, PREG_SET_ORDER)) {
-				$middle = [];
-				foreach ($matches as $match) {
-					if ($match['key'] === 'TZID') {
-						$match['value'] = trim($match['value'], "'\"");
-						$resolved = $this->resolveTimezone($match['value']);
-						if ($resolved !== null) {
-							$middle[$match['key']] = $timezone = $resolved;
-						} else {
-							$middle[$match['key']] = $match['value'];
-						}
-					} elseif ($match['key'] === 'ENCODING') {
-						if ($match['value'] === 'QUOTED-PRINTABLE') {
-							$value = quoted_printable_decode($value);
-						}
-					} else {
-						$middle[$match['key']] = $match['value'];
-					}
-				}
-			}
-		}
-
-		// process simple dates with timezone
-		if (in_array($key, ['DTSTAMP', 'LAST-MODIFIED', 'CREATED', 'DTSTART', 'DTEND'], true)) {
-			try {
-				$value = new DateTime($value, ($timezone ?? $this->timezone));
-			} catch (Exception $e) {
-				$value = null;
-			}
-		} elseif (in_array($key, ['EXDATE', 'RDATE'])) {
-			$values = [];
-			foreach (explode(',', $value) as $singleValue) {
-				try {
-					$values[] = new DateTime($singleValue, ($timezone ?? $this->timezone));
-				} catch (Exception $e) {
-					// pass
-				}
-			}
-			if (count($values) === 1) {
-				$value = $values[0];
-			} else {
-				$value = $values;
-			}
-		}
-
-		if ($key === 'RRULE' && preg_match_all('#(?<key>[^=;]+)=(?<value>[^;]+)#', $value, $matches, PREG_SET_ORDER)) {
-			$middle = null;
-			$value = [];
-			foreach ($matches as $match) {
-				if (in_array($match['key'], ['UNTIL'])) {
-					try {
-						$value[$match['key']] = new DateTime($match['value'], ($timezone ?? $this->timezone));
-					} catch (Exception $e) {
-						$value[$match['key']] = $match['value'];
-					}
-				} else {
-					$value[$match['key']] = $match['value'];
-				}
-			}
-		}
-
-		//implement 4.3.11 Text ESCAPED-CHAR
-		$text_properties = [
-			'CALSCALE', 'METHOD', 'PRODID', 'VERSION', 'CATEGORIES', 'CLASS', 'COMMENT', 'DESCRIPTION',
-			'LOCATION', 'RESOURCES', 'STATUS', 'SUMMARY', 'TRANSP', 'TZID', 'TZNAME', 'CONTACT',
-			'RELATED-TO', 'UID', 'ACTION', 'REQUEST-STATUS', 'URL',
-		];
-
-		if (in_array($key, $text_properties, true) || str_starts_with((string) $key, 'X-')) {
-			if (is_array($value)) {
-				foreach ($value as &$var) {
-					$var = strtr($var, ['\\\\' => '\\', '\\N' => "\n", '\\n' => "\n", '\\;' => ';', '\\,' => ',']);
-				}
-			} else {
-				$value = strtr($value, ['\\\\' => '\\', '\\N' => "\n", '\\n' => "\n", '\\;' => ';', '\\,' => ',']);
-			}
-		}
-
-		if (in_array($key, ['ATTENDEE', 'ORGANIZER'])) {
-			$value = array_merge(is_array($middle) ? $middle : ['middle' => $middle], ['VALUE' => $value]);
-		}
-
-		return [$key, $middle, $value];
-	}
-
-	/**
-	 * Process timezone and return correct one...
-	 *
-	 * @param string $zone
-	 * @return mixed|null
-	 */
-	private function toTimezone(string $zone): mixed {
-		return $this->windowsTimezones[$zone] ?? $zone;
-	}
-
-	/**
-	 * Extract and resolve timezone from a TZID or X-WR-TIMEZONE value.
-	 * Handles prefixed values (e.g. /mozilla.org/.../Europe/Paris) and
-	 * multi-segment IANA zones (e.g. America/Argentina/Buenos_Aires).
-	 */
-	private function resolveTimezone(string $value): ?DateTimeZone {
-		$parts = preg_split('#[/\\\\]#', $value);
-		$parts = array_values(array_filter($parts));
-
-		$count = count($parts);
-		if ($count < 2) {
-			// no slashes - try as-is via windowsTimezones lookup
-			$resolved = $this->toTimezone(trim($value));
-			try {
-				return new DateTimeZone($resolved);
-			} catch (Exception) {
-				return null;
-			}
-		}
-
-		// try building timezone paths from the end, shortest first
-		// e.g. for "/mozilla.org/20070129_1/Europe/Paris":
-		//   try "Europe/Paris" ✓
-		// e.g. for "America/Argentina/Buenos_Aires":
-		//   try "Argentina/Buenos_Aires" ✗, then "America/Argentina/Buenos_Aires" ✓
-		for ($length = 2; $length <= $count; $length++) {
-			$candidate = implode('/', array_slice($parts, $count - $length));
-			$resolved = $this->toTimezone($candidate);
-			try {
-				return new DateTimeZone($resolved);
-			} catch (Exception) {
-			}
-		}
-
-		return null;
+		return $this->recurrences($event, []);
 	}
 
 	public function isMultipleKey(string $key): ?string {
 		return (['ATTACH' => 'ATTACHMENTS', 'EXDATE' => 'EXDATES', 'RDATE' => 'RDATES', 'ATTENDEE' => 'ATTENDEES'])[$key] ?? null;
 	}
 
-	/**
-	 * @param $key
-	 * @return string|null
-	 */
-	public function isMultipleKeyWithCommaSeparation($key): ?string {
+	public function isMultipleKeyWithCommaSeparation(string $key): ?string {
 		return (['X-CATEGORIES' => 'X-CATEGORIES', 'CATEGORIES' => 'CATEGORIES'])[$key] ?? null;
 	}
 
@@ -474,6 +195,14 @@ class IcalParser {
 		return $this->data['VTIMEZONE'] ?? [];
 	}
 
+	public function getTodos(): array {
+		return array_values($this->data['VTODO'] ?? []);
+	}
+
+	public function getJournals(): array {
+		return array_values($this->data['VJOURNAL'] ?? []);
+	}
+
 	/**
 	 * Return sorted event list as ArrayObject
 	 *
@@ -483,23 +212,48 @@ class IcalParser {
 		return $this->getEvents()->sorted();
 	}
 
+	/**
+	 * @deprecated use IcalParser::getEvents()->reversed() instead
+	 */
+	public function getReverseSortedEvents(): ArrayObject {
+		return $this->getEvents()->reversed();
+	}
+
+	/**
+	 * Events with recurring events expanded into single instances.
+	 *
+	 * Every instance has DTEND: from DTEND, from DURATION, or one day for all-day
+	 * events (RFC 5545, section 3.6.1). Recurring instances also carry RECURRING
+	 * and RECURRENCE_INSTANCE (zero based).
+	 */
 	public function getEvents(): EventsList {
 		$events = new EventsList();
-		foreach ($this->data['VEVENT'] ?? [] as $event) {
+		foreach ($this->data['VEVENT'] ?? [] as $counter => $event) {
+			$meta = $this->meta['VEVENT'][$counter] ?? [];
+			$start = $event['DTSTART'] ?? null;
+			if (!$start instanceof DateTimeInterface) {
+				$events->append($event);
+				continue;
+			}
+
+			$duration = $this->duration($event, $meta);
 			if (!array_key_exists('RECURRENCES', $event)) {
+				if (!array_key_exists('DTEND', $event) && $duration !== null) {
+					$event['DTEND'] = DateTime::createFromInterface($start)->add($duration);
+				}
 				$events->append($event);
 				continue;
 			}
 
 			$event['RECURRING'] = true;
-			$eventInterval = $event['DTSTART']->diff($event['DTEND'] ?? $event['DTSTART']);
+			$duration ??= new DateInterval('PT0S');
 			foreach ($event['RECURRENCES'] as $index => $date) {
 				$instance = $event;
 				if ($index !== 0) {
 					unset($instance['RECURRENCES']);
 				}
 				$instance['DTSTART'] = clone $date;
-				$instance['DTEND'] = (clone $date)->add($eventInterval);
+				$instance['DTEND'] = (clone $date)->add($duration);
 				$instance['RECURRENCE_INSTANCE'] = $index;
 				$events->append($instance);
 			}
@@ -508,11 +262,413 @@ class IcalParser {
 	}
 
 	/**
-	 * @return ArrayObject
-	 * @deprecated use IcalParser::getEvents->reversed();
+	 * Store a property of a component in the public data array.
 	 */
-	public function getReverseSortedEvents(): ArrayObject {
-		return $this->getEvents()->reversed();
+	private function store(string $section, int $counter, string $key, mixed $middle, mixed $value, string $raw): void {
+		$component = &$this->data[$section][$counter];
+
+		// Multiple entries are collected in an array under a separate key,
+		// the original key keeps the last value.
+		if ($newKey = $this->isMultipleKey($key)) {
+			$component[$newKey][] = $value;
+		}
+
+		if ($this->isMultipleKeyWithCommaSeparation($key)) {
+			// split on commas not preceded by backslash, then unescape
+			foreach (preg_split('/(?<!\\\\),/', $raw) as $item) {
+				$component[$key][] = trim(strtr($item, self::TEXT_ESCAPES));
+			}
+			return;
+		}
+
+		if ($key === 'ORGANIZER') {
+			foreach (is_array($middle) ? $middle : [] as $midKey => $midVal) {
+				$component[$key . '-' . $midKey] = $midVal;
+			}
+		}
+		if ($key === 'ATTENDEE' || $key === 'ORGANIZER') {
+			$value = $value['VALUE']; // backwards compatibility (leaves ATTENDEE entry as it was)
+		}
+		$component[$key] = $value;
+
+		$this->storeMeta($section, $counter, $key, $middle, $raw);
 	}
 
+	/**
+	 * Remember parser details that the public data cannot express.
+	 */
+	private function storeMeta(string $section, int $counter, string $key, mixed $middle, string $raw): void {
+		$params = is_array($middle) ? $middle : [];
+		$dateOnly = ($params['VALUE'] ?? null) === 'DATE';
+		switch ($key) {
+			case 'DTSTART':
+				$this->meta[$section][$counter]['dateOnly'] = $dateOnly || preg_match('/^\d{8}$/D', trim($raw)) === 1;
+				break;
+			case 'RRULE':
+				$this->meta[$section][$counter]['rrule'] = $raw;
+				break;
+			case 'EXDATE':
+				foreach (explode(',', $raw) as $item) {
+					if ($dateOnly || preg_match('/^\d{8}$/D', trim($item))) {
+						$this->meta[$section][$counter]['exdateDays'][] = substr(trim($item), 0, 8);
+					}
+				}
+				break;
+			case 'RECURRENCE-ID':
+				$timezone = $params['TZID'] ?? null;
+				$this->meta[$section][$counter]['recurrenceIdTimezone'] = $timezone instanceof DateTimeZone ? $timezone : null;
+				break;
+		}
+	}
+
+	private function registerOverride(int $counter): void {
+		$event = $this->data['VEVENT'][$counter] ?? [];
+		if (!isset($event['RECURRENCE-ID'], $event['UID']) || !is_string($event['RECURRENCE-ID'])) {
+			return;
+		}
+		$this->data['_RECURRENCE_IDS'][$event['UID']][$event['RECURRENCE-ID']] = $event;
+		$this->overrides[$event['UID']][] = [
+			'value' => $event['RECURRENCE-ID'],
+			'timezone' => $this->meta['VEVENT'][$counter]['recurrenceIdTimezone'] ?? null,
+		];
+	}
+
+	private function expandRecurringEvents(): void {
+		foreach ($this->data['VEVENT'] ?? [] as $counter => $event) {
+			if (empty($event['RRULE']) && empty($event['RDATE']) && empty($event['EXDATE'])) {
+				continue;
+			}
+			if (!($event['DTSTART'] ?? null) instanceof DateTimeInterface) {
+				continue;
+			}
+			$this->data['VEVENT'][$counter]['RECURRENCES'] = $this->recurrences($event, $this->meta['VEVENT'][$counter] ?? []);
+			if (!empty($event['UID'])) {
+				$this->data['_RECURRENCE_COUNTERS_BY_UID'][$event['UID']] = $counter;
+			}
+		}
+	}
+
+	/**
+	 * @param array<string, mixed> $event
+	 * @param array<string, mixed> $meta
+	 * @return list<DateTime>
+	 */
+	private function recurrences(array $event, array $meta): array {
+		$start = $event['DTSTART'] ?? null;
+		if (!$start instanceof DateTimeInterface) {
+			throw new InvalidArgumentException('A recurring event requires a valid DTSTART.');
+		}
+		$start = DateTime::createFromInterface($start);
+		$timezone = $start->getTimezone();
+
+		$timestamps = [$start->getTimestamp()];
+		if (!empty($event['RRULE'])) {
+			try {
+				$rule = isset($meta['rrule']) ? Rule::fromString($meta['rrule']) : Rule::fromArray($event['RRULE']);
+				$timestamps = $this->expandRule($rule, $start);
+			} catch (InvalidArgumentException $e) {
+				if ($this->options->strict) {
+					throw $e;
+				}
+			}
+		}
+
+		// RDATE is independent of INTERVAL, EXDATE takes precedence over RRULE and RDATE
+		$timestamps = array_merge($timestamps, self::timestamps($event['RDATES'] ?? []));
+		$timestamps = array_diff($timestamps, self::timestamps($event['EXDATES'] ?? []));
+		$timestamps = array_unique($timestamps);
+		sort($timestamps, SORT_NUMERIC);
+
+		$excludedDays = array_fill_keys($meta['exdateDays'] ?? [], true);
+		[$overriddenTimestamps, $overriddenDays] = $this->overriddenInstances($event['UID'] ?? null, $timezone);
+
+		$recurrences = [];
+		foreach ($timestamps as $timestamp) {
+			$date = (clone $start)->setTimestamp($timestamp);
+			if (isset($overriddenTimestamps[$timestamp])) {
+				continue;
+			}
+			if ($excludedDays !== [] || $overriddenDays !== []) {
+				$day = $date->format('Ymd');
+				if (isset($excludedDays[$day]) || isset($overriddenDays[$day])) {
+					continue;
+				}
+			}
+			$recurrences[] = $date;
+		}
+		return $recurrences;
+	}
+
+	/**
+	 * @return list<int>
+	 */
+	private function expandRule(Rule $rule, DateTimeInterface $start): array {
+		$horizon = $from = null;
+		if ($rule->count === null && $rule->until === null) {
+			$now = $this->options->now();
+			$horizon = ($this->options->untilInterval ? $now->add($this->options->untilInterval) : $now)->getTimestamp();
+			if ($this->options->shiftEventDates) {
+				$from = $now->sub($this->options->shiftEventDates)->getTimestamp();
+			}
+		}
+
+		$timestamps = [];
+		$accepted = false;
+		try {
+			foreach (new Expander($rule, $start, $horizon, $this->options->maxOccurrences) as $timestamp) {
+				$accepted = $from === null || $timestamp >= $from;
+				if ($accepted) {
+					$timestamps[] = $timestamp;
+				}
+			}
+		} catch (RuntimeException $e) {
+			if ($this->options->strict) {
+				throw $e;
+			}
+			if ($accepted) {
+				array_pop($timestamps); // the occurrence over the limit
+			}
+		}
+		return $timestamps;
+	}
+
+	/**
+	 * Instances replaced by a VEVENT with the same UID and a RECURRENCE-ID.
+	 *
+	 * @return array{array<int, true>, array<string, true>} timestamps, and days of date-only IDs
+	 */
+	private function overriddenInstances(?string $uid, DateTimeZone $timezone): array {
+		$timestamps = $days = [];
+		foreach ($this->overrides[$uid ?? ''] ?? [] as ['value' => $value, 'timezone' => $idTimezone]) {
+			$value = trim($value);
+			if (preg_match('/^\d{8}$/D', $value)) {
+				$days[$value] = true;
+				continue;
+			}
+			try {
+				$timestamps[(new DateTime($value, $idTimezone ?? $timezone))->getTimestamp()] = true;
+			} catch (Exception) {
+				// invalid RECURRENCE-ID matches nothing
+			}
+		}
+		return [$timestamps, $days];
+	}
+
+	/**
+	 * @param array<string, mixed> $event
+	 * @param array<string, mixed> $meta
+	 */
+	private function duration(array $event, array $meta): ?DateInterval {
+		if (($event['DTEND'] ?? null) instanceof DateTimeInterface) {
+			return $event['DTSTART']->diff($event['DTEND']);
+		}
+		if (is_string($event['DURATION'] ?? null) && ($duration = self::parseDuration($event['DURATION'])) !== null) {
+			return $duration;
+		}
+		return !empty($meta['dateOnly']) ? new DateInterval('P1D') : null;
+	}
+
+	/**
+	 * Parse a DURATION value (RFC 5545, section 3.3.6), e.g. "PT1H30M", "-P1W" or "P1DT12H".
+	 */
+	public static function parseDuration(string $value): ?DateInterval {
+		if (!preg_match('/^([+-])?P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/D', strtoupper(trim($value)), $match) || !preg_match('/\d/', $value)) {
+			return null;
+		}
+		$days = (int) ($match[2] ?? 0) * 7 + (int) ($match[3] ?? 0);
+		$interval = new DateInterval(sprintf('P%dDT%dH%dM%dS', $days, (int) ($match[4] ?? 0), (int) ($match[5] ?? 0), (int) ($match[6] ?? 0)));
+		$interval->invert = ($match[1] ?? '') === '-' ? 1 : 0;
+		return $interval;
+	}
+
+	/**
+	 * @param list<DateTimeInterface|list<DateTimeInterface>> $dates
+	 * @return list<int>
+	 */
+	private static function timestamps(array $dates): array {
+		$result = [];
+		foreach ($dates as $date) {
+			foreach (is_array($date) ? $date : [$date] as $single) {
+				if ($single instanceof DateTimeInterface) {
+					$result[] = $single->getTimestamp();
+				}
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Parse one content line (RFC 5545, section 3.1) into its name, parameters and value.
+	 *
+	 * @return array{string, mixed, mixed, string, string}|null [key, middle, value, raw value, line]
+	 */
+	private function parseRow(string $row): ?array {
+		$nameLength = strcspn($row, ';:');
+		if ($nameLength === 0 || $nameLength === strlen($row) || strspn($row, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_', 0, $nameLength) !== $nameLength) {
+			return null;
+		}
+		$key = strtoupper(substr($row, 0, $nameLength));
+
+		$middle = '';
+		$valueStart = $nameLength + 1;
+		if ($row[$nameLength] === ';') {
+			$colon = self::valueSeparator($row, $nameLength);
+			if ($colon === null) {
+				return null;
+			}
+			$middle = substr($row, $nameLength + 1, $colon - $nameLength - 1);
+			$valueStart = $colon + 1;
+		}
+		$raw = (string) substr($row, $valueStart);
+		$value = $raw;
+		$timezone = null;
+
+		if ($key === 'X-WR-TIMEZONE' || $key === 'TZID') {
+			$resolved = $this->resolveTimezone($value);
+			if ($resolved !== null) {
+				$value = $resolved->getName();
+				$this->timezone = $resolved;
+			}
+		}
+
+		if ($middle !== '' && ($params = self::parseParameters($middle)) !== []) {
+			$middle = [];
+			foreach ($params as $name => $paramValue) {
+				if ($name === 'TZID') {
+					$resolved = $this->resolveTimezone($paramValue);
+					$middle[$name] = $resolved ?? $paramValue;
+					$timezone = $resolved;
+				} elseif ($name === 'ENCODING') {
+					if (strtoupper($paramValue) === 'QUOTED-PRINTABLE') {
+						$value = $raw = quoted_printable_decode($value);
+					}
+				} else {
+					$middle[$name] = $paramValue;
+				}
+			}
+		}
+
+		if (in_array($key, self::DATE_PROPERTIES, true)) {
+			$value = self::createDate($value, $timezone ?? $this->timezone);
+		} elseif ($key === 'EXDATE' || $key === 'RDATE') {
+			$values = [];
+			foreach (explode(',', $value) as $singleValue) {
+				// a PERIOD value (start/end or start/duration) is represented by its start
+				$singleValue = strstr($singleValue, '/', true) ?: $singleValue;
+				if (($date = self::createDate($singleValue, $timezone ?? $this->timezone)) !== null) {
+					$values[] = $date;
+				}
+			}
+			$value = count($values) === 1 ? $values[0] : $values;
+		} elseif ($key === 'RRULE' && preg_match_all('#(?<key>[^=;]+)=(?<value>[^;]+)#', $value, $matches, PREG_SET_ORDER)) {
+			$middle = null;
+			$value = [];
+			foreach ($matches as $match) {
+				if ($match['key'] === 'UNTIL') {
+					$value[$match['key']] = self::createDate($match['value'], $timezone ?? $this->timezone) ?? $match['value'];
+				} else {
+					$value[$match['key']] = $match['value'];
+				}
+			}
+		} elseif (in_array($key, self::TEXT_PROPERTIES, true) || str_starts_with($key, 'X-')) {
+			// 3.3.11 Text ESCAPED-CHAR
+			$value = strtr($value, self::TEXT_ESCAPES);
+		}
+
+		if ($key === 'ATTENDEE' || $key === 'ORGANIZER') {
+			$value = array_merge(is_array($middle) ? $middle : ['middle' => $middle], ['VALUE' => $value]);
+		}
+
+		return [$key, $middle, $value, $raw, $row];
+	}
+
+	/**
+	 * Position of the colon that separates parameters from the value; colons inside quoted
+	 * parameter values (e.g. ALTREP="http://...") are skipped.
+	 */
+	private static function valueSeparator(string $row, int $offset): ?int {
+		$colon = strpos($row, ':', $offset);
+		$quote = strpos($row, '"', $offset);
+		if ($colon === false) {
+			return null;
+		}
+		if ($quote === false || $quote > $colon) {
+			return $colon;
+		}
+		$length = strlen($row);
+		$quoted = false;
+		for ($i = $quote; $i < $length; $i++) {
+			if ($row[$i] === '"') {
+				$quoted = !$quoted;
+			} elseif ($row[$i] === ':' && !$quoted) {
+				return $i;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Parse "NAME=value;NAME2="quoted;value"" into [NAME => value]; parameter names are
+	 * case-insensitive, quotes around values are removed.
+	 *
+	 * @return array<string, string>
+	 */
+	private static function parseParameters(string $middle): array {
+		preg_match_all('/([^=;]+)=((?:"[^"]*"|[^";])*)/', $middle, $matches, PREG_SET_ORDER);
+		$params = [];
+		foreach ($matches as [, $name, $value]) {
+			if (str_contains($value, '"')) {
+				$value = str_replace('"', '', $value);
+			}
+			$params[strtoupper(trim($name))] = $value;
+		}
+		return $params;
+	}
+
+	private static function createDate(string $value, ?DateTimeZone $timezone): ?DateTime {
+		try {
+			return new DateTime($value, $timezone);
+		} catch (Exception) {
+			return null;
+		}
+	}
+
+	/**
+	 * Extract and resolve timezone from a TZID or X-WR-TIMEZONE value.
+	 * Handles Windows names, prefixed values (e.g. /mozilla.org/.../Europe/Paris) and
+	 * multi-segment IANA zones (e.g. America/Argentina/Buenos_Aires).
+	 */
+	private function resolveTimezone(string $value): ?DateTimeZone {
+		$cached = $this->timezoneCache[$value] ??= $this->findTimezone($value) ?? false;
+		return $cached ?: null;
+	}
+
+	private function findTimezone(string $value): ?DateTimeZone {
+		$value = trim($value, " \t'\"");
+		$parts = array_values(array_filter(preg_split('#[/\\\\]#', $value)));
+		$count = count($parts);
+		if ($count < 2) {
+			// no slashes - try as-is via windowsTimezones lookup
+			return self::createTimezone($this->windowsTimezones[$value] ?? $value);
+		}
+
+		// try building timezone paths from the end, shortest first
+		// e.g. for "/mozilla.org/20070129_1/Europe/Paris": try "Europe/Paris" ✓
+		// e.g. for "America/Argentina/Buenos_Aires": "Argentina/Buenos_Aires" ✗, "America/Argentina/Buenos_Aires" ✓
+		for ($length = 2; $length <= $count; $length++) {
+			$candidate = implode('/', array_slice($parts, $count - $length));
+			if ($timezone = self::createTimezone($this->windowsTimezones[$candidate] ?? $candidate)) {
+				return $timezone;
+			}
+		}
+		return null;
+	}
+
+	private static function createTimezone(string $name): ?DateTimeZone {
+		try {
+			return new DateTimeZone($name);
+		} catch (Exception) {
+			return null;
+		}
+	}
 }

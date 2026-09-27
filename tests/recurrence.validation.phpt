@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 use om\Freq;
 use om\IcalParser;
+use om\ParserOptions;
 use om\Recurrence;
 use Tester\Assert;
 use function tests\test;
@@ -34,8 +35,8 @@ test('Recurrence extensions are retained without dynamic properties', function (
 	Assert::false($recurrence->getCount());
 });
 
-test('A recurrence exception restores the process timezone', function () {
-	$parser = new IcalParser();
+test('An invalid recurrence rule fails in strict mode and keeps the process timezone', function () {
+	$parser = new IcalParser(new ParserOptions(strict: true));
 	Assert::exception(fn() => $parser->parseString(implode("\n", [
 		'BEGIN:VCALENDAR',
 		'BEGIN:VEVENT',
@@ -45,4 +46,10 @@ test('A recurrence exception restores the process timezone', function () {
 		'END:VCALENDAR',
 	])), InvalidArgumentException::class);
 	Assert::same('UTC', date_default_timezone_get());
+});
+
+test('An invalid recurrence rule is ignored by default and the event keeps DTSTART', function () {
+	$parser = new IcalParser();
+	$parser->parseString("BEGIN:VCALENDAR\nBEGIN:VEVENT\nUID:x\nDTSTART:20260101T100000Z\nRRULE:FREQ=DAILY;INTERVAL=0\nEND:VEVENT\nEND:VCALENDAR");
+	Assert::same(['2026-01-01 10:00'], array_map(fn($e) => $e['DTSTART']->format('Y-m-d H:i'), $parser->getEvents()->getArrayCopy()));
 });
