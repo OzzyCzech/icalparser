@@ -81,12 +81,16 @@ class IcalParser {
 	 * @return array<string, mixed>|null
 	 */
 	public function parseFile(string $file, ?callable $callback = null): ?array {
+		// the content is passed as a temporary value, so parseString() can free it while normalizing
+		return $this->parseString(self::readFile($file), $callback);
+	}
+
+	private static function readFile(string $file): string {
 		$content = @file_get_contents($file);
 		if ($content === false) {
 			throw new RuntimeException(sprintf('Cannot read iCalendar file "%s".', $file));
 		}
-
-		return $this->parseString($content, $callback);
+		return $content;
 	}
 
 	/**
@@ -112,9 +116,16 @@ class IcalParser {
 			$this->timezone = null;
 		}
 
-		// Normalize line breaks and unfold lines (RFC 5545, section 3.1)
-		$string = str_replace(["\r\n", "\r"], "\n", $string);
-		$string = str_replace(["\n ", "\n\t"], '', $string);
+		// Normalize line breaks and unfold lines (RFC 5545, section 3.1). Each replacement
+		// copies the whole string, so rare patterns are replaced only when present.
+		$string = str_replace("\r\n", "\n", $string);
+		if (str_contains($string, "\r")) {
+			$string = str_replace("\r", "\n", $string);
+		}
+		$string = str_replace("\n ", '', $string);
+		if (str_contains($string, "\n\t")) {
+			$string = str_replace("\n\t", '', $string);
+		}
 		if (str_starts_with($string, "\u{FEFF}")) {
 			$string = substr($string, 3);
 		}
