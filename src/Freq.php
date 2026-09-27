@@ -3,695 +3,189 @@ declare(strict_types=1);
 
 namespace om;
 
-use DateTime;
-use DateTimeInterface;
+use DateTimeImmutable;
 use DateTimeZone;
-use Exception;
+use Generator;
 use InvalidArgumentException;
+use om\RRule\Expander;
+use om\RRule\Frequency;
+use om\RRule\Rule;
 use RuntimeException;
 
 /**
- * Class taken from https://github.com/coopTilleuls/intouch-iCalendar.git (Freq.php)
+ * Timestamp based access to a recurrence set (RRULE plus RDATE, minus EXDATE).
  *
- * @author PC Drew <pc@schoolblocks.com>
- */
-
-/**
- * A class to store Frequency-rules in. Will allow a easy way to find the
- * last and next occurrence of the rule.
+ * Wall-clock calculations use the process default timezone, as in previous versions.
+ * The recurrence engine itself lives in {@see Expander}.
  *
- * No - this is so not pretty. But.. ehh.. You do it better, and I will
- * gladly accept patches.
- *
- * Created by trail-and-error on the examples given in the RFC.
- *
- * TODO: Update to a better way of doing calculating the different options.
- * Instead of only keeping track of the best of the current dates found
- * it should instead keep a array of all the calculated dates within the
- * period.
- * This should fix the issues with multi-rule + multi-rule interference,
- * and make it possible to implement the SETPOS rule.
- * By pushing the next period onto the stack as the last option will
- * (hopefully) remove the need for the awful simpleMode
- *
- * @author Morten Fangel (C) 2008
- * @author Michael Kahn (C) 2013
- * @license http://creativecommons.org/licenses/by-sa/2.5/dk/deed.en_GB CC-BY-SA-DK
+ * Originally based on https://github.com/coopTilleuls/intouch-iCalendar.git (Freq.php)
+ * by Morten Fangel (C) 2008 and Michael Kahn (C) 2013, CC-BY-SA-DK.
  */
 class Freq {
+	/** @deprecated has no effect */
 	public static bool $debug = false;
 
-	protected array $weekdays = [
-		'MO' => 'monday',
-		'TU' => 'tuesday',
-		'WE' => 'wednesday',
-		'TH' => 'thursday',
-		'FR' => 'friday',
-		'SA' => 'saturday',
-		'SU' => 'sunday',
-	];
-	protected array $knownRules = [
-		'month',
-		'weekno',
-		'day',
-		'monthday',
-		'yearday',
-		'hour',
-		'minute',
-	]; // others: 'setpos', 'second'
+	protected Rule $rule;
+	protected int $start;
+	protected string $freq;
 
-	protected array $ruleModifiers = ['wkst'];
-	protected bool $simpleMode = true;
+	/** @var array<int, true> EXDATE timestamps */
+	protected array $excluded;
+	/** @var list<int> RDATE timestamps, sorted */
+	protected array $added;
 
-	protected array $rules = ['freq' => 'yearly', 'interval' => 1];
-	protected int $start = 0;
-	protected string $freq = '';
-
-	protected array $excluded; //EXDATE
-	protected array $added;    //RDATE
-
-	protected ?array $cache = null; // null means not calculated; [] is a valid result.
-	private int $searchDepth = 0;
-	private int $searchSteps = 0;
+	/** @var list<int>|null null means not calculated; [] is a valid result */
+	protected ?array $cache = null;
 
 	/**
-	 * Constructs a new Frequency-rule
-	 *
-	 * @param int $start Unix-timestamp (important: Need to be the start of Event)
-	 * @param array $excluded of int (timestamps), see EXDATE documentation
-	 * @param array $added of int (timestamps), see RDATE documentation
-	 * @throws Exception
+	 * @param array<string, mixed>|string $rule RRULE parts or an RRULE value like "FREQ=DAILY;COUNT=3"
+	 * @param int $start Unix timestamp of DTSTART
+	 * @param list<int> $excluded EXDATE timestamps
+	 * @param list<int> $added RDATE timestamps
+	 * @param int $maxOccurrences expanding more occurrences throws RuntimeException
+	 * @throws InvalidArgumentException for an invalid rule
 	 */
 	public function __construct(array|string $rule, int $start, array $excluded = [], array $added = [], private readonly int $maxOccurrences = 100000) {
 		if ($maxOccurrences < 1) {
 			throw new InvalidArgumentException('maxOccurrences must be positive.');
 		}
-		$this->start = $start;
-		$this->excluded = [];
-
-		if (is_string($rule)) {
-			$parts = explode(';', $rule);
-			$rule = [];
-			foreach ($parts as $part) {
-				$pair = explode('=', $part, 2);
-				if (count($pair) !== 2 || $pair[0] === '' || $pair[1] === '') {
-					throw new InvalidArgumentException('Invalid recurrence rule.');
-				}
-				$rule[$pair[0]] = $pair[1];
-			}
-		}
-		foreach ($rule as $k => $v) {
-			$this->rules[strtolower($k)] = $v;
-		}
-
-		if (isset($this->rules['until']) && is_string($this->rules['until'])) {
-			$this->rules['until'] = strtotime($this->rules['until']);
-		} elseif (($this->rules['until'] ?? null) instanceof DateTimeInterface) {
-			$this->rules['until'] = $this->rules['until']->getTimestamp();
-		}
-		if (array_key_exists('until', $this->rules) && !is_int($this->rules['until'])) {
-			throw new InvalidArgumentException('UNTIL must be a valid date or timestamp.');
-		}
-		$this->freq = strtolower($this->rules['freq']);
-		if (!in_array($this->freq, ['yearly', 'monthly', 'weekly', 'daily', 'hourly', 'minutely'], true)) {
-			throw new InvalidArgumentException('Unsupported recurrence frequency: ' . $this->freq);
-		}
-		foreach (['interval', 'count'] as $key) {
-			if (isset($this->rules[$key])) {
-				$raw = $this->rules[$key];
-				$value = (is_int($raw) || is_string($raw)) && preg_match('/^[0-9]+$/D', (string) $raw)
-					? filter_var(ltrim((string) $raw, '0'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]])
-					: false;
-				if ($value === false) {
-					throw new InvalidArgumentException(strtoupper($key) . ' must be a positive integer.');
-				}
-				$this->rules[$key] = $value;
-			}
-		}
-		if (($this->rules['count'] ?? 0) > $maxOccurrences || count($added) > $maxOccurrences) {
+		$this->rule = is_string($rule) ? Rule::fromString($rule) : Rule::fromArray($rule);
+		if (($this->rule->count ?? 0) > $maxOccurrences || count($added) > $maxOccurrences) {
 			throw new RuntimeException('Recurrence occurrence limit exceeded.');
 		}
-		foreach (['bysetpos', 'bysecond'] as $key) {
-			if (isset($this->rules[$key])) {
-				throw new InvalidArgumentException('Unsupported recurrence rule: ' . strtoupper($key));
-			}
-		}
-
-		foreach ($this->knownRules as $rule) {
-			if (isset($this->rules['by' . $rule])) {
-				if ($this->isPrerule($rule, $this->freq)) {
-					$this->simpleMode = false;
-				}
-			}
-		}
-
-		if (!$this->simpleMode) {
-			if (!(isset($this->rules['byday']) || isset($this->rules['bymonthday']) || isset($this->rules['byyearday']))) {
-				$this->rules['bymonthday'] = date('d', $this->start);
-			}
-		}
-
-		//set until, and cache
-		if (isset($this->rules['count'])) {
-
-			$ts = $this->start;
-			$cache = [$ts => $ts];
-			for ($n = 1; $n < $this->rules['count']; $n++) {
-				$ts = $this->findNext($ts);
-				if ($ts === false) {
-					break;
-				}
-				$cache[$ts] = $ts;
-			}
-			$this->rules['until'] = end($cache);
-
-			//EXDATE
-			if (!empty($excluded)) {
-				foreach ($excluded as $ts) {
-					unset($cache[$ts]);
-				}
-			}
-			//RDATE
-			if (!empty($added)) {
-				$cache = array_unique(array_merge(array_values($cache), $added));
-				asort($cache);
-			}
-
-			$this->cache = array_values(array_diff($cache, $excluded));
-			if (count($this->cache) > $maxOccurrences) {
-				throw new RuntimeException('Recurrence occurrence limit exceeded.');
-			}
-		}
-
-		$this->excluded = $excluded;
+		$this->start = $start;
+		$this->freq = strtolower($this->rule->freq->value);
+		$this->excluded = array_fill_keys($excluded, true);
+		$added = array_values(array_unique($added));
+		sort($added);
 		$this->added = $added;
+		if ($this->rule->count !== null) {
+			$this->getAllOccurrences(); // finite series are calculated eagerly, as before
+		}
 	}
 
-	private function isPrerule(string $rule, string $freq): bool {
-		if ($rule === 'year') {
+	/**
+	 * Next occurrence after the given timestamp, or false when there is none.
+	 */
+	public function findNext(int|bool $offset): bool|int {
+		if ($offset === false) {
 			return false;
 		}
-		if ($rule === 'month' && $freq === 'yearly') {
-			return true;
+		foreach ($this->occurrences() as $timestamp) {
+			if ($timestamp > $offset) {
+				return $timestamp;
+			}
 		}
-		if ($rule === 'monthday' && in_array($freq, ['yearly', 'monthly']) && !isset($this->rules['byday'])) {
-			return true;
-		}
-		// TODO: is it faster to do monthday first, and ignore day if monthday exists? - prolly by a factor of 4..
-		if ($rule === 'yearday' && $freq === 'yearly') {
-			return true;
-		}
-		if ($rule === 'weekno' && $freq === 'yearly') {
-			return true;
-		}
-		if ($rule === 'day' && in_array($freq, ['yearly', 'monthly', 'weekly'])) {
-			return true;
-		}
-		if ($rule === 'hour' && in_array($freq, ['yearly', 'monthly', 'weekly', 'daily'])) {
-			return true;
-		}
-		if ($rule === 'minute') {
-			return true;
-		}
-
 		return false;
 	}
 
 	/**
-	 * Calculates the next time after the given offset that the rule
-	 * will apply.
-	 *
-	 * The approach to finding the next is as follows:
-	 * First we establish a timeframe to find timestamps in. This is
-	 * between $offset and the end of the period that $offset is in.
-	 *
-	 * We then loop though all the rules (that is a Prerule in the
-	 * current freq.), and finds the smallest timestamp inside the
-	 * timeframe.
-	 *
-	 * If we find something, we check if the date is a valid recurrence
-	 * (with validDate). If it is, we return it. Otherwise we try to
-	 * find a new date inside the same timeframe (but using the new-
-	 * found date as offset)
-	 *
-	 * If no new timestamps were found in the period, we try in the
-	 * next period
-	 *
-	 * @throws Exception
-	 */
-	public function findNext(int|bool $offset): bool|int {
-		if ($this->searchDepth === 0) {
-			$this->searchSteps = 0;
-		}
-		if (++$this->searchSteps > $this->maxOccurrences || $this->searchDepth >= 256) {
-			throw new RuntimeException('Recurrence search limit exceeded.');
-		}
-		$this->searchDepth++;
-		try {
-			$next = $this->calculateNext($offset);
-			if ($next !== false && $next <= $offset) {
-				throw new RuntimeException('Recurrence did not advance in time.');
-			}
-			return $next;
-		} finally {
-			$this->searchDepth--;
-		}
-	}
-
-	private function calculateNext(int|bool $offset): bool|int {
-		if ($offset === false) {
-			return false;
-		}
-		if ($this->cache !== null) {
-			foreach ($this->cache as $ts) {
-				if ($ts > $offset) {
-					return $ts;
-				}
-			}
-			return false;
-		}
-
-		//make sure the offset is valid
-		if ($offset === false || (isset($this->rules['until']) && $offset > $this->rules['until'])) {
-
-			if (static::$debug) printf("STOP: %s\n", date('r', $offset));
-			return false;
-		}
-
-		$found = true;
-
-		//set the timestamp of the offset (ignoring hours and minutes unless we want them to be
-		//part of the calculations.
-		if (static::$debug) printf("O: %s\n", date('r', $offset));
-		$hour = (in_array($this->freq, ['hourly', 'minutely']) && $offset > $this->start) ? date('H', $offset) : date('H', $this->start);
-		$minute = (($this->freq === 'minutely' || isset($this->rules['byminute'])) && $offset > $this->start) ? date('i', $offset) : date('i', $this->start);
-		$t = mktime((int) $hour, (int) $minute, (int) date('s', $this->start), (int) date('m', $offset), (int) date('d', $offset), (int) date('Y', $offset));
-		if (static::$debug) printf("START: %s\n", date('r', $t));
-
-		if ($this->simpleMode) {
-			if ($offset < $t) {
-				$ts = $t;
-				if ($ts && in_array($ts, $this->excluded, true)) {
-					$ts = $this->findNext($ts);
-				}
-			} else {
-				$ts = $this->findStartingPoint($t, (int) $this->rules['interval'], false);
-				if (!$this->validDate($ts)) {
-					$ts = $this->findNext($ts);
-				}
-			}
-
-			return $ts;
-		}
-
-		//EOP needs to have the same TIME as START ($t)
-		$tO = new DateTime('@' . $t, new DateTimeZone('UTC'));
-
-		$eop = $this->findEndOfPeriod($offset);
-		$eopO = new DateTime('@' . $eop, new DateTimeZone('UTC'));
-		$eopO->setTime((int) $tO->format('H'), (int) $tO->format('i'), (int) $tO->format('s'));
-		$eop = $eopO->getTimestamp();
-		unset($eopO, $tO);
-
-		if (static::$debug) {
-			echo 'EOP: ' . date('r', $eop) . "\n";
-		}
-		foreach ($this->knownRules as $rule) {
-			if ($found && isset($this->rules['by' . $rule])) {
-				if ($this->isPrerule($rule, $this->freq)) {
-					$subRules = explode(',', $this->rules['by' . $rule]);
-					$_t = null;
-					foreach ($subRules as $subRule) {
-						$imm = call_user_func_array([$this, "ruleBy$rule"], [$subRule, $t]);
-						if ($imm === false) {
-							break;
-						}
-						if (static::$debug) {
-							printf("%s: %s A: %d\n", strtoupper($rule), date('r', $imm), intval($imm > $offset && $imm < $eop));
-						}
-						if ($imm > $offset && $imm <= $eop && ($_t == null || $imm < $_t)) {
-							$_t = $imm;
-						}
-					}
-					if ($_t !== null) {
-						$t = $_t;
-					} else {
-						$found = $this->validDate($t);
-					}
-				}
-			}
-		}
-
-		if ($offset < $this->start && $this->start < $t) {
-			$ts = $this->start;
-		} elseif ($found && ($t != $offset)) {
-			if ($this->validDate($t)) {
-				if (static::$debug) echo 'OK' . "\n";
-				$ts = $t;
-			} else {
-				if (static::$debug) echo 'Invalid' . "\n";
-				$ts = $this->findNext($t);
-			}
-		} else {
-			if (static::$debug) echo 'Not found' . "\n";
-			$ts = $this->findNext($this->findStartingPoint($offset, (int) $this->rules['interval']));
-		}
-		if ($ts && in_array($ts, $this->excluded, true)) {
-			return $this->findNext($ts);
-		}
-
-		return $ts;
-	}
-
-	/**
-	 * Finds the starting point for the next rule. It goes $interval
-	 * 'freq' forward in time since the given offset
-	 */
-	private function findStartingPoint(int $offset, int $interval, bool $truncate = true): int {
-		$_freq = ($this->freq === 'daily') ? 'day__' : $this->freq;
-		$t = '+' . $interval . ' ' . substr($_freq, 0, -2) . 's';
-		if ($_freq === 'monthly' && $truncate) {
-			if ($interval > 1) {
-				$offset = strtotime('+' . ($interval - 1) . ' months ', $offset); // FIXME return type int|false
-			}
-			$t = '+' . ((int) date('t', $offset) - (int) date('d', $offset) + 1) . ' days';
-		}
-
-		$sp = strtotime($t, $offset);
-
-		if ($truncate) {
-			$sp = $this->truncateToPeriod($sp, $this->freq);
-		}
-
-		return $sp;
-	}
-
-	/**
-	 * Resets the timestamp to the beginning of the
-	 * period specified by freq
-	 * Yes - the fall-through is on purpose!
-	 */
-	private function truncateToPeriod(int $time, string $freq): int {
-		$date = getdate($time);
-		switch ($freq) {
-			case 'yearly':
-				$date['mon'] = 1;
-			case 'monthly':
-				$date['mday'] = 1;
-			case 'daily':
-				$date['hours'] = 0;
-			case 'hourly':
-				$date['minutes'] = 0;
-			case 'minutely':
-				$date['seconds'] = 0;
-				break;
-			case 'weekly':
-				if ((int) date('N', $time) == 1) { // cast to int to avoid string/false issues
-					$date['hours'] = 0;
-					$date['minutes'] = 0;
-					$date['seconds'] = 0;
-				} else {
-					$date = getdate(strtotime('last monday 0:00', $time));
-				}
-				break;
-		}
-		return mktime($date['hours'], $date['minutes'], $date['seconds'], $date['mon'], $date['mday'], $date['year']);
-	}
-
-	private function validDate($t): bool {
-		if (isset($this->rules['until']) && $t > $this->rules['until']) {
-			return false;
-		}
-
-		if (in_array($t, $this->excluded, true)) {
-			return false;
-		}
-
-		if (isset($this->rules['bymonth'])) {
-			$months = array_map('intval', explode(',', $this->rules['bymonth']));
-			if (!in_array((int) date('m', $t), $months, true)) {
-				return false;
-			}
-		}
-		if (isset($this->rules['byday'])) {
-			$days = explode(',', $this->rules['byday']);
-			foreach ($days as $i => $k) {
-				$days[$i] = $this->weekdays[preg_replace('/[^A-Z]/', '', $k)];
-			}
-			if (!in_array(strtolower(date('l', $t)), $days, true)) {
-				return false;
-			}
-		}
-		if (isset($this->rules['byweekno'])) {
-			$weeks = array_map('intval', explode(',', $this->rules['byweekno']));
-			if (!in_array((int) date('W', $t), $weeks, true)) {
-				return false;
-			}
-		}
-		if (isset($this->rules['bymonthday'])) {
-			$weekdays = array_map('intval', explode(',', $this->rules['bymonthday']));
-			foreach ($weekdays as $i => $k) {
-				if ($k < 0) {
-					$weekdays[$i] = (int) date('t', $t) + (int) $k + 1;
-				}
-			}
-			if (!in_array((int) date('d', $t), $weekdays, true)) {
-				return false;
-			}
-		}
-		if (isset($this->rules['byhour'])) {
-			$hours = array_map('intval', explode(',', $this->rules['byhour']));
-			if (!in_array((int) date('H', $t), $hours, true)) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * Finds the earliest timestamp possible outside this period.
+	 * Start of the next FREQ period after the given timestamp (e.g. +1 month for MONTHLY).
 	 */
 	public function findEndOfPeriod(int $offset = 0): int {
-		return $this->findStartingPoint($offset, 1, false);
+		$unit = match ($this->rule->freq) {
+			Frequency::Yearly => 'year',
+			Frequency::Monthly => 'month',
+			Frequency::Weekly => 'week',
+			Frequency::Daily => 'day',
+			Frequency::Hourly => 'hour',
+			Frequency::Minutely => 'minute',
+			Frequency::Secondly => 'second',
+		};
+		return $this->localDate($offset)->modify("+1 $unit")->getTimestamp();
 	}
 
 	/**
-	 * Returns the previous (most recent) occurrence of the rule from the
-	 * given offset
-	 *
-	 * @param int $offset
-	 * @throws Exception
-	 * @return bool|int
+	 * Most recent occurrence before the given timestamp, or false when there is none.
 	 */
 	public function previousOccurrence(int $offset): bool|int {
-		if ($this->cache !== null) {
-			$previous = false;
-			foreach ($this->cache as $ts) {
-				if ($ts >= $offset) {
-					break;
-				}
-				$previous = $ts;
-			}
-			return $previous;
-		}
 		$previous = false;
-		$next = $this->firstOccurrence();
-		$steps = 0;
-		while ($next !== false && $next < $offset) {
-			if (++$steps > $this->maxOccurrences) {
-				throw new RuntimeException('Recurrence occurrence limit exceeded.');
+		foreach ($this->occurrences() as $timestamp) {
+			if ($timestamp >= $offset) {
+				break;
 			}
-			$previous = $next;
-			$next = $this->findNext($next);
+			$previous = $timestamp;
 		}
 		return $previous;
 	}
 
 	/**
-	 * Returns the next occurrence of this rule after the given offset
-	 *
-	 * @param int $offset
-	 * @throws Exception
-	 * @return bool|int
+	 * Next occurrence after the given timestamp, or false when there is none.
 	 */
 	public function nextOccurrence(int $offset): bool|int {
-		if ($this->cache === null && $offset < $this->start) {
-			return $this->firstOccurrence();
-		}
 		return $this->findNext($offset);
 	}
 
 	/**
-	 * Finds the first occurrence of the rule.
-	 *
-	 * @throws Exception
-	 * @return bool|int timestamp
+	 * First occurrence of the recurrence set, or false for an empty set.
 	 */
 	public function firstOccurrence(): bool|int {
-		if ($this->cache !== null) {
-			return $this->cache[0] ?? false;
+		foreach ($this->occurrences() as $timestamp) {
+			return $timestamp;
 		}
-		$t = $this->start;
-		if (isset($this->rules['until']) && $t > $this->rules['until']) {
-			return false;
-		}
-		if (in_array($t, $this->excluded)) {
-			$t = $this->findNext($t);
-		}
-
-		return $t;
+		return false;
 	}
 
 	/**
-	 * Finds the absolute last occurrence of the rule from the given offset.
-	 * Builds also the cache, if not set before...
-	 *
-	 * @throws Exception
-	 * @return int|false timestamp, or false for an empty recurrence set
+	 * Last occurrence of the recurrence set, or false for an empty set.
 	 */
 	public function lastOccurrence(): int|false {
-		//build cache if not done
-		$this->getAllOccurrences();
-		//return last timestamp in cache
-		return end($this->cache);
+		$all = $this->getAllOccurrences();
+		return $all === [] ? false : $all[array_key_last($all)];
 	}
 
 	/**
-	 * Returns all timestamps array(), build the cache if not made before
+	 * All occurrences, sorted. Unbounded rules throw RuntimeException after maxOccurrences.
 	 *
-	 * @throws Exception
+	 * @return list<int>
 	 */
 	public function getAllOccurrences(): array {
 		if ($this->cache === null) {
-			$cache = [];
-
-			//build cache
-			$next = $this->firstOccurrence();
-			while ($next !== false) {
-				if (count($cache) >= $this->maxOccurrences) {
-					throw new RuntimeException('Recurrence occurrence limit exceeded.');
-				}
-				$cache[] = $next;
-				$next = $this->findNext($next);
-			}
-			if (!empty($this->added)) {
-				$cache = array_unique(array_merge($cache, $this->added));
-				asort($cache);
-			}
-			$this->cache = array_values(array_diff($cache, $this->excluded));
-			if (count($this->cache) > $this->maxOccurrences) {
-				$this->cache = null;
-				throw new RuntimeException('Recurrence occurrence limit exceeded.');
-			}
+			$this->cache = iterator_to_array($this->occurrences(), false);
 		}
-
 		return $this->cache;
 	}
 
 	/**
-	 * Applies the BYDAY rule to the given timestamp
+	 * Sorted recurrence set: RRULE occurrences merged with RDATE, without EXDATE.
+	 *
+	 * @return Generator<int, int>
 	 */
-	private function ruleByDay(string $rule, int $t): int {
-		$dir = ($rule[0] === '-') ? -1 : 1;
-		$dir_t = ($dir === 1) ? 'next' : 'last';
-
-		$d = $this->weekdays[substr($rule, -2)];
-		$s = $dir_t . ' ' . $d . ' ' . date('H:i:s', $t);
-
-		if ($rule == substr($rule, -2)) {
-			if (date('l', $t) == ucfirst($d)) {
-				$s = 'today ' . date('H:i:s', $t);
+	private function occurrences(): Generator {
+		if ($this->cache !== null) {
+			yield from $this->cache;
+			return;
+		}
+		$added = $this->added;
+		$index = 0;
+		$last = null;
+		$count = 0;
+		$expander = new Expander($this->rule, $this->localDate($this->start), limit: $this->maxOccurrences);
+		foreach ($expander as $timestamp) {
+			while (isset($added[$index]) && $added[$index] <= $timestamp) {
+				yield from $this->emit($added[$index++], $last, $count);
 			}
-
-			$_t = strtotime($s, $t);
-
-			if ($_t == $t && in_array($this->freq, ['weekly', 'monthly', 'yearly'])) {
-				// Yes. This is not a great idea.. but hey, it works.. for now
-				$s = 'next ' . $d . ' ' . date('H:i:s', $t);
-				$_t = strtotime($s, $_t);
-			}
-
-			return $_t;
-		} else {
-			$_f = $this->freq;
-			if (isset($this->rules['bymonth']) && $this->freq === 'yearly') {
-				$this->freq = 'monthly';
-			}
-			if ($dir === -1) {
-				$_t = $this->findEndOfPeriod($t);
-			} else {
-				$_t = $this->truncateToPeriod($t, $this->freq);
-			}
-			$this->freq = $_f;
-
-			$c = preg_replace('/[^0-9]/', '', $rule);
-			$c = ($c == '') ? 1 : $c;
-
-			$n = $_t;
-			while ($c > 0) {
-				if ($dir === 1 && $c == 1 && date('l', $t) == ucfirst($d)) {
-					$s = 'today ' . date('H:i:s', $t);
-				}
-				$n = strtotime($s, $n);
-				$c--;
-			}
-
-			return $n;
+			yield from $this->emit($timestamp, $last, $count);
+		}
+		while (isset($added[$index])) {
+			yield from $this->emit($added[$index++], $last, $count);
 		}
 	}
 
-	private function ruleByMonth($rule, int $t): bool|int {
-		$_t = mktime((int) date('H', $t), (int) date('i', $t), (int) date('s', $t), (int) $rule, (int) date('d', $t), (int) date('Y', $t));
-		if ($t == $_t && isset($this->rules['byday'])) {
-			// TODO: this should check if one of the by*day's exists, and have a multi-day value
-			return false;
-		} else {
-			return $_t;
+	/**
+	 * @return Generator<int, int>
+	 */
+	private function emit(int $timestamp, ?int &$last, int &$count): Generator {
+		if ($timestamp !== $last && !isset($this->excluded[$timestamp])) {
+			if (++$count > $this->maxOccurrences) {
+				throw new RuntimeException('Recurrence occurrence limit exceeded.');
+			}
+			yield $timestamp;
 		}
+		$last = $timestamp;
 	}
 
-	private function ruleByMonthday($rule, int $t): bool|int {
-		if ($rule < 0) {
-			$rule = (int) date('t', $t) + $rule + 1;
-		}
-
-		return mktime((int) date('H', $t), (int) date('i', $t), (int) date('s', $t), (int) date('m', $t), (int) $rule, (int) date('Y', $t));
-	}
-
-	private function ruleByYearday($rule, int $t): bool|int {
-		if ($rule < 0) {
-			$_t = $this->findEndOfPeriod();
-			$d = '-';
-		} else {
-			$_t = $this->truncateToPeriod($t, $this->freq);
-			$d = '+';
-		}
-		$s = $d . abs($rule - 1) . ' days ' . date('H:i:s', $t);
-
-		return strtotime($s, $_t);
-	}
-
-	private function ruleByWeekno($rule, int $t): bool|int {
-		if ($rule < 0) {
-			$_t = $this->findEndOfPeriod();
-			$d = '-';
-		} else {
-			$_t = $this->truncateToPeriod($t, $this->freq);
-			$d = '+';
-		}
-
-		$sub = ((int) date('W', $_t) == 1) ? 2 : 1;
-		$s = $d . abs($rule - $sub) . ' weeks ' . date('H:i:s', $t);
-		return strtotime($s, $_t);
-	}
-
-	private function ruleByHour($rule, int $t): bool|int {
-		return mktime((int) $rule, (int) date('i', $t), (int) date('s', $t), (int) date('m', $t), (int) date('d', $t), (int) date('Y', $t));
-	}
-
-	private function ruleByMinute($rule, int $t): bool|int {
-		// use 24-hour hour 'H' and keep mktime parameter order (hour, minute, second, ...)
-		return mktime((int) date('H', $t), (int) $rule, (int) date('s', $t), (int) date('m', $t), (int) date('d', $t), (int) date('Y', $t));
+	private function localDate(int $timestamp): DateTimeImmutable {
+		return (new DateTimeImmutable('@' . $timestamp))->setTimezone(new DateTimeZone(date_default_timezone_get()));
 	}
 }

@@ -93,16 +93,16 @@ test('Finite caches stop at the last occurrence and EXDATE removes RDATE too', f
 test('Occurrence and search budgets prevent unlimited expansion', function () {
 	Assert::exception(fn() => new Freq('FREQ=DAILY;COUNT=4', 0, maxOccurrences: 3), RuntimeException::class);
 	Assert::exception(fn() => (new Freq('FREQ=DAILY', 0, maxOccurrences: 3))->getAllOccurrences(), RuntimeException::class);
-	Assert::exception(fn() => (new Freq('FREQ=DAILY;COUNT=2;BYMONTH=2', 0, maxOccurrences: 3))->getAllOccurrences(), RuntimeException::class);
+	Assert::same([0, 2678400], (new Freq('FREQ=DAILY;COUNT=2;BYMONTH=2', 0, maxOccurrences: 3))->getAllOccurrences());
+	Assert::same([0], (new Freq('FREQ=YEARLY;BYMONTH=2;BYMONTHDAY=30', 0))->getAllOccurrences(), 'a rule without any further match ends');
 	Assert::exception(fn() => new Freq('FREQ=DAILY', 0, maxOccurrences: 0), InvalidArgumentException::class);
 	Assert::exception(fn() => new Freq('FREQ=DAILY;COUNT=2', 0, added: [172800], maxOccurrences: 2), RuntimeException::class);
 	Assert::exception(fn() => (new Freq('FREQ=DAILY', 0, maxOccurrences: 2))->previousOccurrence(864000), RuntimeException::class);
 	Assert::count(3, (new Freq('FREQ=DAILY;COUNT=3', 0, maxOccurrences: 3))->getAllOccurrences());
 });
 
-test('Unimplemented rule parts fail explicitly', function () {
-	foreach (['BYSETPOS=1', 'BYSECOND=10'] as $part) {
-		Assert::exception(fn() => new Freq("FREQ=DAILY;COUNT=2;$part", 0), InvalidArgumentException::class);
-	}
+test('BYSETPOS and BYSECOND are supported, an invalid UNTIL fails', function () {
+	Assert::same([0, 10, 86410], (new Freq('FREQ=DAILY;COUNT=3;BYSECOND=10', 0))->getAllOccurrences());
+	Assert::same(['1970-01-01', '1970-01-30', '1970-02-27'], array_map(fn($ts) => gmdate('Y-m-d', $ts), (new Freq('FREQ=MONTHLY;COUNT=3;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1', 0))->getAllOccurrences()));
 	Assert::exception(fn() => new Freq('FREQ=DAILY;UNTIL=invalid', 0), InvalidArgumentException::class);
 });
