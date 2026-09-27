@@ -9,7 +9,6 @@ use om\ICal\Exception\InvalidValueException;
  * UTC-OFFSET values (RFC 5545, section 3.3.14) in seconds.
  */
 final class UtcOffset {
-
 	/**
 	 * @throws InvalidValueException
 	 */

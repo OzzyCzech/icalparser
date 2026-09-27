@@ -6,7 +6,6 @@ namespace om\ICal\Validation;
 use Stringable;
 
 final readonly class Issue implements Stringable {
-
 	/**
 	 * @param string $code stable identifier, e.g. "event.dtend-and-duration"
 	 * @param string $component name of the component, e.g. VEVENT

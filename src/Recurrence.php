@@ -20,7 +20,6 @@ use Exception;
  * @license http://creativecommons.org/licenses/by-sa/2.5/dk/deed.en_GB CC-BY-SA-DK
  */
 class Recurrence {
-
 	/** @var array<string, mixed> */
 	public array $rrule;
 	protected mixed $freq;

@@ -10,7 +10,6 @@ use Stringable;
  * PERIOD value (RFC 5545, section 3.3.9): start and end, or start and duration.
  */
 final readonly class Period implements Stringable {
-
 	public function __construct(
 		public DateTimeValue $start,
 		public DateTimeValue $end,

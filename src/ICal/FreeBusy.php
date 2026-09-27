@@ -11,7 +11,6 @@ use om\ICal\Value\Period;
  * VFREEBUSY (RFC 5545, section 3.6.4).
  */
 final class FreeBusy extends Item {
-
 	public function end(): ?DateTimeValue {
 		return $this->date('DTEND');
 	}

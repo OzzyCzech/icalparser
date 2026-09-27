@@ -9,7 +9,6 @@ use om\ICal\Component;
  * Maps a TZID to a PHP timezone.
  */
 interface TimezoneResolver {
-
 	/**
 	 * @param Component $calendar the VCALENDAR component containing the TZID (and its VTIMEZONE definitions)
 	 */

@@ -21,6 +21,9 @@ use om\ICal\Property;
  * @internal
  */
 final class TreeBuilder {
+	/** Components that can only be direct children of VCALENDAR. */
+	private const array CALENDAR_CHILDREN = ['VEVENT' => true, 'VTODO' => true, 'VJOURNAL' => true, 'VFREEBUSY' => true, 'VTIMEZONE' => true];
+
 	/** @var list<ParseWarning> */
 	private array $warnings = [];
 
@@ -47,6 +50,11 @@ final class TreeBuilder {
 				if ($this->stack === [] && $name !== 'VCALENDAR') {
 					$this->problem('syntax.missing-calendar', "$name outside of VCALENDAR, an implicit VCALENDAR was added.", $line->line);
 					$this->open('VCALENDAR', $line->line);
+				}
+				// a new event (task, ...) ends components left open, e.g. in truncated feeds
+				while (isset(self::CALENDAR_CHILDREN[$name]) && count($this->stack) > 1) {
+					$this->problem('syntax.missing-end', "END:{$this->current()} is missing before BEGIN:$name, the component was closed.", $line->line);
+					yield from $this->close();
 				}
 				$this->open($name, $line->line);
 				continue;

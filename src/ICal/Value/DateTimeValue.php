@@ -10,6 +10,7 @@ use DateTimeZone;
 use Exception;
 use om\ICal\Exception\InvalidValueException;
 use om\ICal\Exception\TimezoneResolutionException;
+use om\RRule\LocalTime;
 use Stringable;
 
 /**
@@ -19,7 +20,6 @@ use Stringable;
  * a timezone is given to toDateTime(). Local values can always be read with format().
  */
 final readonly class DateTimeValue implements Stringable {
-
 	/**
 	 * @param DateTimeImmutable $dateTime the value in its timezone; the wall-clock time in UTC for dates and floating times
 	 * @param ?string $tzid TZID parameter, also kept for floating times whose TZID could not be resolved
@@ -79,7 +79,9 @@ final readonly class DateTimeValue implements Stringable {
 			return new self(DateTimeType::Utc, new DateTimeImmutable($local, new DateTimeZone('UTC')));
 		}
 		if ($tzid !== null && $timezone !== null) {
-			return new self(DateTimeType::Zoned, new DateTimeImmutable($local, $timezone), $tzid);
+			// ambiguous and nonexistent local times as RFC 5545 requires (PHP is not consistent)
+			$instant = LocalTime::timestamp($timezone, self::wallClock($local)->getTimestamp());
+			return new self(DateTimeType::Zoned, (new DateTimeImmutable('@' . $instant))->setTimezone($timezone), $tzid);
 		}
 		return new self(DateTimeType::Floating, self::wallClock($local), $tzid);
 	}

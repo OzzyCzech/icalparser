@@ -9,7 +9,6 @@ namespace om\ICal;
  * with their raw values, so unknown and X- properties are kept unchanged.
  */
 final class Serializer {
-
 	public static function serialize(Component $component): string {
 		$result = 'BEGIN:' . $component->name . "\r\n";
 		foreach ($component->properties as $property) {

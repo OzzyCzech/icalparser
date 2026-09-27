@@ -14,7 +14,6 @@ use Traversable;
  * @implements IteratorAggregate<string, list<string>>
  */
 final class Parameters implements IteratorAggregate, Countable {
-
 	/**
 	 * @param array<string, list<string>> $values
 	 */

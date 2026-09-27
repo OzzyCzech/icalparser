@@ -12,7 +12,6 @@ use Throwable;
  * the raw value and a stable machine readable error code (e.g. "syntax.invalid-line").
  */
 interface ICalException extends Throwable {
-
 	public function errorCode(): string;
 
 	public function line(): ?int;

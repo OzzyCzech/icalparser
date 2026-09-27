@@ -13,7 +13,6 @@ use om\ICal\ContentLine;
  * (with the line and its number) and skipped.
  */
 final class Tokenizer {
-
 	/**
 	 * @param iterable<int, string> $lines unfolded lines, see LineReader
 	 * @param ?callable(string, int): void $invalid

@@ -13,7 +13,6 @@ use om\ICal\Value\DateTimeValue;
  * VALARM (RFC 5545, section 3.6.6).
  */
 final class Alarm {
-
 	/**
 	 * @internal use Item::alarms()
 	 */

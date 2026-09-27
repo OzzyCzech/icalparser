@@ -10,7 +10,6 @@ use om\ICal\Component;
  * Resolves every TZID to the configured timezone; use it as the last resolver.
  */
 final readonly class FallbackTimezoneResolver implements TimezoneResolver {
-
 	public function __construct(private DateTimeZone $timezone) {
 	}
 

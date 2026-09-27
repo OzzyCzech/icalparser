@@ -10,7 +10,6 @@ use om\ICal\Value\DateTimeValue;
  * VTODO (RFC 5545, section 3.6.2).
  */
 final class Todo extends Item {
-
 	/**
 	 * DUE, or DTSTART + DURATION.
 	 */

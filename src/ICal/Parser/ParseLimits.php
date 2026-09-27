@@ -7,7 +7,6 @@ namespace om\ICal\Parser;
  * Limits for untrusted input; exceeding one throws ResourceLimitException.
  */
 final readonly class ParseLimits {
-
 	public function __construct(
 		public int $maxFileSize = 100 * 1024 * 1024,
 		public int $maxLineLength = 1024 * 1024,

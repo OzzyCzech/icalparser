@@ -19,7 +19,6 @@ use om\RRule\Rule;
  * so occurrencesBetween() returns the complete series.
  */
 abstract class Item {
-
 	/**
 	 * @param list<Item> $overrides
 	 * @internal use Calendar::events() and similar methods

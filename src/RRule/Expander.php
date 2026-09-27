@@ -522,13 +522,7 @@ final class Expander implements IteratorAggregate {
 			return $timestamp;
 		}
 
-		// A new object resolves ambiguous times (DST fall-back) to the first occurrence as
-		// RFC 5545 requires; nonexistent times (DST gap) move forward by the gap.
-		[$year, $month, $day] = self::civilFromDays($days);
-		[$hour, $minute, $second] = [intdiv($secondsOfDay, 3600), intdiv($secondsOfDay % 3600, 60), $secondsOfDay % 60];
-		$timestamp = $year >= 0 && $year <= 9999
-			? (new DateTimeImmutable(sprintf('%04d-%02d-%02d %02d:%02d:%02d', $year, $month, $day, $hour, $minute, $second), $this->timezone))->getTimestamp()
-			: $this->probe->setDate($year, $month, $day)->setTime($hour, $minute, $second)->getTimestamp();
+		$timestamp = LocalTime::timestamp($this->timezone, $local);
 		$this->rememberOffset($timestamp);
 		return $timestamp;
 	}

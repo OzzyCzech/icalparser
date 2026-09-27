@@ -19,7 +19,6 @@ use om\ICal\Parser\Parser;
  * The permissive parser is used; see ICal::parser() for strict parsing, limits and warnings.
  */
 final class ICal {
-
 	/**
 	 * The first calendar of the content.
 	 *

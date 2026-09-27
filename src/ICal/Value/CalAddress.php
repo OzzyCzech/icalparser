@@ -10,7 +10,6 @@ use Stringable;
  * CAL-ADDRESS value of ORGANIZER and ATTENDEE (RFC 5545, sections 3.3.3 and 3.8.4).
  */
 final readonly class CalAddress implements Stringable {
-
 	public function __construct(
 		public string $uri,
 		public Parameters $parameters,

@@ -13,7 +13,6 @@ use ArrayObject;
  * @extends ArrayObject<int, array<string, mixed>>
  */
 class EventsList extends ArrayObject {
-
 	/**
 	 * Return array of Events
 	 */

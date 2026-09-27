@@ -6,7 +6,6 @@ namespace om\ICal\Timezone;
 use DateTimeZone;
 
 final readonly class ResolvedTimezone {
-
 	public function __construct(
 		public string $tzid,
 		public DateTimeZone $timezone,

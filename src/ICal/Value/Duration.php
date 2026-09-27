@@ -9,7 +9,6 @@ use DateInterval;
  * DURATION values (RFC 5545, section 3.3.6), e.g. "PT1H30M", "-P1W" or "P1DT12H".
  */
 final class Duration {
-
 	public static function parse(string $value): ?DateInterval {
 		$value = strtoupper(trim($value));
 		if (!preg_match('/^([+-])?P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/D', $value, $match) || !preg_match('/\d/', $value)) {

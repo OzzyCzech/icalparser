@@ -10,7 +10,6 @@ namespace om\ICal;
  * "with" methods return a modified copy.
  */
 final readonly class Component {
-
 	/**
 	 * @param list<Property> $properties
 	 * @param list<Component> $components

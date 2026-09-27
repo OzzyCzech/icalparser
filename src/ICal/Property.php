@@ -12,7 +12,6 @@ use Stringable;
  * by om\ICal\Value\ValueParser and by the typed components (Event, Todo, ...).
  */
 final class Property implements Stringable {
-
 	/** Parameters are parsed on first access. */
 	public Parameters $parameters {
 		get => $this->parsed ??= Parameters::parse($this->rawParameters);

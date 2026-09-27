@@ -7,7 +7,6 @@ use om\ICal\Calendar;
 use om\ICal\Exception\SyntaxException;
 
 final readonly class ParseResult {
-
 	/**
 	 * @param list<Calendar> $calendars
 	 * @param list<ParseWarning> $warnings

@@ -14,7 +14,6 @@ use om\ICal\Value\DateTimeValue;
  * and $master the recurring item; otherwise both are the same.
  */
 final readonly class Occurrence {
-
 	/**
 	 * @param ?DateTimeValue $recurrenceId original start of a recurring instance, null for a single item
 	 */

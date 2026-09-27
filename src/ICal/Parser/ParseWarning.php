@@ -9,7 +9,6 @@ use Stringable;
  * A problem the permissive parser repaired or skipped.
  */
 final readonly class ParseWarning implements Stringable {
-
 	/**
 	 * @param string $code stable identifier, e.g. "syntax.invalid-line"
 	 */

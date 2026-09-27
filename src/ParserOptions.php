@@ -12,7 +12,6 @@ use InvalidArgumentException;
  * Configuration of {@see IcalParser}.
  */
 class ParserOptions {
-
 	public function __construct(
 		/**
 		 * Interval used to cap recurring events that have no defined end

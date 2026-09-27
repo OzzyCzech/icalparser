@@ -10,7 +10,6 @@ use om\ICal\Value\DateTimeValue;
  * VEVENT (RFC 5545, section 3.6.1).
  */
 final class Event extends Item {
-
 	/**
 	 * DTEND, DTSTART + DURATION, or one day after an all-day DTSTART (RFC 5545, section 3.6.1).
 	 */
