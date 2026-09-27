@@ -64,6 +64,6 @@ DUE - DTSTART for tasks.
 ## Verification
 
 The engine is tested with the examples of RFC 5545, property-based tests (sorted, unique, within
-UNTIL and COUNT, EXDATE, serialization) and differential tests against sabre/vobject and
-python-dateutil (`composer test:differential`); the known deviations of these libraries from the
-RFC are documented in `tests/Differential`.
+UNTIL and COUNT, EXDATE, serialization) and differential tests against
+python-dateutil (`composer test:differential`); its known deviations from the RFC are documented
+in `tests/Differential`.

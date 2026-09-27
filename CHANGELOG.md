@@ -92,5 +92,5 @@ with 2 MB of memory, and converts values lazily.
 
 - a fixture corpus (RFC 5545 examples, Google, Apple, Outlook, Exchange, Nextcloud and Fastmail style calendars, broken
   input, regressions) with golden files
-- property-based, fuzz and pathological input tests; differential tests against sabre/vobject and python-dateutil
+- property-based, fuzz and pathological input tests; differential tests against python-dateutil
 - PHPStan level 8, PHP CS Fixer, CI jobs for tests, coding standard and differential tests
