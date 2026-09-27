@@ -3,7 +3,7 @@
 ## 5.0.0 (unreleased)
 
 Version 5 adds a new, layered API (`om\ICal`) and keeps the array based API of version 4 (`IcalParser`, `EventsList`,
-`Freq`, `Recurrence`, `ParserOptions`) with the shape of its data, now deprecated. Both use a new recurrence engine and
+`Freq`, `Recurrence`, `ParserOptions`) with the shape of its data, now deprecated and to be removed in 5.5 at the latest. Both use a new recurrence engine and
 content line parser, which fixes many bugs; the results of affected calendars differ from 4.1.3.
 See [UPGRADING.md](UPGRADING.md).
 

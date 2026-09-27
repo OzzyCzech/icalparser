@@ -12,7 +12,7 @@ use ArrayObject;
  * @author Roman Ožana <roman@ozana.cz>
  * @extends ArrayObject<int, array<string, mixed>>
  *
- * @deprecated 5.0 use om\ICal\Calendar::events() and occurrencesBetween(), see UPGRADING.md
+ * @deprecated 5.0, removed in 5.5 at the latest; use om\ICal\Calendar::events() and occurrencesBetween(), see UPGRADING.md
  */
 class EventsList extends ArrayObject {
 	/**

@@ -1,7 +1,7 @@
 # Upgrading from 4.x to 5.0
 
 Version 5 adds a new API in the `om\ICal` namespace. The array based API of version 4 (`IcalParser`) still works
-and is deprecated; it will be removed in version 6.
+and is deprecated; it will be removed in version 5.5 at the latest.
 
 ## Staying on the array API
 
@@ -60,5 +60,5 @@ the shape of the parsed data. The recurrence engine was replaced, so results of 
 
 ## Removed and deprecated
 
-Nothing is removed in 5.0. Deprecated (to be removed in 6.0): `IcalParser`, `EventsList`, `Freq`, `Recurrence`,
+Nothing is removed in 5.0. Deprecated (to be removed in 5.5 at the latest): `IcalParser`, `EventsList`, `Freq`, `Recurrence`,
 `ParserOptions`, `IcalParser::getSortedEvents()` and `getReverseSortedEvents()` (already deprecated in 4.x).

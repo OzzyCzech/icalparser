@@ -24,7 +24,7 @@ use RuntimeException;
  * @license BSD-3-Clause
  * @author Roman Ožana <roman@ozana.cz>
  *
- * @deprecated 5.0 use om\ICal::parse() or om\ICal::parser(), see UPGRADING.md
+ * @deprecated 5.0, removed in 5.5 at the latest; use om\ICal::parse() or om\ICal::parser(), see UPGRADING.md
  */
 class IcalParser {
 	private const array DATE_PROPERTIES = ['DTSTAMP' => true, 'LAST-MODIFIED' => true, 'CREATED' => true, 'DTSTART' => true, 'DTEND' => true, 'DUE' => true, 'COMPLETED' => true];

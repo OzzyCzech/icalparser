@@ -139,7 +139,8 @@ The [examples](examples) directory contains a web page listing upcoming events o
 
 ## Upgrading from version 4
 
-The array based `IcalParser` of version 4 is still available and deprecated; it keeps its output and fixes many bugs.
+The array based `IcalParser` of version 4 is still available and deprecated (it will be removed in 5.5 at the latest);
+it keeps its output and fixes many bugs.
 See [UPGRADING.md](UPGRADING.md) and [CHANGELOG.md](CHANGELOG.md).  
 
 ## Development
