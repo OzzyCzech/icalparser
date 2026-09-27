@@ -112,7 +112,12 @@ $cal = new IcalParser(new ParserOptions(
 - `RECURRENCE-ID;RANGE=THISANDFUTURE` overrides only the single instance
 - a `DTSTART` in a daylight saving gap is moved by PHP, so its occurrences use the moved local time
 
-You can run example with [PHP Built-in web server](https://www.php.net/manual/en/features.commandline.webserver.php) as follow:
+### Example
+
+The [example](example/index.php) lists upcoming events of a sample calendar
+([example/calendar.ics](example/calendar.ics)) with recurring, moved, all-day and multi-day events.
+Run it with the [PHP built-in web server](https://www.php.net/manual/en/features.commandline.webserver.php)
+and open http://localhost:8000:
 
 ```shell
 php -S localhost:8000 -t example
