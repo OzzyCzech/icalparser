@@ -1,0 +1,20 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "single",
+                    "summary": "Master",
+                    "start": "2026-01-05 10:00:00 UTC",
+                    "end": "2026-01-05 11:00:00 UTC",
+                    "overrides": 1,
+                    "occurrences": [
+                        "2026-01-05 12:00:00 UTC – 2026-01-05 13:00:00 UTC [Override]"
+                    ]
+                }
+            ]
+        }
+    ]
+}

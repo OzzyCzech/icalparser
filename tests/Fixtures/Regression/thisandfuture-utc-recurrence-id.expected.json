@@ -1,0 +1,32 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "series",
+                    "summary": "Standup",
+                    "start": "2026-01-05 10:00:00 +01:00 (Europe/Prague = Europe/Prague)",
+                    "end": "2026-01-05 10:30:00 +01:00 (Europe/Prague = Europe/Prague)",
+                    "rrules": [
+                        "FREQ=WEEKLY;COUNT=4"
+                    ],
+                    "overrides": 1,
+                    "occurrences": [
+                        "2026-01-05 10:00:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-05 10:30:00 +01:00 (Europe/Prague = Europe/Prague)",
+                        "2026-01-12 11:00:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-12 11:30:00 +01:00 (Europe/Prague = Europe/Prague) [Standup (one hour later)]",
+                        "2026-01-19 11:00:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-19 11:30:00 +01:00 (Europe/Prague = Europe/Prague) [Standup (one hour later)]",
+                        "2026-01-26 11:00:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-26 11:30:00 +01:00 (Europe/Prague = Europe/Prague) [Standup (one hour later)]"
+                    ]
+                }
+            ],
+            "issues": [
+                "WARNING VEVENT.DTSTART (line 7): TZID \"Europe/Prague\" has no VTIMEZONE definition. [timezone.not-defined]",
+                "WARNING VEVENT.DTEND (line 8): TZID \"Europe/Prague\" has no VTIMEZONE definition. [timezone.not-defined]",
+                "WARNING VEVENT.DTSTART (line 16): TZID \"Europe/Prague\" has no VTIMEZONE definition. [timezone.not-defined]",
+                "WARNING VEVENT.DTEND (line 17): TZID \"Europe/Prague\" has no VTIMEZONE definition. [timezone.not-defined]"
+            ]
+        }
+    ]
+}

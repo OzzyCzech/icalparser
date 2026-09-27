@@ -266,7 +266,8 @@ abstract class Item {
 		$fromTs = $from === null ? null : $space->window($from);
 		$toTs = $to === null ? null : $space->window($to);
 
-		if (!$this->isRecurring()) {
+		// a single item without overrides; with overrides it is a recurrence set of DTSTART alone
+		if (!$this->isRecurring() && $this->overrides === []) {
 			$occurrence = new Occurrence($start, $start->add($this->duration()), $this, $this);
 			if (($includeCancelled || !$this->isCancelled()) && $space->overlaps($occurrence, $fromTs, $toTs)) {
 				yield $occurrence;
@@ -285,7 +286,8 @@ abstract class Item {
 			$overrideStart = $override->start();
 			$durationOf = $overrideStart === null ? $this : $override; // without DTSTART the instance keeps its time and length
 			if ($override->isThisAndFuture()) {
-				$shift = $overrideStart === null ? 0 : $overrideStart->wallClockAsUtc()->getTimestamp() - $id->wallClockAsUtc()->getTimestamp();
+				// the shift of the local time in the timezone of the series (RECURRENCE-ID may be in UTC)
+				$shift = $overrideStart === null ? 0 : $this->localTime($space, $overrideStart) - $this->localTime($space, $id);
 				$ranges[$space->toBase($id)] = [$override, $shift, $durationOf];
 				$earliest = max($earliest, -$shift);
 				continue;
@@ -360,6 +362,10 @@ abstract class Item {
 				throw ResourceLimitException::create('recurrence.limit', "Recurrence occurrence limit of {$limits->maxInstances} exceeded.");
 			}
 		}
+	}
+
+	private function localTime(TimeSpace $space, DateTimeValue $value): int {
+		return $space->fromBase($space->toBase($value))->wallClockAsUtc()->getTimestamp();
 	}
 
 	/**
