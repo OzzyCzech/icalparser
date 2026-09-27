@@ -1,0 +1,15 @@
+{
+  "name": "icalparser-website",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prepare-content": "node scripts/prepare.mjs",
+    "dev": "node scripts/prepare.mjs && astro dev",
+    "build": "node scripts/prepare.mjs && astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.42.4",
+    "astro": "^7.3.5"
+  }
+}

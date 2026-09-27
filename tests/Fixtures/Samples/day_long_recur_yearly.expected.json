@@ -1,0 +1,43 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+    ],
+    "calendars": [
+        {
+            "name": "calmozilla1@gmail.com",
+            "timezone": "America/Los_Angeles",
+            "timezones": [
+                "America/Los_Angeles => America/Los_Angeles (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "4pfh824gvims850j0gar361t04@google.com",
+                    "summary": "Day Long Event",
+                    "start": "2012-08-03 (date)",
+                    "end": "2012-08-04 (date)",
+                    "rrules": [
+                        "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR"
+                    ],
+                    "status": "CONFIRMED",
+                    "alarms": [
+                        "EMAIL 2012-08-02 23:30:00 UTC",
+                        "DISPLAY 2012-08-02 23:30:00 UTC"
+                    ],
+                    "occurrences": [
+                        "2012-08-03 (date) – 2012-08-04 (date)",
+                        "2012-08-06 (date) – 2012-08-07 (date)",
+                        "2012-08-07 (date) – 2012-08-08 (date)",
+                        "2012-08-08 (date) – 2012-08-09 (date)",
+                        "2012-08-09 (date) – 2012-08-10 (date)",
+                        "2012-08-10 (date) – 2012-08-11 (date)",
+                        "2012-08-13 (date) – 2012-08-14 (date)",
+                        "2012-08-14 (date) – 2012-08-15 (date)",
+                        "2012-08-15 (date) – 2012-08-16 (date)",
+                        "2012-08-16 (date) – 2012-08-17 (date)"
+                    ]
+                }
+            ]
+        }
+    ]
+}

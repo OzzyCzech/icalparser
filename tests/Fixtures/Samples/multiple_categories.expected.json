@@ -1,0 +1,58 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+    ],
+    "calendars": [
+        {
+            "timezones": [
+                "America/Los_Angeles => America/Los_Angeles (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "1334F9B7-6136-444E-A58D-472564C6AA73",
+                    "summary": "sahaja <> frashed",
+                    "start": "2012-03-26 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                    "end": "2012-03-26 11:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                    "status": "CONFIRMED",
+                    "categories": [
+                        "one",
+                        "two",
+                        "three"
+                    ],
+                    "attendees": [
+                        "jlal@mozilla.com REQ-PARTICIPANT/NEEDS-ACTION"
+                    ],
+                    "alarms": [
+                        "DISPLAY -PT5M"
+                    ],
+                    "occurrences": [
+                        "2012-03-26 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-03-26 11:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "14556F9B7-6136-444E-A58D-472564C6AA73",
+                    "summary": "something something",
+                    "start": "2012-03-26 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                    "end": "2012-03-26 11:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                    "status": "CONFIRMED",
+                    "categories": [
+                        "one",
+                        "two",
+                        "three"
+                    ],
+                    "attendees": [
+                        "jlal@mozilla.com REQ-PARTICIPANT/NEEDS-ACTION"
+                    ],
+                    "alarms": [
+                        "DISPLAY -PT5M"
+                    ],
+                    "occurrences": [
+                        "2012-03-26 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-03-26 11:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles)"
+                    ]
+                }
+            ]
+        }
+    ]
+}

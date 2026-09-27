@@ -1,0 +1,44 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+    ],
+    "calendars": [
+        {
+            "timezones": [
+                "America/Los_Angeles => America/Los_Angeles (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "44c10eaa-db0b-4223-8653-cf2b63f26326",
+                    "summary": "Calendar",
+                    "start": "2012-09-11 10:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                    "end": "2012-09-11 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                    "rrules": [
+                        "FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR"
+                    ],
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "foo@bar.com REQ-PARTICIPANT/ACCEPTED",
+                        "x@bar.com REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "alarms": [
+                        "DISPLAY -PT5M"
+                    ],
+                    "occurrences": [
+                        "2012-09-11 10:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-09-11 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-09-12 10:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-09-12 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-09-13 10:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-09-13 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-09-14 10:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-09-14 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-09-17 10:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-09-17 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-09-18 10:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-09-18 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-09-19 10:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-09-19 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-09-20 10:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-09-20 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-09-21 10:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-09-21 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-09-24 10:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-09-24 11:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)"
+                    ]
+                }
+            ]
+        }
+    ]
+}

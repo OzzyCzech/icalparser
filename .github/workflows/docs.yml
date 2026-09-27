@@ -1,0 +1,66 @@
+name: Documentation
+
+on:
+  push:
+    branches: [ main, next ]
+    tags: [ 'v*' ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          tools: composer
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+
+      - name: API reference (ApiGen from the docblocks of src/, apigen.neon)
+        run: |
+          composer create-project apigen/apigen:dev-master "$RUNNER_TEMP/apigen" --no-dev --no-interaction --no-progress
+          php "$RUNNER_TEMP/apigen/bin/apigen"
+
+      - name: Site (Starlight from docs/*.md, UPGRADING.md and CHANGELOG.md)
+        working-directory: website
+        run: |
+          npm ci
+          npm run build
+
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: website/dist
+
+  deploy:
+    # the site shows the default branch; other branches and pull requests only check that it builds
+    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

@@ -1,0 +1,60 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "name": "Personal",
+            "timezones": [
+                "Europe/Berlin => Europe/Berlin (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "a1b2c3d4-e5f6-4789-abcd-ef0123456789",
+                    "summary": "Pay invoices (last workday)",
+                    "start": "2026-01-30 17:00:00 +01:00 (Europe/Berlin = Europe/Berlin)",
+                    "end": "2026-01-30 18:00:00 +01:00 (Europe/Berlin = Europe/Berlin)",
+                    "rrules": [
+                        "FREQ=MONTHLY;COUNT=12;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1"
+                    ],
+                    "status": "CONFIRMED",
+                    "categories": [
+                        "Finance",
+                        "Home"
+                    ],
+                    "occurrences": [
+                        "2026-01-30 17:00:00 +01:00 (Europe/Berlin = Europe/Berlin) – 2026-01-30 18:00:00 +01:00 (Europe/Berlin = Europe/Berlin)",
+                        "2026-02-27 17:00:00 +01:00 (Europe/Berlin = Europe/Berlin) – 2026-02-27 18:00:00 +01:00 (Europe/Berlin = Europe/Berlin)",
+                        "2026-03-31 17:00:00 +02:00 (Europe/Berlin = Europe/Berlin) – 2026-03-31 18:00:00 +02:00 (Europe/Berlin = Europe/Berlin)",
+                        "2026-04-30 17:00:00 +02:00 (Europe/Berlin = Europe/Berlin) – 2026-04-30 18:00:00 +02:00 (Europe/Berlin = Europe/Berlin)",
+                        "2026-05-29 17:00:00 +02:00 (Europe/Berlin = Europe/Berlin) – 2026-05-29 18:00:00 +02:00 (Europe/Berlin = Europe/Berlin)",
+                        "2026-06-30 17:00:00 +02:00 (Europe/Berlin = Europe/Berlin) – 2026-06-30 18:00:00 +02:00 (Europe/Berlin = Europe/Berlin)",
+                        "2026-07-31 17:00:00 +02:00 (Europe/Berlin = Europe/Berlin) – 2026-07-31 18:00:00 +02:00 (Europe/Berlin = Europe/Berlin)",
+                        "2026-08-31 17:00:00 +02:00 (Europe/Berlin = Europe/Berlin) – 2026-08-31 18:00:00 +02:00 (Europe/Berlin = Europe/Berlin)",
+                        "2026-09-30 17:00:00 +02:00 (Europe/Berlin = Europe/Berlin) – 2026-09-30 18:00:00 +02:00 (Europe/Berlin = Europe/Berlin)",
+                        "2026-10-30 17:00:00 +01:00 (Europe/Berlin = Europe/Berlin) – 2026-10-30 18:00:00 +01:00 (Europe/Berlin = Europe/Berlin)"
+                    ]
+                },
+                {
+                    "type": "VTODO",
+                    "uid": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+                    "summary": "Renew passport",
+                    "start": "2026-01-10 09:00:00 +01:00 (Europe/Berlin = Europe/Berlin)",
+                    "end": "2026-01-31 18:00:00 +01:00 (Europe/Berlin = Europe/Berlin)",
+                    "status": "IN-PROCESS",
+                    "x-properties": [
+                        "X-NEXTCLOUD-PINNED"
+                    ],
+                    "occurrences": [
+                        "2026-01-10 09:00:00 +01:00 (Europe/Berlin = Europe/Berlin) – 2026-01-31 18:00:00 +01:00 (Europe/Berlin = Europe/Berlin)"
+                    ]
+                },
+                {
+                    "type": "VTODO",
+                    "uid": "9f8e7d6c-5b4a-3928-1706-f5e4d3c2b1a0",
+                    "summary": "Book appointment",
+                    "status": "COMPLETED"
+                }
+            ]
+        }
+    ]
+}

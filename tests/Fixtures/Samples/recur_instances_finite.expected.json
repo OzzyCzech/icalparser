@@ -1,0 +1,43 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+    ],
+    "calendars": [
+        {
+            "timezones": [
+                "America/Los_Angeles => America/Los_Angeles (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "623c13c0-6c2b-45d6-a12b-c33ad61c4868",
+                    "summary": "Crazy Event Thingy!",
+                    "start": "2012-10-02 10:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                    "end": "2012-10-02 10:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                    "rrules": [
+                        "FREQ=MONTHLY;UNTIL=20121231T100000;BYDAY=1TU"
+                    ],
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "calmozilla1@gmail.com REQ-PARTICIPANT/ACCEPTED",
+                        "james@lightsofapollo.com REQ-PARTICIPANT/NEEDS-ACTION",
+                        "iam.revelation@gmail.com REQ-PARTICIPANT/NEEDS-ACTION"
+                    ],
+                    "alarms": [
+                        "DISPLAY -PT5M"
+                    ],
+                    "occurrences": [
+                        "2012-10-02 10:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-10-02 10:30:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-11-05 10:00:00 -08:00 (America/Los_Angeles = America/Los_Angeles) – 2012-11-05 10:30:00 -08:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-11-06 10:00:00 -08:00 (America/Los_Angeles = America/Los_Angeles) – 2012-11-06 10:30:00 -08:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-11-10 10:00:00 -08:00 (America/Los_Angeles = America/Los_Angeles) – 2012-11-10 10:30:00 -08:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-12-04 10:00:00 -08:00 (America/Los_Angeles = America/Los_Angeles) – 2012-12-04 10:30:00 -08:00 (America/Los_Angeles = America/Los_Angeles)"
+                    ]
+                }
+            ],
+            "issues": [
+                "ERROR VEVENT.RRULE (line 24): UNTIL must have the value type of DTSTART (UTC for zoned times). [recurrence.until-type]"
+            ]
+        }
+    ]
+}

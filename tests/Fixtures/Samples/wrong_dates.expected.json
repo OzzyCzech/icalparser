@@ -1,0 +1,43 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]",
+        "line 12: Invalid DATE-TIME value: 2014929 in DTSTART, it was ignored. [value.invalid]",
+        "line 26: Invalid DATE-TIME value: 2014930 in DTEND, it was ignored. [value.invalid]"
+    ],
+    "calendars": [
+        {
+            "name": "calmozilla1@gmail.com",
+            "timezone": "America/Los_Angeles",
+            "timezones": [
+                "America/Los_Angeles => America/Los_Angeles (Iana)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "dn4vrfmfn5p05roahsopg57h48@google.com",
+                    "summary": "Really long event name thing",
+                    "end": "2014-09-30 (date)",
+                    "status": "CONFIRMED"
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "dn4vrfmfn5p05roahsopg57h48@google.com",
+                    "summary": "Really long event name thing",
+                    "start": "2014-09-29 (date)",
+                    "end": "2014-09-30 (date)",
+                    "status": "CONFIRMED",
+                    "occurrences": [
+                        "2014-09-29 (date) – 2014-09-30 (date)"
+                    ]
+                }
+            ],
+            "issues": [
+                "ERROR VTIMEZONE: VTIMEZONE needs a STANDARD or DAYLIGHT component. [timezone.no-observance]",
+                "ERROR VEVENT.DTSTAMP: DTSTAMP is required. [component.missing-property]",
+                "ERROR VEVENT.DTSTART (line 12): Invalid value \"2014929\". [value.invalid]",
+                "ERROR VEVENT.DTSTAMP: DTSTAMP is required. [component.missing-property]",
+                "ERROR VEVENT.DTEND (line 26): Invalid value \"2014930\". [value.invalid]"
+            ]
+        }
+    ]
+}

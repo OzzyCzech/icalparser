@@ -1,0 +1,43 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+    ],
+    "calendars": [
+        {
+            "name": "calmozilla1@gmail.com",
+            "timezone": "America/Los_Angeles",
+            "timezones": [
+                "America/Los_Angeles => America/Los_Angeles (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "tgh9qho17b07pk2n2ji3gluans@google.com",
+                    "summary": "Every day recurring",
+                    "start": "2012-08-01 05:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                    "end": "2012-08-01 06:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                    "rrules": [
+                        "FREQ=DAILY"
+                    ],
+                    "status": "CONFIRMED",
+                    "alarms": [
+                        "EMAIL -PT30M",
+                        "DISPLAY -PT30M"
+                    ],
+                    "occurrences": [
+                        "2012-08-01 05:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-08-01 06:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-08-02 05:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-08-02 06:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-08-03 05:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-08-03 06:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-08-04 05:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-08-04 06:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-08-05 05:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-08-05 06:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-08-06 05:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-08-06 06:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-08-07 05:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-08-07 06:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-08-08 05:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-08-08 06:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-08-09 05:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-08-09 06:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2012-08-10 05:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-08-10 06:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)"
+                    ]
+                }
+            ]
+        }
+    ]
+}

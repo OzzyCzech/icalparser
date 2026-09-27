@@ -1,0 +1,543 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "method": "PUBLISH",
+            "timezone": "UTC",
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "h@9bae7e86083abdfdff45712c19ef81bc41f44111@google.com",
+                    "summary": "Štedrý den",
+                    "start": "2013-12-24 (date)",
+                    "end": "2013-12-25 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2013-12-24 (date) – 2013-12-25 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@26c4829203feb7deebebdf226285322a079b9b7c@google.com",
+                    "summary": "Štedrý den",
+                    "start": "2014-12-24 (date)",
+                    "end": "2014-12-25 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2014-12-24 (date) – 2014-12-25 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@1c3d67eb7865010f0ee809055f7c465124091d1b@google.com",
+                    "summary": "Štedrý den",
+                    "start": "2015-12-24 (date)",
+                    "end": "2015-12-25 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2015-12-24 (date) – 2015-12-25 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@e5a21162ed9d250ee5f689058366a09f10cf4ccb@google.com",
+                    "summary": "Velikonoční pondělí",
+                    "start": "2015-04-06 (date)",
+                    "end": "2015-04-07 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2015-04-06 (date) – 2015-04-07 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@9595a34a188b5376d452c829499a8f8354ec6049@google.com",
+                    "summary": "Velikonoční pondělí",
+                    "start": "2014-04-21 (date)",
+                    "end": "2014-04-22 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2014-04-21 (date) – 2014-04-22 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@7470a1d77684e63d5aa048babb939885ad1066c5@google.com",
+                    "summary": "Svátek práce",
+                    "start": "2015-05-01 (date)",
+                    "end": "2015-05-02 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2015-05-01 (date) – 2015-05-02 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@59ea753d474913d8c7ab474eaba701f8ec5c2ba1@google.com",
+                    "summary": "Svátek práce",
+                    "start": "2014-05-01 (date)",
+                    "end": "2014-05-02 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2014-05-01 (date) – 2014-05-02 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@19480e43102b11f061a7fc231692a6504e6f55de@google.com",
+                    "summary": "Svátek práce",
+                    "start": "2013-05-01 (date)",
+                    "end": "2013-05-02 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2013-05-01 (date) – 2013-05-02 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@cdcc3450b77b919b7e5c1d0186439b81fe315723@google.com",
+                    "summary": "Nový rok",
+                    "start": "2014-01-01 (date)",
+                    "end": "2014-01-02 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2014-01-01 (date) – 2014-01-02 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@93d93af5add7e8e8542f9d2be9bf9b189adc7088@google.com",
+                    "summary": "Nový rok",
+                    "start": "2013-01-01 (date)",
+                    "end": "2013-01-02 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2013-01-01 (date) – 2013-01-02 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@3be21c366071b22c3322e48e898803d89a2873c8@google.com",
+                    "summary": "Nový rok",
+                    "start": "2015-01-01 (date)",
+                    "end": "2015-01-02 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2015-01-01 (date) – 2015-01-02 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@910a92f331886c719cdab7cae0f8d56387788789@google.com",
+                    "summary": "Den české státnosti",
+                    "start": "2014-09-28 (date)",
+                    "end": "2014-09-29 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2014-09-28 (date) – 2014-09-29 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@4bdee7defc8620b327b23400a9da3be5d0721a10@google.com",
+                    "summary": "Den české státnosti",
+                    "start": "2013-09-28 (date)",
+                    "end": "2013-09-29 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2013-09-28 (date) – 2013-09-29 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@0534aebb7a00356b125529a447b38be655046ca9@google.com",
+                    "summary": "Den české státnosti",
+                    "start": "2015-09-28 (date)",
+                    "end": "2015-09-29 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2015-09-28 (date) – 2015-09-29 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@f234114d721bac5776f1683f23a58ed2ffd53c84@google.com",
+                    "summary": "Den vítězství",
+                    "start": "2015-05-08 (date)",
+                    "end": "2015-05-09 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2015-05-08 (date) – 2015-05-09 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@5b971aece3bf450de53261bafe25898080af2454@google.com",
+                    "summary": "Den vítězství",
+                    "start": "2013-05-08 (date)",
+                    "end": "2013-05-09 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2013-05-08 (date) – 2013-05-09 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@574f6e8b741d1eb0e80ed4caea1441858393ff58@google.com",
+                    "summary": "Den vítězství",
+                    "start": "2014-05-08 (date)",
+                    "end": "2014-05-09 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2014-05-08 (date) – 2014-05-09 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@be894303693f374fad9017da7ac6391c23eca0f6@google.com",
+                    "summary": "Den vzniku samostatného československého státu",
+                    "start": "2013-10-28 (date)",
+                    "end": "2013-10-29 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2013-10-28 (date) – 2013-10-29 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@7e708d1f45342cd36f819e1f0d3d9f9b7eacc02f@google.com",
+                    "summary": "Den vzniku samostatného československého státu",
+                    "start": "2015-10-28 (date)",
+                    "end": "2015-10-29 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2015-10-28 (date) – 2015-10-29 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@4dcdf85aaa09aea21fd49914085b47cdb44ccf0f@google.com",
+                    "summary": "Den vzniku samostatného československého státu",
+                    "start": "2014-10-28 (date)",
+                    "end": "2014-10-29 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2014-10-28 (date) – 2014-10-29 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@d2253851fcafd5063bdbece5367507e338b5eea0@google.com",
+                    "summary": "Den upálení mistra Jana Husa",
+                    "start": "2015-07-06 (date)",
+                    "end": "2015-07-07 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2015-07-06 (date) – 2015-07-07 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@2f980e6bc7f0445430367c33d3e4a27441196199@google.com",
+                    "summary": "Den upálení mistra Jana Husa",
+                    "start": "2014-07-06 (date)",
+                    "end": "2014-07-07 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2014-07-06 (date) – 2014-07-07 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@09c62186abafba1bac59818bde105765a7a02121@google.com",
+                    "summary": "Den upálení mistra Jana Husa",
+                    "start": "2013-07-06 (date)",
+                    "end": "2013-07-07 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2013-07-06 (date) – 2013-07-07 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@df873adcd2b61ea7c1b13761d7561b9fe6faae5c@google.com",
+                    "summary": "Den slovanských věrozvěstů Cyrila a Metoděje",
+                    "start": "2015-07-05 (date)",
+                    "end": "2015-07-06 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2015-07-05 (date) – 2015-07-06 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@cc790a245031c0186f1d6d9ab8560db87c86269d@google.com",
+                    "summary": "Den slovanských věrozvěstů Cyrila a Metoděje",
+                    "start": "2014-07-05 (date)",
+                    "end": "2014-07-06 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2014-07-05 (date) – 2014-07-06 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@4b4d8fc982e6734d799afdd5de90041a009e56b5@google.com",
+                    "summary": "Den slovanských věrozvěstů Cyrila a Metoděje",
+                    "start": "2013-07-05 (date)",
+                    "end": "2013-07-06 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2013-07-05 (date) – 2013-07-06 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@e35dfa2052d4cf25d186e005626c66b794792d35@google.com",
+                    "summary": "Den obnovy samostatného českého státu",
+                    "start": "2015-01-01 (date)",
+                    "end": "2015-01-02 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2015-01-01 (date) – 2015-01-02 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@e13a9a864c4beec0b4f1055fb4e1bb14076b5a9b@google.com",
+                    "summary": "Den obnovy samostatného českého státu",
+                    "start": "2013-01-01 (date)",
+                    "end": "2013-01-02 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2013-01-01 (date) – 2013-01-02 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@a87543a1136d4a980a8037471eb49ea00f087c81@google.com",
+                    "summary": "Den obnovy samostatného českého státu",
+                    "start": "2014-01-01 (date)",
+                    "end": "2014-01-02 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2014-01-01 (date) – 2014-01-02 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@94e14807e30f52a82572a2cd28a51c89a033d09f@google.com",
+                    "summary": "Den boje za svobodu a demokracii",
+                    "start": "2014-11-17 (date)",
+                    "end": "2014-11-18 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2014-11-17 (date) – 2014-11-18 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@873a2a1499e25477876926c6729dc214b2f1f0f9@google.com",
+                    "summary": "Den boje za svobodu a demokracii",
+                    "start": "2013-11-17 (date)",
+                    "end": "2013-11-18 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2013-11-17 (date) – 2013-11-18 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@599f0d6373565c265b3491b084a2c6198b0b00b9@google.com",
+                    "summary": "Den boje za svobodu a demokracii",
+                    "start": "2015-11-17 (date)",
+                    "end": "2015-11-18 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2015-11-17 (date) – 2015-11-18 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@e65fdbb6f9703e75e775c9f407f55663c80d4764@google.com",
+                    "summary": "2. svátek vánoční",
+                    "start": "2015-12-26 (date)",
+                    "end": "2015-12-27 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2015-12-26 (date) – 2015-12-27 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@807088064c072183b2fa351251155bff44f09787@google.com",
+                    "summary": "2. svátek vánoční",
+                    "start": "2014-12-26 (date)",
+                    "end": "2014-12-27 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2014-12-26 (date) – 2014-12-27 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@6165f686632ab29cdd7bdb46a4c3578a48045428@google.com",
+                    "summary": "2. svátek vánoční",
+                    "start": "2013-12-26 (date)",
+                    "end": "2013-12-27 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2013-12-26 (date) – 2013-12-27 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@e2f049ac27b03ada54a27294becbcd1cc2680d9a@google.com",
+                    "summary": "1. svátek vánoční",
+                    "start": "2014-12-25 (date)",
+                    "end": "2014-12-26 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2014-12-25 (date) – 2014-12-26 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@7f26c52a3d0e69b81f2fc35490224899490c0014@google.com",
+                    "summary": "1. svátek vánoční",
+                    "start": "2013-12-25 (date)",
+                    "end": "2013-12-26 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2013-12-25 (date) – 2013-12-26 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "h@3ddadf7953340f067a4e3b07a4621f9343ff1518@google.com",
+                    "summary": "1. svátek vánoční",
+                    "start": "2015-12-25 (date)",
+                    "end": "2015-12-26 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "cdpisorqclhmg8r8dtm6ip31f506esjfelo2sthecdgmopbechgn4bj7dtnmer355phmur8%40virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2015-12-25 (date) – 2015-12-26 (date)"
+                    ]
+                }
+            ]
+        }
+    ]
+}

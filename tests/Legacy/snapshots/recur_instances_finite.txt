@@ -1,0 +1,111 @@
+# data
+{
+    "VERSION": "2.0",
+    "PRODID": "Zimbra-Calendar-Provider",
+    "VTIMEZONE": [
+        {
+            "TZID": "America/Los_Angeles"
+        }
+    ],
+    "STANDARD": [
+        {
+            "DTSTART": "1971-01-01 02:00:00 America/Los_Angeles",
+            "TZOFFSETTO": "-0800",
+            "TZOFFSETFROM": "-0700",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "WKST": "MO",
+                "INTERVAL": "1",
+                "BYMONTH": "11",
+                "BYDAY": "1SU"
+            },
+            "TZNAME": "PST"
+        }
+    ],
+    "DAYLIGHT": [
+        {
+            "DTSTART": "1971-01-01 02:00:00 America/Los_Angeles",
+            "TZOFFSETTO": "-0700",
+            "TZOFFSETFROM": "-0800",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "WKST": "MO",
+                "INTERVAL": "1",
+                "BYMONTH": "3",
+                "BYDAY": "2SU"
+            },
+            "TZNAME": "PDT"
+        }
+    ],
+    "VEVENT": [
+        {
+            "UID": "623c13c0-6c2b-45d6-a12b-c33ad61c4868",
+            "DESCRIPTION": "IAM FOO",
+            "RRULE": {
+                "FREQ": "MONTHLY",
+                "INTERVAL": "1",
+                "BYDAY": "1TU",
+                "UNTIL": "2012-12-31 10:00:00 America/Los_Angeles"
+            },
+            "SUMMARY": "Crazy Event Thingy!",
+            "ATTENDEES": [
+                {
+                    "CUTYPE": "INDIVIDUAL",
+                    "ROLE": "REQ-PARTICIPANT",
+                    "PARTSTAT": "ACCEPTED",
+                    "CN": "Sahaja Lal",
+                    "X-NUM-GUESTS": "0",
+                    "VALUE": "mailto:calmozilla1@gmail.com"
+                },
+                {
+                    "CUTYPE": "INDIVIDUAL",
+                    "ROLE": "REQ-PARTICIPANT",
+                    "PARTSTAT": "NEEDS-ACTION",
+                    "CN": "james@lightsofapollo.com",
+                    "X-NUM-GUESTS": "0",
+                    "VALUE": "mailto:james@lightsofapollo.com"
+                },
+                {
+                    "CUTYPE": "INDIVIDUAL",
+                    "ROLE": "REQ-PARTICIPANT",
+                    "PARTSTAT": "NEEDS-ACTION",
+                    "CN": "iam.revelation@gmail.com",
+                    "X-NUM-GUESTS": "0",
+                    "VALUE": "mailto:iam.revelation@gmail.com"
+                }
+            ],
+            "ATTENDEE": "mailto:iam.revelation@gmail.com",
+            "LOCATION": "PLACE",
+            "ORGANIZER-CN": "James Lal",
+            "ORGANIZER": "mailto:jlal@mozilla.com",
+            "DTSTART": "2012-10-02 10:00:00 America/Los_Angeles",
+            "DTEND": "2012-10-02 10:30:00 America/Los_Angeles",
+            "STATUS": "CONFIRMED",
+            "CLASS": "PUBLIC",
+            "TRANSP": "OPAQUE",
+            "LAST-MODIFIED": "2012-09-12 17:15:06 Z",
+            "DTSTAMP": "2012-09-12 17:15:06 Z",
+            "SEQUENCE": "0",
+            "RDATES": [
+                "2012-11-10 10:00:00 America/Los_Angeles",
+                "2012-11-05 10:00:00 America/Los_Angeles"
+            ],
+            "RDATE": "2012-11-05 10:00:00 America/Los_Angeles",
+            "RECURRENCES": "5 dates"
+        }
+    ],
+    "VALARM": [
+        {
+            "ACTION": "DISPLAY",
+            "TRIGGER": "-PT5M",
+            "DESCRIPTION": "Reminder"
+        }
+    ]
+}
+
+# events: 5, md5 4000b3be47177b1736f859b39b2f0296
+2012-10-02 10:00:00 America/Los_Angeles | 2012-10-02 10:30:00 America/Los_Angeles | 0 | - | 623c13c0-6c2b-45d6-a12b-c33ad61c4868 | Crazy Event Thingy!
+2012-11-05 10:00:00 America/Los_Angeles | 2012-11-05 10:30:00 America/Los_Angeles | 1 | - | 623c13c0-6c2b-45d6-a12b-c33ad61c4868 | Crazy Event Thingy!
+2012-11-06 10:00:00 America/Los_Angeles | 2012-11-06 10:30:00 America/Los_Angeles | 2 | - | 623c13c0-6c2b-45d6-a12b-c33ad61c4868 | Crazy Event Thingy!
+2012-11-10 10:00:00 America/Los_Angeles | 2012-11-10 10:30:00 America/Los_Angeles | 3 | - | 623c13c0-6c2b-45d6-a12b-c33ad61c4868 | Crazy Event Thingy!
+2012-12-04 10:00:00 America/Los_Angeles | 2012-12-04 10:30:00 America/Los_Angeles | 4 | - | 623c13c0-6c2b-45d6-a12b-c33ad61c4868 | Crazy Event Thingy!

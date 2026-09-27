@@ -1,0 +1,139 @@
+# data
+{
+    "PRODID": "-//Google Inc//Google Calendar 70.9054//EN",
+    "VERSION": "2.0",
+    "CALSCALE": "GREGORIAN",
+    "METHOD": "PUBLISH",
+    "X-WR-CALNAME": "School Board",
+    "X-WR-TIMEZONE": "America/Chicago",
+    "X-WR-CALDESC": "",
+    "VTIMEZONE": [
+        {
+            "TZID": "America/Chicago",
+            "X-LIC-LOCATION": "America/Chicago"
+        }
+    ],
+    "DAYLIGHT": [
+        {
+            "TZOFFSETFROM": "-0600",
+            "TZOFFSETTO": "-0500",
+            "TZNAME": "CDT",
+            "DTSTART": "1970-03-08 02:00:00 America/Chicago",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "3",
+                "BYDAY": "2SU"
+            }
+        }
+    ],
+    "STANDARD": [
+        {
+            "TZOFFSETFROM": "-0500",
+            "TZOFFSETTO": "-0600",
+            "TZNAME": "CST",
+            "DTSTART": "1970-11-01 02:00:00 America/Chicago",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "11",
+                "BYDAY": "1SU"
+            }
+        }
+    ],
+    "VEVENT": [
+        {
+            "DTSTART": "2016-08-08 18:00:00 America/Chicago",
+            "DTEND": "2016-08-08 20:30:00 America/Chicago",
+            "DTSTAMP": "2016-07-18 16:02:26 Z",
+            "UID": "kpgr4590djmi89l3sv51gmalrc@google.com",
+            "ATTENDEES": [
+                {
+                    "CUTYPE": "INDIVIDUAL",
+                    "ROLE": "REQ-PARTICIPANT",
+                    "PARTSTAT": "ACCEPTED",
+                    "CN": "School Board",
+                    "X-NUM-GUESTS": "0",
+                    "VALUE": "mailto:aliceisd.net_7hatmpq9uek3a1h6if0r0sn5bc@group.calendar.google.com"
+                }
+            ],
+            "ATTENDEE": "mailto:aliceisd.net_7hatmpq9uek3a1h6if0r0sn5bc@group.calendar.google.com",
+            "RECURRENCE-ID": "20160808T183000",
+            "CREATED": "2015-07-15 18:38:09 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-07-18 15:55:38 Z",
+            "LOCATION": "",
+            "SEQUENCE": "1",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "Regular Board Meeting Modified",
+            "TRANSP": "OPAQUE"
+        },
+        {
+            "DTSTART": "2015-08-10 18:30:00 America/Chicago",
+            "DTEND": "2015-08-10 21:00:00 America/Chicago",
+            "RRULE": {
+                "FREQ": "MONTHLY",
+                "UNTIL": "2018-07-09 23:30:00 Z",
+                "BYDAY": "2MO"
+            },
+            "DTSTAMP": "2016-07-18 16:02:26 Z",
+            "UID": "kpgr4590djmi89l3sv51gmalrc@google.com",
+            "ATTENDEES": [
+                {
+                    "CUTYPE": "INDIVIDUAL",
+                    "ROLE": "REQ-PARTICIPANT",
+                    "PARTSTAT": "ACCEPTED",
+                    "CN": "School Board",
+                    "X-NUM-GUESTS": "0",
+                    "VALUE": "mailto:aliceisd.net_7hatmpq9uek3a1h6if0r0sn5bc@group.calendar.google.com"
+                }
+            ],
+            "ATTENDEE": "mailto:aliceisd.net_7hatmpq9uek3a1h6if0r0sn5bc@group.calendar.google.com",
+            "CREATED": "2015-07-15 18:38:09 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-07-18 15:55:38 Z",
+            "LOCATION": "",
+            "SEQUENCE": "0",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "Regular Board Meeting",
+            "TRANSP": "OPAQUE",
+            "RECURRENCES": "35 dates"
+        }
+    ]
+}
+
+# events: 36, md5 ba91f5a047f95449ad95d4e2ece082cd
+2015-08-10 18:30:00 America/Chicago | 2015-08-10 21:00:00 America/Chicago | 0 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2015-09-14 18:30:00 America/Chicago | 2015-09-14 21:00:00 America/Chicago | 1 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2015-10-12 18:30:00 America/Chicago | 2015-10-12 21:00:00 America/Chicago | 2 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2015-11-09 18:30:00 America/Chicago | 2015-11-09 21:00:00 America/Chicago | 3 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2015-12-14 18:30:00 America/Chicago | 2015-12-14 21:00:00 America/Chicago | 4 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2016-01-11 18:30:00 America/Chicago | 2016-01-11 21:00:00 America/Chicago | 5 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2016-02-08 18:30:00 America/Chicago | 2016-02-08 21:00:00 America/Chicago | 6 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2016-03-14 18:30:00 America/Chicago | 2016-03-14 21:00:00 America/Chicago | 7 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2016-04-11 18:30:00 America/Chicago | 2016-04-11 21:00:00 America/Chicago | 8 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2016-05-09 18:30:00 America/Chicago | 2016-05-09 21:00:00 America/Chicago | 9 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2016-06-13 18:30:00 America/Chicago | 2016-06-13 21:00:00 America/Chicago | 10 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2016-07-11 18:30:00 America/Chicago | 2016-07-11 21:00:00 America/Chicago | 11 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2016-08-08 18:00:00 America/Chicago | 2016-08-08 20:30:00 America/Chicago | - | 20160808T183000 | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting Modified
+2016-09-12 18:30:00 America/Chicago | 2016-09-12 21:00:00 America/Chicago | 12 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2016-10-10 18:30:00 America/Chicago | 2016-10-10 21:00:00 America/Chicago | 13 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2016-11-14 18:30:00 America/Chicago | 2016-11-14 21:00:00 America/Chicago | 14 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2016-12-12 18:30:00 America/Chicago | 2016-12-12 21:00:00 America/Chicago | 15 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2017-01-09 18:30:00 America/Chicago | 2017-01-09 21:00:00 America/Chicago | 16 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2017-02-13 18:30:00 America/Chicago | 2017-02-13 21:00:00 America/Chicago | 17 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2017-03-13 18:30:00 America/Chicago | 2017-03-13 21:00:00 America/Chicago | 18 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2017-04-10 18:30:00 America/Chicago | 2017-04-10 21:00:00 America/Chicago | 19 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2017-05-08 18:30:00 America/Chicago | 2017-05-08 21:00:00 America/Chicago | 20 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2017-06-12 18:30:00 America/Chicago | 2017-06-12 21:00:00 America/Chicago | 21 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2017-07-10 18:30:00 America/Chicago | 2017-07-10 21:00:00 America/Chicago | 22 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2017-08-14 18:30:00 America/Chicago | 2017-08-14 21:00:00 America/Chicago | 23 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2017-09-11 18:30:00 America/Chicago | 2017-09-11 21:00:00 America/Chicago | 24 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2017-10-09 18:30:00 America/Chicago | 2017-10-09 21:00:00 America/Chicago | 25 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2017-11-13 18:30:00 America/Chicago | 2017-11-13 21:00:00 America/Chicago | 26 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2017-12-11 18:30:00 America/Chicago | 2017-12-11 21:00:00 America/Chicago | 27 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2018-01-08 18:30:00 America/Chicago | 2018-01-08 21:00:00 America/Chicago | 28 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2018-02-12 18:30:00 America/Chicago | 2018-02-12 21:00:00 America/Chicago | 29 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2018-03-12 18:30:00 America/Chicago | 2018-03-12 21:00:00 America/Chicago | 30 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2018-04-09 18:30:00 America/Chicago | 2018-04-09 21:00:00 America/Chicago | 31 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2018-05-14 18:30:00 America/Chicago | 2018-05-14 21:00:00 America/Chicago | 32 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2018-06-11 18:30:00 America/Chicago | 2018-06-11 21:00:00 America/Chicago | 33 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting
+2018-07-09 18:30:00 America/Chicago | 2018-07-09 21:00:00 America/Chicago | 34 | - | kpgr4590djmi89l3sv51gmalrc@google.com | Regular Board Meeting

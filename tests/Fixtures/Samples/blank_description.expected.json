@@ -1,0 +1,31 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+    ],
+    "calendars": [
+        {
+            "name": "calmozilla1@gmail.com",
+            "timezone": "America/Los_Angeles",
+            "timezones": [
+                "America/Los_Angeles => America/Los_Angeles (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "dn4vrfmfn5p05roahsopg57h48@google.com",
+                    "summary": "Really long event name thing",
+                    "start": "2012-06-30 06:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                    "end": "2012-06-30 07:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)",
+                    "status": "CONFIRMED",
+                    "alarms": [
+                        "EMAIL -PT30M",
+                        "DISPLAY -PT30M"
+                    ],
+                    "occurrences": [
+                        "2012-06-30 06:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles) – 2012-06-30 07:00:00 -07:00 (America/Los_Angeles = America/Los_Angeles)"
+                    ]
+                }
+            ]
+        }
+    ]
+}

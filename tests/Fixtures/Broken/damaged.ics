@@ -1,0 +1,25 @@
+BEGIN:VCALENDAR
+version:2.0
+prodid:lowercase and LF line breaks
+begin:vevent
+uid:broken-1
+dtstart:20260105T100000Z
+summary:Lower case names
+this line is garbage
+X-BEFORE-END;PARAM="unterminated:value
+begin:valarm
+action:display
+end:vevent
+BEGIN:VEVENT
+UID:broken-2
+DTSTART:2026-01-06
+DTSTART;TZID=Mars/Olympus:20260106T100000
+RRULE:FREQ=DAILY;INTERVAL=0
+DURATION:1 hour
+SUMMARY:Invalid values
+END:VEVENT
+END:VTODO
+BEGIN:VEVENT
+UID:broken-3
+DTSTART;VALUE=DATE:20260107
+SUMMARY:Missing END at the end of the file

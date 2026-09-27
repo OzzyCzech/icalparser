@@ -1,0 +1,120 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "timezones": [
+                "America/New_York => -04:00 (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "guid-1.example.com",
+                    "summary": "XYZ Project Review",
+                    "start": "1998-03-12 08:30:00 -04:00 (America/New_York = -04:00)",
+                    "end": "1998-03-12 09:30:00 -04:00 (America/New_York = -04:00)",
+                    "categories": [
+                        "MEETING"
+                    ],
+                    "attendees": [
+                        "employee-A@example.com REQ-PARTICIPANT/NEEDS-ACTION"
+                    ],
+                    "occurrences": [
+                        "1998-03-12 08:30:00 -04:00 (America/New_York = -04:00) – 1998-03-12 09:30:00 -04:00 (America/New_York = -04:00)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "19970901T130000Z-123401@example.com",
+                    "summary": "Annual Employee Review",
+                    "start": "1997-09-03 16:30:00 UTC",
+                    "end": "1997-09-03 19:00:00 UTC",
+                    "categories": [
+                        "BUSINESS",
+                        "HUMAN RESOURCES"
+                    ],
+                    "occurrences": [
+                        "1997-09-03 16:30:00 UTC – 1997-09-03 19:00:00 UTC"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "19970901T130000Z-123403@example.com",
+                    "summary": "Our Blissful Anniversary",
+                    "start": "1997-11-02 (date)",
+                    "end": "1997-11-03 (date)",
+                    "rrules": [
+                        "FREQ=YEARLY"
+                    ],
+                    "categories": [
+                        "ANNIVERSARY",
+                        "PERSONAL",
+                        "SPECIAL OCCASION"
+                    ],
+                    "occurrences": [
+                        "1997-11-02 (date) – 1997-11-03 (date)",
+                        "1998-11-02 (date) – 1998-11-03 (date)",
+                        "1999-11-02 (date) – 1999-11-03 (date)",
+                        "2000-11-02 (date) – 2000-11-03 (date)",
+                        "2001-11-02 (date) – 2001-11-03 (date)",
+                        "2002-11-02 (date) – 2002-11-03 (date)",
+                        "2003-11-02 (date) – 2003-11-03 (date)",
+                        "2004-11-02 (date) – 2004-11-03 (date)",
+                        "2005-11-02 (date) – 2005-11-03 (date)",
+                        "2006-11-02 (date) – 2006-11-03 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "20070423T123432Z-541111@example.com",
+                    "summary": "Festival International de Jazz de Montreal",
+                    "start": "2007-06-28 (date)",
+                    "end": "2007-07-09 (date)",
+                    "occurrences": [
+                        "2007-06-28 (date) – 2007-07-09 (date)"
+                    ]
+                },
+                {
+                    "type": "VTODO",
+                    "uid": "20070313T123432Z-456553@example.com",
+                    "summary": "Submit Quebec Income Tax Return for 2006",
+                    "end": "2007-05-01 (date)",
+                    "status": "NEEDS-ACTION",
+                    "categories": [
+                        "FAMILY",
+                        "FINANCE"
+                    ]
+                },
+                {
+                    "type": "VTODO",
+                    "uid": "20070514T103211Z-123404@example.com",
+                    "summary": "Submit Revised Internet-Draft",
+                    "start": "2007-05-14 11:00:00 UTC",
+                    "end": "2007-07-09 13:00:00 UTC",
+                    "status": "NEEDS-ACTION",
+                    "occurrences": [
+                        "2007-05-14 11:00:00 UTC – 2007-07-09 13:00:00 UTC"
+                    ]
+                },
+                {
+                    "type": "VJOURNAL",
+                    "uid": "19970901T130000Z-123405@example.com",
+                    "summary": "Staff meeting minutes",
+                    "start": "1997-03-17 (date)",
+                    "end": "1997-03-17 (date)",
+                    "occurrences": [
+                        "1997-03-17 (date) – 1997-03-17 (date)"
+                    ]
+                },
+                {
+                    "type": "VFREEBUSY",
+                    "uid": "19970901T115957Z-76A912@example.com",
+                    "start": "1998-03-13 14:17:11 UTC",
+                    "end": "1998-04-10 14:17:11 UTC",
+                    "occurrences": [
+                        "1998-03-13 14:17:11 UTC – 1998-04-10 14:17:11 UTC"
+                    ]
+                }
+            ]
+        }
+    ]
+}

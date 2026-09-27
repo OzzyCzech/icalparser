@@ -1,0 +1,676 @@
+# data
+{
+    "PRODID": "-//Google Inc//Google Calendar 70.9054//EN",
+    "VERSION": "2.0",
+    "CALSCALE": "GREGORIAN",
+    "METHOD": "PUBLISH",
+    "X-WR-CALNAME": "SB-1213",
+    "X-WR-TIMEZONE": "America/Denver",
+    "X-WR-CALDESC": "",
+    "VTIMEZONE": [
+        {
+            "TZID": "America/New_York",
+            "X-LIC-LOCATION": "America/New_York"
+        }
+    ],
+    "DAYLIGHT": [
+        {
+            "TZOFFSETFROM": "-0500",
+            "TZOFFSETTO": "-0400",
+            "TZNAME": "EDT",
+            "DTSTART": "1970-03-08 02:00:00 America/New_York",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "3",
+                "BYDAY": "2SU"
+            }
+        }
+    ],
+    "STANDARD": [
+        {
+            "TZOFFSETFROM": "-0400",
+            "TZOFFSETTO": "-0500",
+            "TZNAME": "EST",
+            "DTSTART": "1970-11-01 02:00:00 America/New_York",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "11",
+                "BYDAY": "1SU"
+            }
+        }
+    ],
+    "VEVENT": [
+        {
+            "DTSTART": "2017-06-02 00:00:00 America/New_York",
+            "DTEND": "2017-06-03 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170601",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "4",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2017-05-31 00:00:00 America/New_York",
+            "DTEND": "2017-06-01 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170530",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "4",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2017-05-24 00:00:00 America/New_York",
+            "DTEND": "2017-05-25 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170524",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "5",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2017-02-16 00:00:00 America/New_York",
+            "DTEND": "2017-02-17 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170215",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2017-02-14 00:00:00 America/New_York",
+            "DTEND": "2017-02-15 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170213",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2017-02-10 00:00:00 America/New_York",
+            "DTEND": "2017-02-11 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170209",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2017-02-08 00:00:00 America/New_York",
+            "DTEND": "2017-02-09 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170207",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2017-02-06 00:00:00 America/New_York",
+            "DTEND": "2017-02-07 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170205",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2017-02-02 00:00:00 America/New_York",
+            "DTEND": "2017-02-03 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170201",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2017-01-31 00:00:00 America/New_York",
+            "DTEND": "2017-02-01 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170130",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2017-01-27 00:00:00 America/New_York",
+            "DTEND": "2017-01-28 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170126",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2017-01-25 00:00:00 America/New_York",
+            "DTEND": "2017-01-26 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170124",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2017-01-23 00:00:00 America/New_York",
+            "DTEND": "2017-01-24 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170122",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2017-01-19 00:00:00 America/New_York",
+            "DTEND": "2017-01-20 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170118",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2017-01-13 00:00:00 America/New_York",
+            "DTEND": "2017-01-14 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170112",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2017-01-11 00:00:00 America/New_York",
+            "DTEND": "2017-01-12 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170110",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2017-01-09 00:00:00 America/New_York",
+            "DTEND": "2017-01-10 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170108",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2017-01-05 00:00:00 America/New_York",
+            "DTEND": "2017-01-06 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170104",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2017-01-03 00:00:00 America/New_York",
+            "DTEND": "2017-01-04 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170102",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2016-11-22 00:00:00 America/New_York",
+            "DTEND": "2016-11-23 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20161121",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2016-11-18 00:00:00 America/New_York",
+            "DTEND": "2016-11-19 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20161117",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2016-11-16 00:00:00 America/New_York",
+            "DTEND": "2016-11-17 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20161115",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2016-11-14 00:00:00 America/New_York",
+            "DTEND": "2016-11-15 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20161113",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2016-11-10 00:00:00 America/New_York",
+            "DTEND": "2016-11-11 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20161109",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2016-09-23 00:00:00 America/New_York",
+            "DTEND": "2016-09-24 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20160922",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2016-09-21 00:00:00 America/New_York",
+            "DTEND": "2016-09-22 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20160920",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2016-09-19 00:00:00 America/New_York",
+            "DTEND": "2016-09-20 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20160916",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2016-09-15 00:00:00 America/New_York",
+            "DTEND": "2016-09-16 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20160914",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2016-09-13 00:00:00 America/New_York",
+            "DTEND": "2016-09-14 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20160912",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2016-09-09 00:00:00 America/New_York",
+            "DTEND": "2016-09-10 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20160908",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2016-09-07 00:00:00 America/New_York",
+            "DTEND": "2016-09-08 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20160906",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "2",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT"
+        },
+        {
+            "DTSTART": "2016-08-17 00:00:00 America/New_York",
+            "DTEND": "2016-08-18 00:00:00 America/New_York",
+            "EXDATES": [
+                "2016-08-21 00:00:00 America/New_York",
+                "2016-08-27 00:00:00 America/New_York",
+                "2016-09-04 00:00:00 America/New_York",
+                "2016-09-10 00:00:00 America/New_York",
+                "2016-09-18 00:00:00 America/New_York",
+                "2016-09-24 00:00:00 America/New_York",
+                "2016-09-26 00:00:00 America/New_York",
+                "2016-10-02 00:00:00 America/New_York",
+                "2016-10-08 00:00:00 America/New_York",
+                "2016-10-16 00:00:00 America/New_York",
+                "2016-10-22 00:00:00 America/New_York",
+                "2016-10-30 00:00:00 America/New_York",
+                "2016-11-05 00:00:00 America/New_York",
+                "2016-11-07 00:00:00 America/New_York",
+                "2016-11-11 00:00:00 America/New_York",
+                "2016-11-19 00:00:00 America/New_York",
+                "2016-11-23 00:00:00 America/New_York",
+                "2016-11-25 00:00:00 America/New_York",
+                "2016-11-27 00:00:00 America/New_York",
+                "2016-12-03 00:00:00 America/New_York",
+                "2016-12-11 00:00:00 America/New_York",
+                "2016-12-17 00:00:00 America/New_York",
+                "2016-12-19 00:00:00 America/New_York",
+                "2016-12-21 00:00:00 America/New_York",
+                "2016-12-23 00:00:00 America/New_York",
+                "2016-12-25 00:00:00 America/New_York",
+                "2016-12-27 00:00:00 America/New_York",
+                "2016-12-29 00:00:00 America/New_York",
+                "2016-12-31 00:00:00 America/New_York",
+                "2017-01-06 00:00:00 America/New_York",
+                "2017-01-14 00:00:00 America/New_York",
+                "2017-01-16 00:00:00 America/New_York",
+                "2017-01-20 00:00:00 America/New_York",
+                "2017-01-28 00:00:00 America/New_York",
+                "2017-02-03 00:00:00 America/New_York",
+                "2017-02-11 00:00:00 America/New_York",
+                "2017-02-17 00:00:00 America/New_York",
+                "2017-02-19 00:00:00 America/New_York",
+                "2017-02-25 00:00:00 America/New_York",
+                "2017-03-05 00:00:00 America/New_York",
+                "2017-03-11 00:00:00 America/New_York",
+                "2017-03-19 00:00:00 America/New_York",
+                "2017-03-25 00:00:00 America/New_York",
+                "2017-03-27 00:00:00 America/New_York",
+                "2017-04-02 00:00:00 America/New_York",
+                "2017-04-08 00:00:00 America/New_York",
+                "2017-04-10 00:00:00 America/New_York",
+                "2017-04-12 00:00:00 America/New_York",
+                "2017-04-14 00:00:00 America/New_York",
+                "2017-04-16 00:00:00 America/New_York",
+                "2017-04-22 00:00:00 America/New_York",
+                "2017-04-30 00:00:00 America/New_York",
+                "2017-05-06 00:00:00 America/New_York",
+                "2017-05-14 00:00:00 America/New_York",
+                "2017-05-20 00:00:00 America/New_York",
+                "2017-05-28 00:00:00 America/New_York"
+            ],
+            "EXDATE": "2017-05-28 00:00:00 America/New_York",
+            "RRULE": {
+                "FREQ": "DAILY",
+                "UNTIL": "2017-06-01 00:00:00 America/New_York",
+                "INTERVAL": "2"
+            },
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "1",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "B",
+            "TRANSP": "TRANSPARENT",
+            "RECURRENCES": "57 dates"
+        },
+        {
+            "DTSTART": "2017-06-01 00:00:00 America/New_York",
+            "DTEND": "2017-06-02 00:00:00 America/New_York",
+            "DTSTAMP": "2016-08-29 19:18:52 Z",
+            "UID": "h9i3hjtisl53goaljdcdb681fc@google.com",
+            "RECURRENCE-ID": "20170526",
+            "CREATED": "2016-08-29 13:44:37 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2016-08-29 13:44:50 Z",
+            "LOCATION": "",
+            "SEQUENCE": "6",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "A",
+            "TRANSP": "TRANSPARENT"
+        }
+    ]
+}
+
+# events: 89, md5 71407d6873fb89a9a306e95fa80fe059
+2016-08-17 00:00:00 America/New_York | 2016-08-18 00:00:00 America/New_York | 0 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-08-19 00:00:00 America/New_York | 2016-08-20 00:00:00 America/New_York | 1 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-08-23 00:00:00 America/New_York | 2016-08-24 00:00:00 America/New_York | 2 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-08-25 00:00:00 America/New_York | 2016-08-26 00:00:00 America/New_York | 3 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-08-29 00:00:00 America/New_York | 2016-08-30 00:00:00 America/New_York | 4 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-08-31 00:00:00 America/New_York | 2016-09-01 00:00:00 America/New_York | 5 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-09-02 00:00:00 America/New_York | 2016-09-03 00:00:00 America/New_York | 6 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-09-07 00:00:00 America/New_York | 2016-09-08 00:00:00 America/New_York | - | 20160906 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-09-09 00:00:00 America/New_York | 2016-09-10 00:00:00 America/New_York | - | 20160908 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-09-13 00:00:00 America/New_York | 2016-09-14 00:00:00 America/New_York | - | 20160912 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-09-15 00:00:00 America/New_York | 2016-09-16 00:00:00 America/New_York | - | 20160914 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-09-19 00:00:00 America/New_York | 2016-09-20 00:00:00 America/New_York | - | 20160916 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-09-21 00:00:00 America/New_York | 2016-09-22 00:00:00 America/New_York | - | 20160920 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-09-23 00:00:00 America/New_York | 2016-09-24 00:00:00 America/New_York | - | 20160922 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-09-28 00:00:00 America/New_York | 2016-09-29 00:00:00 America/New_York | 7 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-09-30 00:00:00 America/New_York | 2016-10-01 00:00:00 America/New_York | 8 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-10-04 00:00:00 America/New_York | 2016-10-05 00:00:00 America/New_York | 9 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-10-06 00:00:00 America/New_York | 2016-10-07 00:00:00 America/New_York | 10 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-10-10 00:00:00 America/New_York | 2016-10-11 00:00:00 America/New_York | 11 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-10-12 00:00:00 America/New_York | 2016-10-13 00:00:00 America/New_York | 12 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-10-14 00:00:00 America/New_York | 2016-10-15 00:00:00 America/New_York | 13 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-10-18 00:00:00 America/New_York | 2016-10-19 00:00:00 America/New_York | 14 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-10-20 00:00:00 America/New_York | 2016-10-21 00:00:00 America/New_York | 15 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-10-24 00:00:00 America/New_York | 2016-10-25 00:00:00 America/New_York | 16 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-10-26 00:00:00 America/New_York | 2016-10-27 00:00:00 America/New_York | 17 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-10-28 00:00:00 America/New_York | 2016-10-29 00:00:00 America/New_York | 18 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-11-01 00:00:00 America/New_York | 2016-11-02 00:00:00 America/New_York | 19 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-11-03 00:00:00 America/New_York | 2016-11-04 00:00:00 America/New_York | 20 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-11-10 00:00:00 America/New_York | 2016-11-11 00:00:00 America/New_York | - | 20161109 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-11-14 00:00:00 America/New_York | 2016-11-15 00:00:00 America/New_York | - | 20161113 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-11-16 00:00:00 America/New_York | 2016-11-17 00:00:00 America/New_York | - | 20161115 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-11-18 00:00:00 America/New_York | 2016-11-19 00:00:00 America/New_York | - | 20161117 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-11-22 00:00:00 America/New_York | 2016-11-23 00:00:00 America/New_York | - | 20161121 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-11-29 00:00:00 America/New_York | 2016-11-30 00:00:00 America/New_York | 21 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-12-01 00:00:00 America/New_York | 2016-12-02 00:00:00 America/New_York | 22 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-12-05 00:00:00 America/New_York | 2016-12-06 00:00:00 America/New_York | 23 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-12-07 00:00:00 America/New_York | 2016-12-08 00:00:00 America/New_York | 24 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-12-09 00:00:00 America/New_York | 2016-12-10 00:00:00 America/New_York | 25 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-12-13 00:00:00 America/New_York | 2016-12-14 00:00:00 America/New_York | 26 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2016-12-15 00:00:00 America/New_York | 2016-12-16 00:00:00 America/New_York | 27 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-01-03 00:00:00 America/New_York | 2017-01-04 00:00:00 America/New_York | - | 20170102 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-01-05 00:00:00 America/New_York | 2017-01-06 00:00:00 America/New_York | - | 20170104 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-01-09 00:00:00 America/New_York | 2017-01-10 00:00:00 America/New_York | - | 20170108 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-01-11 00:00:00 America/New_York | 2017-01-12 00:00:00 America/New_York | - | 20170110 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-01-13 00:00:00 America/New_York | 2017-01-14 00:00:00 America/New_York | - | 20170112 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-01-19 00:00:00 America/New_York | 2017-01-20 00:00:00 America/New_York | - | 20170118 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-01-23 00:00:00 America/New_York | 2017-01-24 00:00:00 America/New_York | - | 20170122 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-01-25 00:00:00 America/New_York | 2017-01-26 00:00:00 America/New_York | - | 20170124 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-01-27 00:00:00 America/New_York | 2017-01-28 00:00:00 America/New_York | - | 20170126 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-01-31 00:00:00 America/New_York | 2017-02-01 00:00:00 America/New_York | - | 20170130 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-02-02 00:00:00 America/New_York | 2017-02-03 00:00:00 America/New_York | - | 20170201 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-02-06 00:00:00 America/New_York | 2017-02-07 00:00:00 America/New_York | - | 20170205 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-02-08 00:00:00 America/New_York | 2017-02-09 00:00:00 America/New_York | - | 20170207 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-02-10 00:00:00 America/New_York | 2017-02-11 00:00:00 America/New_York | - | 20170209 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-02-14 00:00:00 America/New_York | 2017-02-15 00:00:00 America/New_York | - | 20170213 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-02-16 00:00:00 America/New_York | 2017-02-17 00:00:00 America/New_York | - | 20170215 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-02-21 00:00:00 America/New_York | 2017-02-22 00:00:00 America/New_York | 28 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-02-23 00:00:00 America/New_York | 2017-02-24 00:00:00 America/New_York | 29 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-02-27 00:00:00 America/New_York | 2017-02-28 00:00:00 America/New_York | 30 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-03-01 00:00:00 America/New_York | 2017-03-02 00:00:00 America/New_York | 31 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+... 19 events omitted ...
+2017-05-08 00:00:00 America/New_York | 2017-05-09 00:00:00 America/New_York | 51 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-05-10 00:00:00 America/New_York | 2017-05-11 00:00:00 America/New_York | 52 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-05-12 00:00:00 America/New_York | 2017-05-13 00:00:00 America/New_York | 53 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-05-16 00:00:00 America/New_York | 2017-05-17 00:00:00 America/New_York | 54 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-05-18 00:00:00 America/New_York | 2017-05-19 00:00:00 America/New_York | 55 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-05-22 00:00:00 America/New_York | 2017-05-23 00:00:00 America/New_York | 56 | - | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-05-24 00:00:00 America/New_York | 2017-05-25 00:00:00 America/New_York | - | 20170524 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-05-31 00:00:00 America/New_York | 2017-06-01 00:00:00 America/New_York | - | 20170530 | h9i3hjtisl53goaljdcdb681fc@google.com | B
+2017-06-01 00:00:00 America/New_York | 2017-06-02 00:00:00 America/New_York | - | 20170526 | h9i3hjtisl53goaljdcdb681fc@google.com | A
+2017-06-02 00:00:00 America/New_York | 2017-06-03 00:00:00 America/New_York | - | 20170601 | h9i3hjtisl53goaljdcdb681fc@google.com | B

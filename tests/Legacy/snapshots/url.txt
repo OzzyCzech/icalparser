@@ -1,0 +1,52 @@
+# data
+{
+    "VERSION": "2.0",
+    "X-WR-CALNAME": "URL",
+    "CALSCALE": "GREGORIAN",
+    "VTIMEZONE": [
+        {
+            "TZID": "Europe/Berlin",
+            "TZURL": "http://tzurl.org/zoneinfo-outlook/Europe/Berlin",
+            "X-LIC-LOCATION": "Europe/Berlin"
+        }
+    ],
+    "DAYLIGHT": [
+        {
+            "TZOFFSETFROM": "+0100",
+            "TZOFFSETTO": "+0200",
+            "TZNAME": "CEST",
+            "DTSTART": "1970-03-29 02:00:00 Europe/Berlin",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "3",
+                "BYDAY": "-1SU"
+            }
+        }
+    ],
+    "STANDARD": [
+        {
+            "TZOFFSETFROM": "+0200",
+            "TZOFFSETTO": "+0100",
+            "TZNAME": "CET",
+            "DTSTART": "1970-10-25 03:00:00 Europe/Berlin",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "10",
+                "BYDAY": "-1SU"
+            }
+        }
+    ],
+    "VEVENT": [
+        {
+            "DTSTAMP": "2019-11-06 09:36:07 Z",
+            "UID": "20191106T093607Z-791992399@marudot.com",
+            "DTSTART": "2019-11-01 00:00:00 Europe/Berlin",
+            "DTEND": "2019-11-02 00:00:00 Europe/Berlin",
+            "SUMMARY": "Example event",
+            "URL": "https%3A%2F%2Fgithub.com%2FOzzyCzech%2Ficalparser%2F"
+        }
+    ]
+}
+
+# events: 1, md5 47c07f396648d89db1097ba843ef2d8a
+2019-11-01 00:00:00 Europe/Berlin | 2019-11-02 00:00:00 Europe/Berlin | - | - | 20191106T093607Z-791992399@marudot.com | Example event

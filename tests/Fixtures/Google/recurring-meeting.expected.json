@@ -1,0 +1,49 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "name": "Work",
+            "method": "PUBLISH",
+            "timezone": "Europe/Prague",
+            "timezones": [
+                "Europe/Prague => Europe/Prague (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "4h1k2j3l4k5j6h7g8f9d0s@google.com",
+                    "summary": "Standup",
+                    "start": "2026-01-05 09:30:00 +01:00 (Europe/Prague = Europe/Prague)",
+                    "end": "2026-01-05 10:00:00 +01:00 (Europe/Prague = Europe/Prague)",
+                    "rrules": [
+                        "FREQ=WEEKLY;UNTIL=20260330T073000Z;BYDAY=MO,WE"
+                    ],
+                    "overrides": 1,
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "jana@example.com REQ-PARTICIPANT/ACCEPTED",
+                        "petr@example.com REQ-PARTICIPANT/NEEDS-ACTION"
+                    ],
+                    "alarms": [
+                        "DISPLAY -PT10M"
+                    ],
+                    "x-properties": [
+                        "X-GOOGLE-CONFERENCE"
+                    ],
+                    "occurrences": [
+                        "2026-01-05 09:30:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-05 10:00:00 +01:00 (Europe/Prague = Europe/Prague)",
+                        "2026-01-07 09:30:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-07 10:00:00 +01:00 (Europe/Prague = Europe/Prague)",
+                        "2026-01-12 09:30:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-12 10:00:00 +01:00 (Europe/Prague = Europe/Prague)",
+                        "2026-01-14 11:00:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-14 11:30:00 +01:00 (Europe/Prague = Europe/Prague) [Standup (moved)]",
+                        "2026-01-19 09:30:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-19 10:00:00 +01:00 (Europe/Prague = Europe/Prague)",
+                        "2026-01-21 09:30:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-21 10:00:00 +01:00 (Europe/Prague = Europe/Prague)",
+                        "2026-01-26 09:30:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-26 10:00:00 +01:00 (Europe/Prague = Europe/Prague)",
+                        "2026-01-28 09:30:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-28 10:00:00 +01:00 (Europe/Prague = Europe/Prague)",
+                        "2026-02-02 09:30:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-02-02 10:00:00 +01:00 (Europe/Prague = Europe/Prague)",
+                        "2026-02-04 09:30:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-02-04 10:00:00 +01:00 (Europe/Prague = Europe/Prague)"
+                    ]
+                }
+            ]
+        }
+    ]
+}

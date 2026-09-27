@@ -1,0 +1,34 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+    ],
+    "calendars": [
+        {
+            "name": "calmozilla1@gmail.com",
+            "timezone": "America/Los_Angeles",
+            "timezones": [
+                "America/Los_Angeles => America/Los_Angeles (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "summary": "Every day recurring",
+                    "start": "2023-01-31 05:00:00 -08:00 (America/Los_Angeles = America/Los_Angeles)",
+                    "end": "2023-01-31 06:00:00 -08:00 (America/Los_Angeles = America/Los_Angeles)",
+                    "rrules": [
+                        "FREQ=WEEKLY;UNTIL=20230228T090000;INTERVAL=2;BYDAY=TU"
+                    ],
+                    "occurrences": [
+                        "2023-01-31 05:00:00 -08:00 (America/Los_Angeles = America/Los_Angeles) – 2023-01-31 06:00:00 -08:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2023-02-14 05:00:00 -08:00 (America/Los_Angeles = America/Los_Angeles) – 2023-02-14 06:00:00 -08:00 (America/Los_Angeles = America/Los_Angeles)",
+                        "2023-02-28 05:00:00 -08:00 (America/Los_Angeles = America/Los_Angeles) – 2023-02-28 06:00:00 -08:00 (America/Los_Angeles = America/Los_Angeles)"
+                    ]
+                }
+            ],
+            "issues": [
+                "ERROR VEVENT.UID: UID is required. [component.missing-property]",
+                "ERROR VEVENT.RRULE (line 28): UNTIL must have the value type of DTSTART (UTC for zoned times). [recurrence.until-type]"
+            ]
+        }
+    ]
+}

@@ -1,4 +1,13 @@
 .idea
 composer.lock
 /vendor/
-tests/output/
+tests/**/output/
+/docs/modernization.md
+coverage.html
+.php-cs-fixer.cache
+/.venv/
+/website/node_modules/
+/website/dist/
+/website/.astro/
+/website/src/content/docs/
+/website/public/api/

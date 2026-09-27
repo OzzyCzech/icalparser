@@ -1,0 +1,64 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "name": "Calendar",
+            "method": "PUBLISH",
+            "timezones": [
+                "Central Europe Standard Time => Europe/Budapest (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "040000008200E00074C5B7101A82E00800000000C0D1E2F3A4B5C6010000000000000000100000001234567890ABCDEF1234567890ABCDEF",
+                    "summary": "Monthly review",
+                    "start": "2026-01-30 10:00:00 +01:00 (Central Europe Standard Time = Europe/Budapest)",
+                    "end": "2026-01-30 11:00:00 +01:00 (Central Europe Standard Time = Europe/Budapest)",
+                    "rrules": [
+                        "FREQ=MONTHLY;UNTIL=20261231T090000Z;BYDAY=-1FR"
+                    ],
+                    "status": "CONFIRMED",
+                    "alarms": [
+                        "DISPLAY -PT15M"
+                    ],
+                    "x-properties": [
+                        "X-MICROSOFT-CDO-APPT-SEQUENCE",
+                        "X-MICROSOFT-CDO-BUSYSTATUS",
+                        "X-MICROSOFT-CDO-INTENDEDSTATUS",
+                        "X-MICROSOFT-CDO-ALLDAYEVENT",
+                        "X-MICROSOFT-CDO-IMPORTANCE",
+                        "X-MICROSOFT-CDO-INSTTYPE",
+                        "X-MICROSOFT-DONOTFORWARDMEETING",
+                        "X-MICROSOFT-DISALLOW-COUNTER"
+                    ],
+                    "occurrences": [
+                        "2026-01-30 10:00:00 +01:00 (Central Europe Standard Time = Europe/Budapest) – 2026-01-30 11:00:00 +01:00 (Central Europe Standard Time = Europe/Budapest)",
+                        "2026-02-27 10:00:00 +01:00 (Central Europe Standard Time = Europe/Budapest) – 2026-02-27 11:00:00 +01:00 (Central Europe Standard Time = Europe/Budapest)",
+                        "2026-05-29 10:00:00 +02:00 (Central Europe Standard Time = Europe/Budapest) – 2026-05-29 11:00:00 +02:00 (Central Europe Standard Time = Europe/Budapest)",
+                        "2026-06-26 10:00:00 +02:00 (Central Europe Standard Time = Europe/Budapest) – 2026-06-26 11:00:00 +02:00 (Central Europe Standard Time = Europe/Budapest)",
+                        "2026-07-31 10:00:00 +02:00 (Central Europe Standard Time = Europe/Budapest) – 2026-07-31 11:00:00 +02:00 (Central Europe Standard Time = Europe/Budapest)",
+                        "2026-08-28 10:00:00 +02:00 (Central Europe Standard Time = Europe/Budapest) – 2026-08-28 11:00:00 +02:00 (Central Europe Standard Time = Europe/Budapest)",
+                        "2026-09-25 10:00:00 +02:00 (Central Europe Standard Time = Europe/Budapest) – 2026-09-25 11:00:00 +02:00 (Central Europe Standard Time = Europe/Budapest)",
+                        "2026-10-30 10:00:00 +01:00 (Central Europe Standard Time = Europe/Budapest) – 2026-10-30 11:00:00 +01:00 (Central Europe Standard Time = Europe/Budapest)",
+                        "2026-11-27 10:00:00 +01:00 (Central Europe Standard Time = Europe/Budapest) – 2026-11-27 11:00:00 +01:00 (Central Europe Standard Time = Europe/Budapest)",
+                        "2026-12-25 10:00:00 +01:00 (Central Europe Standard Time = Europe/Budapest) – 2026-12-25 11:00:00 +01:00 (Central Europe Standard Time = Europe/Budapest)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "040000008200E00074C5B7101A82E0080000000000A1B2C3D4E5F6",
+                    "summary": "Company holiday",
+                    "start": "2026-05-01 (date)",
+                    "end": "2026-05-02 (date)",
+                    "x-properties": [
+                        "X-MICROSOFT-CDO-BUSYSTATUS",
+                        "X-MICROSOFT-CDO-ALLDAYEVENT"
+                    ],
+                    "occurrences": [
+                        "2026-05-01 (date) – 2026-05-02 (date)"
+                    ]
+                }
+            ]
+        }
+    ]
+}

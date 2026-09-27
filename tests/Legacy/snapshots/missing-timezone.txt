@@ -1,0 +1,55 @@
+# data
+{
+    "PRODID": "-//Airbnb Inc//Hosting Calendar 0.8.8//EN",
+    "CALSCALE": "GREGORIAN",
+    "VERSION": "2.0",
+    "VEVENT": [
+        {
+            "DTEND": "2022-05-20 00:00:00 UTC",
+            "DTSTART": "2022-04-12 00:00:00 UTC",
+            "UID": "1418fdfasfdasdfsad@airbnb.com",
+            "DESCRIPTION": "Reservation URL: https://www.airbnb.com/hosting/reservations/details/HMQHSAR9SE\nPhone Number (Last 4 Digits): 0431",
+            "SUMMARY": "Reserved"
+        },
+        {
+            "DTEND": "2022-06-20 00:00:00 UTC",
+            "DTSTART": "2022-06-17 00:00:00 UTC",
+            "UID": "1418fb94e984-dfasdfasdfsdfsdfsd@airbnb.com",
+            "DESCRIPTION": "Reservation URL: https://www.airbnb.com/hosting/reservations/details/HMWQXYQSM4\nPhone Number (Last 4 Digits): 2360",
+            "SUMMARY": "Reserved"
+        },
+        {
+            "DTEND": "2022-06-28 00:00:00 UTC",
+            "DTSTART": "2022-06-25 00:00:00 UTC",
+            "UID": "1418fb94e984-dafdfdfadfdfadsfasdafsd@airbnb.com",
+            "DESCRIPTION": "Reservation URL: https://www.airbnb.com/hosting/reservations/details/HM49HZXKQT\nPhone Number (Last 4 Digits): 1537",
+            "SUMMARY": "Reserved"
+        },
+        {
+            "DTEND": "2022-07-24 00:00:00 UTC",
+            "DTSTART": "2022-07-23 00:00:00 UTC",
+            "UID": "6fec1092d3fa-afdfasdfdsfasdfasdfsdfasd@airbnb.com",
+            "SUMMARY": "Airbnb (Not available)"
+        },
+        {
+            "DTEND": "2022-08-07 00:00:00 UTC",
+            "DTSTART": "2022-07-25 00:00:00 UTC",
+            "UID": "6fec1092d3fa-afdfsdfsdfasdfadsfsfs@airbnb.com",
+            "SUMMARY": "Airbnb (Not available)"
+        },
+        {
+            "DTEND": "2023-05-12 00:00:00 UTC",
+            "DTSTART": "2022-11-07 00:00:00 UTC",
+            "UID": "6fec1092d3fa-afdafdsafsdfdfsdfsd@airbnb.com",
+            "SUMMARY": "Airbnb (Not available)"
+        }
+    ]
+}
+
+# events: 6, md5 db0e776368aa617c209ee0a6e3ef4914
+2022-04-12 00:00:00 UTC | 2022-05-20 00:00:00 UTC | - | - | 1418fdfasfdasdfsad@airbnb.com | Reserved
+2022-06-17 00:00:00 UTC | 2022-06-20 00:00:00 UTC | - | - | 1418fb94e984-dfasdfasdfsdfsdfsd@airbnb.com | Reserved
+2022-06-25 00:00:00 UTC | 2022-06-28 00:00:00 UTC | - | - | 1418fb94e984-dafdfdfadfdfadsfasdafsd@airbnb.com | Reserved
+2022-07-23 00:00:00 UTC | 2022-07-24 00:00:00 UTC | - | - | 6fec1092d3fa-afdfasdfdsfasdfasdfsdfasd@airbnb.com | Airbnb (Not available)
+2022-07-25 00:00:00 UTC | 2022-08-07 00:00:00 UTC | - | - | 6fec1092d3fa-afdfsdfsdfasdfadsfsfs@airbnb.com | Airbnb (Not available)
+2022-11-07 00:00:00 UTC | 2023-05-12 00:00:00 UTC | - | - | 6fec1092d3fa-afdafdsafsdfdfsdfsd@airbnb.com | Airbnb (Not available)

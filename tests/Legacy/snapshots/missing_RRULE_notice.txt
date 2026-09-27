@@ -1,0 +1,68 @@
+# data
+{
+    "VERSION": "2.0",
+    "X-WR-CALNAME": "URL",
+    "CALSCALE": "GREGORIAN",
+    "VTIMEZONE": [
+        {
+            "TZID": "Europe/Berlin",
+            "TZURL": "http://tzurl.org/zoneinfo-outlook/Europe/Berlin",
+            "X-LIC-LOCATION": "Europe/Berlin"
+        }
+    ],
+    "DAYLIGHT": [
+        {
+            "TZOFFSETFROM": "+0100",
+            "TZOFFSETTO": "+0200",
+            "TZNAME": "CEST",
+            "DTSTART": "1970-03-29 02:00:00 Europe/Berlin",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "3",
+                "BYDAY": "-1SU"
+            }
+        }
+    ],
+    "STANDARD": [
+        {
+            "TZOFFSETFROM": "+0200",
+            "TZOFFSETTO": "+0100",
+            "TZNAME": "CET",
+            "DTSTART": "1970-10-25 03:00:00 Europe/Berlin",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "10",
+                "BYDAY": "-1SU"
+            }
+        }
+    ],
+    "VEVENT": [
+        {
+            "UID": "111",
+            "DTSTAMP": "2018-11-23 19:26:51 Z",
+            "CATEGORIES": [
+                "Party"
+            ],
+            "CONTACT": "",
+            "DESCRIPTION": "xxx",
+            "DTSTART": "2016-04-15 21:00:00 Europe/Berlin",
+            "DTEND": "2016-04-16 04:00:00 Europe/Berlin",
+            "LOCATION": "xxx",
+            "RDATES": [
+                "2016-12-16 21:00:00 Europe/Berlin",
+                "2016-12-23 21:00:00 Europe/Berlin",
+                "2016-12-30 21:00:00 Europe/Berlin"
+            ],
+            "RDATE": "2016-12-30 21:00:00 Europe/Berlin",
+            "SEQUENCE": "0",
+            "SUMMARY": "xxx",
+            "RECURRENCES": "4 dates"
+        }
+    ]
+}
+
+# events: 4, md5 763bff94628ee25df565b0987c8c0571
+2016-04-15 21:00:00 Europe/Berlin | 2016-04-16 04:00:00 Europe/Berlin | 0 | - | 111 | xxx
+2016-12-16 21:00:00 Europe/Berlin | 2016-12-17 04:00:00 Europe/Berlin | 1 | - | 111 | xxx
+2016-12-23 21:00:00 Europe/Berlin | 2016-12-24 04:00:00 Europe/Berlin | 2 | - | 111 | xxx
+2016-12-30 21:00:00 Europe/Berlin | 2016-12-31 04:00:00 Europe/Berlin | 3 | - | 111 | xxx

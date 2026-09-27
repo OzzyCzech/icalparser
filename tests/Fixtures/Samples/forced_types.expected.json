@@ -1,0 +1,34 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+    ],
+    "calendars": [
+        {
+            "name": "calmozilla1@gmail.com",
+            "timezone": "America/Los_Angeles",
+            "timezones": [
+                "America/Los_Angeles => America/Los_Angeles (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "redgrb1l0aju5edm6h0s102eu4@google.com",
+                    "summary": "Event",
+                    "start": "2012-09-04 (date)",
+                    "end": "2012-09-05 (date)",
+                    "status": "CONFIRMED",
+                    "alarms": [
+                        "EMAIL 2012-09-03 23:30:00 UTC",
+                        "DISPLAY -"
+                    ],
+                    "occurrences": [
+                        "2012-09-04 (date) – 2012-09-05 (date)"
+                    ]
+                }
+            ],
+            "issues": [
+                "ERROR VALARM.TRIGGER: TRIGGER is required. [component.missing-property]"
+            ]
+        }
+    ]
+}

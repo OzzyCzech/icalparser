@@ -10,9 +10,11 @@ use ArrayObject;
  *
  * @license BSD-3-Clause
  * @author Roman Ožana <roman@ozana.cz>
+ * @extends ArrayObject<int, array<string, mixed>>
+ *
+ * @deprecated 5.0, removed in 5.5 at the latest; use om\ICal\Calendar::events() and occurrencesBetween(), see UPGRADING.md
  */
 class EventsList extends ArrayObject {
-
 	/**
 	 * Return array of Events
 	 */
@@ -21,57 +23,42 @@ class EventsList extends ArrayObject {
 	}
 
 	/**
-	 * Return sorted EventList (the newest dates are first)
+	 * Sort in place, oldest dates first. Missing dates sort last.
 	 */
 	public function sorted(): EventsList {
-		$this->uasort($this->comparator(true));
-
-		return $this;
+		return $this->sortByStart(true);
 	}
 
 	/**
-	 * Return reversed sorted EventList (the oldest dates are first)
+	 * Sort in place, newest dates first. Missing dates sort last.
 	 */
 	public function reversed(): EventsList {
-		$this->uasort($this->comparator(false));
-
-		return $this;
+		return $this->sortByStart(false);
 	}
 
 	/**
-	 * Return a comparator callable for DTSTART values.
-	 * @param bool $ascending When true, sorts ascending (older first) like the original implementation; false inverts order.
+	 * Stable sort by DTSTART; each timestamp is calculated only once.
 	 */
-	private function comparator(bool $ascending): callable {
-		return function ($a, $b) use ($ascending): int {
-			$ad = $a['DTSTART'] ?? null;
-			$bd = $b['DTSTART'] ?? null;
-
-			// both equal (including both null)
-			if ($ad === $bd) {
-				return 0;
+	private function sortByStart(bool $ascending): EventsList {
+		$events = parent::getArrayCopy();
+		$timestamps = [];
+		$undated = [];
+		foreach ($events as $key => $event) {
+			$start = $event['DTSTART'] ?? null;
+			if ($start === null) {
+				$undated[] = $key;
+			} else {
+				$timestamps[$key] = $this->dtTimestamp($start);
 			}
+		}
+		$ascending ? asort($timestamps, SORT_NUMERIC) : arsort($timestamps, SORT_NUMERIC);
 
-			// decide ordering for nulls: nulls sort last
-			if ($ad === null) {
-				return 1;
-			}
-			if ($bd === null) {
-				return -1;
-			}
-
-			$at = $this->dtTimestamp($ad);
-			$bt = $this->dtTimestamp($bd);
-
-			if ($at === $bt) {
-				return 0;
-			}
-
-			if ($ascending) {
-				return ($at < $bt) ? -1 : 1;
-			}
-			return ($at > $bt) ? -1 : 1;
-		};
+		$sorted = [];
+		foreach ([...array_keys($timestamps), ...$undated] as $key) {
+			$sorted[$key] = $events[$key];
+		}
+		$this->exchangeArray($sorted);
+		return $this;
 	}
 
 	/**

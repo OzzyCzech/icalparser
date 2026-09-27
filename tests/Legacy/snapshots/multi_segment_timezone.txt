@@ -1,0 +1,22 @@
+# data
+{
+    "VERSION": "2.0",
+    "PRODID": "-//Test//Test//EN",
+    "X-WR-TIMEZONE": "America/Argentina/Buenos_Aires",
+    "VEVENT": [
+        {
+            "DTSTART": "2024-01-01 12:00:00 America/Indiana/Indianapolis",
+            "DTEND": "2024-01-01 13:00:00 America/Indiana/Indianapolis",
+            "SUMMARY": "Test event"
+        },
+        {
+            "DTSTART": "2024-02-01 12:00:00 America/Argentina/Buenos_Aires",
+            "DTEND": "2024-02-01 13:00:00 America/Argentina/Buenos_Aires",
+            "SUMMARY": "Test event with invalid timezone"
+        }
+    ]
+}
+
+# events: 2, md5 74bf3f4c507ae3eabc74db8f471977fc
+2024-01-01 12:00:00 America/Indiana/Indianapolis | 2024-01-01 13:00:00 America/Indiana/Indianapolis | - | - | - | Test event
+2024-02-01 12:00:00 America/Argentina/Buenos_Aires | 2024-02-01 13:00:00 America/Argentina/Buenos_Aires | - | - | - | Test event with invalid timezone

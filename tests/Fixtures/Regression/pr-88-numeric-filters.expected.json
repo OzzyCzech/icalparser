@@ -1,0 +1,24 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "padded",
+                    "summary": "Padded numbers",
+                    "start": "2026-01-01 09:00:00 UTC",
+                    "end": "2026-01-01 09:00:00 UTC",
+                    "rrules": [
+                        "FREQ=DAILY;COUNT=3;BYHOUR=9;BYMONTHDAY=1,2,3;BYMONTH=1"
+                    ],
+                    "occurrences": [
+                        "2026-01-01 09:00:00 UTC – 2026-01-01 09:00:00 UTC",
+                        "2026-01-02 09:00:00 UTC – 2026-01-02 09:00:00 UTC",
+                        "2026-01-03 09:00:00 UTC – 2026-01-03 09:00:00 UTC"
+                    ]
+                }
+            ]
+        }
+    ]
+}

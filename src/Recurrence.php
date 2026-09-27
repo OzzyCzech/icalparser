@@ -18,9 +18,11 @@ use Exception;
  * @author Steven Oxley
  * @author Michael Kahn (C) 2013
  * @license http://creativecommons.org/licenses/by-sa/2.5/dk/deed.en_GB CC-BY-SA-DK
+ *
+ * @deprecated 5.0, removed in 5.5 at the latest; use om\RRule\Rule, see UPGRADING.md
  */
 class Recurrence {
-
+	/** @var array<string, mixed> */
 	public array $rrule;
 	protected mixed $freq;
 	protected mixed $until;
@@ -39,6 +41,7 @@ class Recurrence {
 	/**
 	 * A list of the properties that can have comma-separated lists for values.
 	 */
+	/** @var list<string> */
 	protected array $listProperties = [
 		'bysecond', 'byminute', 'byhour', 'byday', 'bymonthday',
 		'byyearday', 'byweekno', 'bymonth', 'bysetpos',
@@ -49,6 +52,7 @@ class Recurrence {
 	 *
 	 * @param array $rrule an om\icalparser row array which will be parsed to get the
 	 * desired information.
+	 * @param array<string, mixed> $rrule
 	 */
 	public function __construct(array $rrule) {
 		$this->parseRrule($rrule);
@@ -57,6 +61,8 @@ class Recurrence {
 	/**
 	 * Parses an 'RRULE' array and sets the member variables of this object.
 	 * Expects a string that looks like this:  'FREQ=WEEKLY;INTERVAL=2;BYDAY=SU,TU,WE'
+	 *
+	 * @param array<string, mixed> $rrule
 	 */
 	protected function parseRrule(array $rrule): void {
 		$this->rrule = $rrule;
@@ -65,6 +71,11 @@ class Recurrence {
 		foreach ($this->rrule as $propertyName => $propertyValue) {
 			//need the lower-case name for setting the member variable
 			$propertyName = strtolower($propertyName);
+			// Preserve extensions in rrule without creating dynamic object properties.
+			if (!in_array($propertyName, ['freq', 'until', 'count', 'interval', 'wkst'], true)
+				&& !in_array($propertyName, $this->listProperties, true)) {
+				continue;
+			}
 			//split up the list of values into an array (if it's a list)
 			if (in_array($propertyName, $this->listProperties, true)) {
 				$propertyValue = explode(',', $propertyValue);

@@ -1,0 +1,63 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]",
+        "line 8: Invalid content line was ignored: this line is garbage [syntax.invalid-line]",
+        "line 9: Invalid content line was ignored: X-BEFORE-END;PARAM=\"unterminated:value [syntax.invalid-line]",
+        "line 12: END:VALARM is missing, the component was closed. [syntax.missing-end]",
+        "line 21: END:VTODO without BEGIN:VTODO was ignored. [syntax.unexpected-end]",
+        "END:VEVENT is missing at the end of the input, the component was closed. [syntax.missing-end]",
+        "END:VCALENDAR is missing at the end of the input, the component was closed. [syntax.missing-end]",
+        "line 15: Invalid DATE-TIME value: 2026-01-06 in DTSTART, it was ignored. [value.invalid]",
+        "line 16: Unknown timezone \"Mars/Olympus\", its times are floating. [timezone.unresolved]",
+        "line 17: INTERVAL must be a positive integer. The RRULE was ignored. [value.invalid]",
+        "line 18: Invalid DURATION value in DURATION, it was ignored. [value.invalid]"
+    ],
+    "calendars": [
+        {
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "broken-1",
+                    "summary": "Lower case names",
+                    "start": "2026-01-05 10:00:00 UTC",
+                    "end": "2026-01-05 10:00:00 UTC",
+                    "alarms": [
+                        "DISPLAY -"
+                    ],
+                    "occurrences": [
+                        "2026-01-05 10:00:00 UTC – 2026-01-05 10:00:00 UTC"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "broken-2",
+                    "summary": "Invalid values"
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "broken-3",
+                    "summary": "Missing END at the end of the file",
+                    "start": "2026-01-07 (date)",
+                    "end": "2026-01-08 (date)",
+                    "occurrences": [
+                        "2026-01-07 (date) – 2026-01-08 (date)"
+                    ]
+                }
+            ],
+            "issues": [
+                "ERROR VEVENT.DTSTAMP: DTSTAMP is required. [component.missing-property]",
+                "ERROR VALARM.TRIGGER: TRIGGER is required. [component.missing-property]",
+                "ERROR VEVENT.DTSTAMP: DTSTAMP is required. [component.missing-property]",
+                "ERROR VEVENT.DTSTART (line 16): DTSTART must not occur more than once. [component.duplicate-property]",
+                "ERROR VEVENT.DTSTART (line 15): Invalid value \"2026-01-06\". [value.invalid]",
+                "WARNING VEVENT.DTSTART (line 16): TZID \"Mars/Olympus\" has no VTIMEZONE definition. [timezone.not-defined]",
+                "WARNING VEVENT.DTSTART (line 16): TZID \"Mars/Olympus\" cannot be resolved, its times are floating. [timezone.unresolved]",
+                "ERROR VEVENT.RRULE (line 17): Invalid value \"FREQ=DAILY;INTERVAL=0\". [value.invalid]",
+                "ERROR VEVENT.DURATION (line 18): Invalid value \"1 hour\". [value.invalid]",
+                "ERROR VEVENT.DURATION (line 18): DURATION requires DTSTART. [component.duration-without-start]",
+                "ERROR VEVENT.RRULE: A recurring component requires DTSTART. [recurrence.without-start]",
+                "ERROR VEVENT.DTSTAMP: DTSTAMP is required. [component.missing-property]"
+            ]
+        }
+    ]
+}

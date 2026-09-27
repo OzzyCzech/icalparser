@@ -1,0 +1,168 @@
+# data
+{
+    "PRODID": "-//Google Inc//Google Calendar 70.9054//EN",
+    "VERSION": "2.0",
+    "CALSCALE": "GREGORIAN",
+    "METHOD": "PUBLISH",
+    "X-WR-CALNAME": "Office Opening Hours",
+    "X-WR-TIMEZONE": "Europe/London",
+    "VTIMEZONE": [
+        {
+            "TZID": "Europe/London",
+            "X-LIC-LOCATION": "Europe/London"
+        }
+    ],
+    "DAYLIGHT": [
+        {
+            "TZOFFSETFROM": "+0000",
+            "TZOFFSETTO": "+0100",
+            "TZNAME": "BST",
+            "DTSTART": "1970-03-29 01:00:00 Europe/London",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "3",
+                "BYDAY": "-1SU"
+            }
+        }
+    ],
+    "STANDARD": [
+        {
+            "TZOFFSETFROM": "+0100",
+            "TZOFFSETTO": "+0000",
+            "TZNAME": "GMT",
+            "DTSTART": "1970-10-25 02:00:00 Europe/London",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "10",
+                "BYDAY": "-1SU"
+            }
+        }
+    ],
+    "VEVENT": [
+        {
+            "DTSTART": "2019-04-01 09:00:00 Europe/London",
+            "DTEND": "2019-04-01 17:00:00 Europe/London",
+            "RRULE": {
+                "FREQ": "WEEKLY",
+                "WKST": "SU",
+                "BYDAY": "MO,TU,WE,TH,FR"
+            },
+            "DTSTAMP": "2019-04-02 17:45:36 Z",
+            "UID": "1nibcosj8r05bjoia671im7ulg@google.com",
+            "CREATED": "2019-04-01 14:48:32 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2019-04-01 14:50:24 Z",
+            "LOCATION": "",
+            "SEQUENCE": "0",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "Office Opening Hours",
+            "TRANSP": "OPAQUE",
+            "RECURRENCES": "2545 dates"
+        },
+        {
+            "DTSTART": "2019-02-25 09:00:00 Europe/London",
+            "DTEND": "2019-02-25 17:00:00 Europe/London",
+            "RRULE": {
+                "FREQ": "WEEKLY",
+                "WKST": "SU",
+                "UNTIL": "2019-03-29 23:59:59 Z",
+                "BYDAY": "MO,TU,WE,TH,FR"
+            },
+            "DTSTAMP": "2019-04-02 17:45:36 Z",
+            "UID": "7e581hcu1ub3nm0bb6c4o29suj@google.com",
+            "ATTENDEES": [
+                {
+                    "CUTYPE": "INDIVIDUAL",
+                    "ROLE": "REQ-PARTICIPANT",
+                    "PARTSTAT": "ACCEPTED",
+                    "CN": "Office Opening Hours",
+                    "X-NUM-GUESTS": "0",
+                    "VALUE": "mailto:poweredpasture.com_la2jmsbphe5h11351kkscnnqtg@group.calendar.google.com"
+                }
+            ],
+            "ATTENDEE": "mailto:poweredpasture.com_la2jmsbphe5h11351kkscnnqtg@group.calendar.google.com",
+            "CREATED": "2019-02-27 16:46:30 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2019-04-01 14:47:25 Z",
+            "LOCATION": "",
+            "SEQUENCE": "0",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "Office Opening Hours",
+            "TRANSP": "OPAQUE",
+            "RECURRENCES": "25 dates"
+        }
+    ]
+}
+
+# events: 2570, md5 4e0c99a4a1aa0ab9117e14ba25e0403c
+2019-02-25 09:00:00 Europe/London | 2019-02-25 17:00:00 Europe/London | 0 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-02-26 09:00:00 Europe/London | 2019-02-26 17:00:00 Europe/London | 1 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-02-27 09:00:00 Europe/London | 2019-02-27 17:00:00 Europe/London | 2 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-02-28 09:00:00 Europe/London | 2019-02-28 17:00:00 Europe/London | 3 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-01 09:00:00 Europe/London | 2019-03-01 17:00:00 Europe/London | 4 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-04 09:00:00 Europe/London | 2019-03-04 17:00:00 Europe/London | 5 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-05 09:00:00 Europe/London | 2019-03-05 17:00:00 Europe/London | 6 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-06 09:00:00 Europe/London | 2019-03-06 17:00:00 Europe/London | 7 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-07 09:00:00 Europe/London | 2019-03-07 17:00:00 Europe/London | 8 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-08 09:00:00 Europe/London | 2019-03-08 17:00:00 Europe/London | 9 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-11 09:00:00 Europe/London | 2019-03-11 17:00:00 Europe/London | 10 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-12 09:00:00 Europe/London | 2019-03-12 17:00:00 Europe/London | 11 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-13 09:00:00 Europe/London | 2019-03-13 17:00:00 Europe/London | 12 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-14 09:00:00 Europe/London | 2019-03-14 17:00:00 Europe/London | 13 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-15 09:00:00 Europe/London | 2019-03-15 17:00:00 Europe/London | 14 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-18 09:00:00 Europe/London | 2019-03-18 17:00:00 Europe/London | 15 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-19 09:00:00 Europe/London | 2019-03-19 17:00:00 Europe/London | 16 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-20 09:00:00 Europe/London | 2019-03-20 17:00:00 Europe/London | 17 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-21 09:00:00 Europe/London | 2019-03-21 17:00:00 Europe/London | 18 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-22 09:00:00 Europe/London | 2019-03-22 17:00:00 Europe/London | 19 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-25 09:00:00 Europe/London | 2019-03-25 17:00:00 Europe/London | 20 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-26 09:00:00 Europe/London | 2019-03-26 17:00:00 Europe/London | 21 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-27 09:00:00 Europe/London | 2019-03-27 17:00:00 Europe/London | 22 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-28 09:00:00 Europe/London | 2019-03-28 17:00:00 Europe/London | 23 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-03-29 09:00:00 Europe/London | 2019-03-29 17:00:00 Europe/London | 24 | - | 7e581hcu1ub3nm0bb6c4o29suj@google.com | Office Opening Hours
+2019-04-01 09:00:00 Europe/London | 2019-04-01 17:00:00 Europe/London | 0 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-02 09:00:00 Europe/London | 2019-04-02 17:00:00 Europe/London | 1 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-03 09:00:00 Europe/London | 2019-04-03 17:00:00 Europe/London | 2 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-04 09:00:00 Europe/London | 2019-04-04 17:00:00 Europe/London | 3 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-05 09:00:00 Europe/London | 2019-04-05 17:00:00 Europe/London | 4 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-08 09:00:00 Europe/London | 2019-04-08 17:00:00 Europe/London | 5 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-09 09:00:00 Europe/London | 2019-04-09 17:00:00 Europe/London | 6 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-10 09:00:00 Europe/London | 2019-04-10 17:00:00 Europe/London | 7 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-11 09:00:00 Europe/London | 2019-04-11 17:00:00 Europe/London | 8 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-12 09:00:00 Europe/London | 2019-04-12 17:00:00 Europe/London | 9 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-15 09:00:00 Europe/London | 2019-04-15 17:00:00 Europe/London | 10 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-16 09:00:00 Europe/London | 2019-04-16 17:00:00 Europe/London | 11 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-17 09:00:00 Europe/London | 2019-04-17 17:00:00 Europe/London | 12 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-18 09:00:00 Europe/London | 2019-04-18 17:00:00 Europe/London | 13 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-19 09:00:00 Europe/London | 2019-04-19 17:00:00 Europe/London | 14 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-22 09:00:00 Europe/London | 2019-04-22 17:00:00 Europe/London | 15 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-23 09:00:00 Europe/London | 2019-04-23 17:00:00 Europe/London | 16 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-24 09:00:00 Europe/London | 2019-04-24 17:00:00 Europe/London | 17 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-25 09:00:00 Europe/London | 2019-04-25 17:00:00 Europe/London | 18 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-26 09:00:00 Europe/London | 2019-04-26 17:00:00 Europe/London | 19 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-29 09:00:00 Europe/London | 2019-04-29 17:00:00 Europe/London | 20 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-04-30 09:00:00 Europe/London | 2019-04-30 17:00:00 Europe/London | 21 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-05-01 09:00:00 Europe/London | 2019-05-01 17:00:00 Europe/London | 22 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-05-02 09:00:00 Europe/London | 2019-05-02 17:00:00 Europe/London | 23 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-05-03 09:00:00 Europe/London | 2019-05-03 17:00:00 Europe/London | 24 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-05-06 09:00:00 Europe/London | 2019-05-06 17:00:00 Europe/London | 25 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-05-07 09:00:00 Europe/London | 2019-05-07 17:00:00 Europe/London | 26 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-05-08 09:00:00 Europe/London | 2019-05-08 17:00:00 Europe/London | 27 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-05-09 09:00:00 Europe/London | 2019-05-09 17:00:00 Europe/London | 28 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-05-10 09:00:00 Europe/London | 2019-05-10 17:00:00 Europe/London | 29 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-05-13 09:00:00 Europe/London | 2019-05-13 17:00:00 Europe/London | 30 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-05-14 09:00:00 Europe/London | 2019-05-14 17:00:00 Europe/London | 31 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-05-15 09:00:00 Europe/London | 2019-05-15 17:00:00 Europe/London | 32 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-05-16 09:00:00 Europe/London | 2019-05-16 17:00:00 Europe/London | 33 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2019-05-17 09:00:00 Europe/London | 2019-05-17 17:00:00 Europe/London | 34 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+... 2500 events omitted ...
+2028-12-18 09:00:00 Europe/London | 2028-12-18 17:00:00 Europe/London | 2535 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2028-12-19 09:00:00 Europe/London | 2028-12-19 17:00:00 Europe/London | 2536 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2028-12-20 09:00:00 Europe/London | 2028-12-20 17:00:00 Europe/London | 2537 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2028-12-21 09:00:00 Europe/London | 2028-12-21 17:00:00 Europe/London | 2538 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2028-12-22 09:00:00 Europe/London | 2028-12-22 17:00:00 Europe/London | 2539 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2028-12-25 09:00:00 Europe/London | 2028-12-25 17:00:00 Europe/London | 2540 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2028-12-26 09:00:00 Europe/London | 2028-12-26 17:00:00 Europe/London | 2541 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2028-12-27 09:00:00 Europe/London | 2028-12-27 17:00:00 Europe/London | 2542 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2028-12-28 09:00:00 Europe/London | 2028-12-28 17:00:00 Europe/London | 2543 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours
+2028-12-29 09:00:00 Europe/London | 2028-12-29 17:00:00 Europe/London | 2544 | - | 1nibcosj8r05bjoia671im7ulg@google.com | Office Opening Hours

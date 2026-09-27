@@ -6,72 +6,169 @@
 
 # PHP iCal Parser
 
-Internet Calendaring Parser [rfc2445](https://www.ietf.org/rfc/rfc2445.txt) or iCal parser is simple PHP class for parsing format into array.
+A lightweight and robust iCalendar ([RFC 5545](https://www.rfc-editor.org/rfc/rfc5545)) parser for PHP.
+Documentation: [ozzyczech.github.io/icalparser](https://ozzyczech.github.io/icalparser/)
 
-## How to install
+- reads real-world `.ics` files from Google Calendar, Apple Calendar, Outlook, Exchange, Nextcloud, Fastmail and others,
+  repairs damaged files and reports every repair
+- keeps unknown and X- properties, writes calendars back
+- keeps the meaning of dates, floating, UTC and zoned times, resolves Windows timezones and custom VTIMEZONE definitions
+- expands recurring events lazily: the complete RRULE (including BYSETPOS and BYWEEKNO), RDATE, EXDATE and
+  RECURRENCE-ID overrides (moved, cancelled and THISANDFUTURE)
+- safe for untrusted input: strict and permissive mode, resource limits, streaming of large files
 
-The recommended way to is via Composer:
+## Install
 
-```shell script
+```shell
 composer require om/icalparser
 ```
 
-## Usage and example
+## Usage
 
 ```php
-<?php
-use om\IcalParser;
-require_once '../vendor/autoload.php';
+use om\ICal;
 
-$cal = new IcalParser();
-$results = $cal->parseFile(
-	'https://www.google.com/calendar/ical/cs.czech%23holiday%40group.v.calendar.google.com/public/basic.ics'
-);
+$calendar = ICal::parseFile('calendar.ics'); // or ICal::parse($content)
 
-foreach ($cal->getEvents()->sorted() as $event) {
-	printf('%s - %s' . PHP_EOL, $event['DTSTART']->format('j.n.Y'), $event['SUMMARY']);
-	
+foreach ($calendar->events() as $event) {
+	echo $event->summary(), ' ', $event->start()?->format('Y-m-d H:i'), PHP_EOL;
+}
+
+// every instance of every event in a period, sorted, with moved and cancelled instances applied
+$from = new DateTimeImmutable('2026-01-01');
+$to = new DateTimeImmutable('2026-02-01');
+foreach ($calendar->occurrencesBetween($from, $to) as $occurrence) {
+	// the local time; ->startTime($timezone) gives an instant (see "Dates and times")
+	printf("%s %s%s\n", $occurrence->start->format('j. n. H:i'), $occurrence->summary(), $occurrence->isModified() ? ' (changed)' : '');
 }
 ```
 
-Each property of each event is available using the property name (in capital letters) as a key. 
-There are some special cases:
+Events, tasks (`todos()`), journal entries (`journals()`) and free/busy components (`freeBusy()`) have typed getters:
+`uid()`, `summary()`, `description()`, `location()`, `start()`, `end()`, `duration()`, `status()`, `categories()`,
+`organizer()`, `attendees()`, `alarms()`, `recurrenceRule()` and more. Any property, including unknown ones, is available too:
 
-- multiple attendees with individual parameters: use `ATTENDEES` as key to get all attendees in the following scheme:
 ```php
-[
-	[
-		'ROLE' => 'REQ-PARTICIPANT',
-		'PARTSTAT' => 'NEEDS-ACTION',
-		'CN' => 'John Doe',
-		'VALUE' => 'mailto:john.doe@example.org'
-	],
-	[
-		'ROLE' => 'REQ-PARTICIPANT',
-		'PARTSTAT' => 'NEEDS-ACTION',
-		'CN' => 'Test Example',
-		'VALUE' => 'mailto:test@example.org'
-	]
-]
+$event->property('X-APPLE-STRUCTURED-LOCATION')?->parameter('X-TITLE');
+$event->value('X-MICROSOFT-CDO-BUSYSTATUS'); // typed value, see docs/values.md
 ```
-- organizer's name: the *CN* parameter of the organizer property can be retrieved using the key `ORGANIZER-CN`
 
-You can run example with [PHP Built-in web server](https://www.php.net/manual/en/features.commandline.webserver.php) as follow:
+### Dates and times
+
+`start()`, `end()` and the occurrences return `DateTimeValue`, which keeps the difference between
+`20261010` (a date), `20261010T100000` (floating), `20261010T100000Z` (UTC) and `TZID=Europe/Prague:20261010T100000` (zoned).
+Floating times and dates are never converted with the PHP default timezone:
+
+```php
+$start = $event->start();
+$start->format('Y-m-d H:i');                           // the local value, always
+$start->toDateTime();                                  // the instant; needs a timezone for dates and floating times
+$start->toDateTime(new DateTimeZone('Europe/Prague')); // in a given timezone
+$start->isDate(); $start->isFloating(); $start->isUtc(); $start->isZoned();
+```
+
+The timezone of dates and floating times is X-WR-TIMEZONE of the calendar or the one configured with
+`ICal::parser()->floatingTimezone(...)`. See [values and timezones](docs/values.md).
+
+### Recurring events
+
+```php
+foreach ($event->occurrencesBetween($from, $to) as $occurrence) { /* ... */ }
+foreach ($event->occurrences(limit: 10) as $occurrence) { /* ... */ }
+```
+
+Occurrences are generated lazily and only for a window or up to a limit; there is no unlimited expansion.
+The recurrence engine can be used on its own:
+
+```php
+use om\RRule\Expander;
+use om\RRule\Rule;
+
+$rule = Rule::fromString('FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1;COUNT=3'); // the last workday
+foreach (new Expander($rule, new DateTimeImmutable('2026-01-30 09:00', new DateTimeZone('Europe/Prague'))) as $timestamp) {
+	echo date('Y-m-d', $timestamp), PHP_EOL;
+}
+```
+
+See [recurrence](docs/recurrence.md).
+
+### Strict and permissive parsing
+
+```php
+use om\ICal\Parser\ParserMode;
+
+$result = ICal::parser()->mode(ParserMode::Permissive)->parseFile('feed.ics');
+$calendar = $result->calendar();
+foreach ($result->warnings() as $warning) {
+	echo $warning, PHP_EOL; // line 12: END:VEVENT is missing, the component was closed. [syntax.missing-end]
+}
+```
+
+The permissive mode (default) repairs damaged files and reports each repair as a warning. The strict mode throws an
+exception with an error code, line, property and raw value. Limits of the input and of recurrence expansion protect
+against pathological files. See [parsing, warnings and limits](docs/parsing.md) and [validation](docs/validation.md).
+
+### Large files
+
+```php
+foreach (ICal::stream('huge.ics') as $item) { // events, tasks, ... one by one, constant memory
+	echo $item->summary(), PHP_EOL;
+}
+```
+
+### Writing
+
+```php
+use om\ICal\Calendar;
+use om\ICal\Component;
+use om\ICal\Property;
+
+$event = new Component('VEVENT', [
+	Property::create('UID', 'meeting-1@example.org'),
+	Property::create('DTSTAMP', '20260101T000000Z'),
+	Property::create('DTSTART', '20260105T093000', ['TZID' => 'Europe/Prague']),
+	Property::create('SUMMARY', 'Standup'),
+]);
+echo Calendar::create()->withComponent($event)->serialize();
+```
+
+Parsed calendars are serialized with all their properties, lines are folded at 75 octets.
+
+## Examples
+
+The [examples](examples) directory contains a web page listing upcoming events of a sample calendar
+(`php -S localhost:8000 -t examples`) and command line scripts for streaming, validation and writing.
+
+## Upgrading from version 4
+
+The array based `IcalParser` of version 4 is still available and deprecated (it will be removed in 5.5 at the latest);
+it keeps its output and fixes many bugs.
+See [UPGRADING.md](UPGRADING.md) and [CHANGELOG.md](CHANGELOG.md).  
+
+## Development
+
+iCal parser uses [Nette Tester](https://github.com/nette/tester), [PHPStan](https://phpstan.org/) and
+[PHP CS Fixer](https://cs.symfony.com/).
 
 ```shell
-php -S localhost:8000 -t example
+composer install
+composer test               # unit tests and tests of the version 4 API
+composer test:integration   # public API, parser modes, golden files of tests/Fixtures
+composer test:fuzz          # corrupted and pathological input
+composer test:differential  # comparison with python-dateutil, see below
+composer analyse            # PHPStan
+composer cs                 # coding standard (cs:fix fixes it)
+composer check              # all of the above except differential tests
 ```
 
-## Requirements
+The differential test needs Python with dateutil and is skipped without it:
+`python3 -m venv .venv && .venv/bin/pip install python-dateutil`, then run it with `ICALPARSER_PYTHON=.venv/bin/python`.
 
-- PHP version see `composer.json`
+The documentation at [ozzyczech.github.io/icalparser](https://ozzyczech.github.io/icalparser/) is built by
+[Starlight](https://starlight.astro.build/) from `docs/*.md`, `UPGRADING.md` and `CHANGELOG.md`, and by
+[ApiGen](https://github.com/ApiGen/ApiGen) from the docblocks of `src/` (`.github/workflows/docs.yml`). Preview it with
+`composer create-project apigen/apigen:dev-master ../apigen --no-dev && php ../apigen/bin/apigen`, then
+`cd website && npm install && npm run dev`.
 
-## Run tests
-
-iCal parser using [Nette Tester](https://github.com/nette/tester). The tests can be invoked via [composer](https://getcomposer.org/).
-
-```shell script
-composer update
-composer test
-```
-
+Every calendar in `tests/Fixtures` has a golden file with the normalized output. After an intended change,
+regenerate them with `UPDATE_SNAPSHOTS=1 composer test:integration` and review the diff. Every bug gets a fixture
+in `tests/Fixtures/Regression` or a test.

@@ -1,0 +1,155 @@
+# data
+{
+    "VERSION": "2.0",
+    "PRODID": "Zimbra-Calendar-Provider",
+    "VTIMEZONE": [
+        {
+            "TZID": "America/Los_Angeles"
+        }
+    ],
+    "STANDARD": [
+        {
+            "DTSTART": "1971-01-01 02:00:00 America/Los_Angeles",
+            "TZOFFSETTO": "-0800",
+            "TZOFFSETFROM": "-0700",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYDAY": "1SU",
+                "BYMONTH": "11"
+            },
+            "TZNAME": "PST"
+        }
+    ],
+    "DAYLIGHT": [
+        {
+            "DTSTART": "1971-01-01 02:00:00 America/Los_Angeles",
+            "TZOFFSETTO": "-0700",
+            "TZOFFSETFROM": "-0800",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYDAY": "2SU",
+                "BYMONTH": "3"
+            },
+            "TZNAME": "PDT"
+        }
+    ],
+    "VEVENT": [
+        {
+            "UID": "44c10eaa-db0b-4223-8653-cf2b63f26326",
+            "RRULE": {
+                "FREQ": "DAILY",
+                "BYDAY": "MO,TU,WE,TH,FR"
+            },
+            "SUMMARY": "Calendar",
+            "DESCRIPTION": "desc",
+            "ATTENDEES": [
+                {
+                    "CN": "XXX",
+                    "ROLE": "REQ-PARTICIPANT",
+                    "PARTSTAT": "ACCEPTED",
+                    "RSVP": "TRUE",
+                    "VALUE": "mailto:foo@bar.com"
+                },
+                {
+                    "CN": "XXXX",
+                    "ROLE": "REQ-PARTICIPANT",
+                    "PARTSTAT": "ACCEPTED",
+                    "RSVP": "TRUE",
+                    "VALUE": "mailto:x@bar.com"
+                }
+            ],
+            "ATTENDEE": "mailto:x@bar.com",
+            "ORGANIZER-CN": "foobar",
+            "ORGANIZER": "mailto:x@bar.com",
+            "DTSTART": "2012-09-11 10:30:00 America/Los_Angeles",
+            "DTEND": "2012-09-11 11:00:00 America/Los_Angeles",
+            "STATUS": "CONFIRMED",
+            "CLASS": "PUBLIC",
+            "TRANSP": "OPAQUE",
+            "LAST-MODIFIED": "2012-09-11 18:48:51 Z",
+            "DTSTAMP": "2012-09-11 18:48:51 Z",
+            "SEQUENCE": "1",
+            "RECURRENCES": "4254 dates"
+        }
+    ],
+    "VALARM": [
+        {
+            "ACTION": "DISPLAY",
+            "TRIGGER": "-PT5M",
+            "DESCRIPTION": "Reminder"
+        }
+    ]
+}
+
+# events: 4254, md5 c2814718eb81a464af3e48735fde287c
+2012-09-11 10:30:00 America/Los_Angeles | 2012-09-11 11:00:00 America/Los_Angeles | 0 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-09-12 10:30:00 America/Los_Angeles | 2012-09-12 11:00:00 America/Los_Angeles | 1 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-09-13 10:30:00 America/Los_Angeles | 2012-09-13 11:00:00 America/Los_Angeles | 2 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-09-14 10:30:00 America/Los_Angeles | 2012-09-14 11:00:00 America/Los_Angeles | 3 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-09-17 10:30:00 America/Los_Angeles | 2012-09-17 11:00:00 America/Los_Angeles | 4 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-09-18 10:30:00 America/Los_Angeles | 2012-09-18 11:00:00 America/Los_Angeles | 5 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-09-19 10:30:00 America/Los_Angeles | 2012-09-19 11:00:00 America/Los_Angeles | 6 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-09-20 10:30:00 America/Los_Angeles | 2012-09-20 11:00:00 America/Los_Angeles | 7 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-09-21 10:30:00 America/Los_Angeles | 2012-09-21 11:00:00 America/Los_Angeles | 8 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-09-24 10:30:00 America/Los_Angeles | 2012-09-24 11:00:00 America/Los_Angeles | 9 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-09-25 10:30:00 America/Los_Angeles | 2012-09-25 11:00:00 America/Los_Angeles | 10 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-09-26 10:30:00 America/Los_Angeles | 2012-09-26 11:00:00 America/Los_Angeles | 11 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-09-27 10:30:00 America/Los_Angeles | 2012-09-27 11:00:00 America/Los_Angeles | 12 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-09-28 10:30:00 America/Los_Angeles | 2012-09-28 11:00:00 America/Los_Angeles | 13 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-01 10:30:00 America/Los_Angeles | 2012-10-01 11:00:00 America/Los_Angeles | 14 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-02 10:30:00 America/Los_Angeles | 2012-10-02 11:00:00 America/Los_Angeles | 15 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-03 10:30:00 America/Los_Angeles | 2012-10-03 11:00:00 America/Los_Angeles | 16 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-04 10:30:00 America/Los_Angeles | 2012-10-04 11:00:00 America/Los_Angeles | 17 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-05 10:30:00 America/Los_Angeles | 2012-10-05 11:00:00 America/Los_Angeles | 18 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-08 10:30:00 America/Los_Angeles | 2012-10-08 11:00:00 America/Los_Angeles | 19 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-09 10:30:00 America/Los_Angeles | 2012-10-09 11:00:00 America/Los_Angeles | 20 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-10 10:30:00 America/Los_Angeles | 2012-10-10 11:00:00 America/Los_Angeles | 21 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-11 10:30:00 America/Los_Angeles | 2012-10-11 11:00:00 America/Los_Angeles | 22 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-12 10:30:00 America/Los_Angeles | 2012-10-12 11:00:00 America/Los_Angeles | 23 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-15 10:30:00 America/Los_Angeles | 2012-10-15 11:00:00 America/Los_Angeles | 24 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-16 10:30:00 America/Los_Angeles | 2012-10-16 11:00:00 America/Los_Angeles | 25 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-17 10:30:00 America/Los_Angeles | 2012-10-17 11:00:00 America/Los_Angeles | 26 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-18 10:30:00 America/Los_Angeles | 2012-10-18 11:00:00 America/Los_Angeles | 27 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-19 10:30:00 America/Los_Angeles | 2012-10-19 11:00:00 America/Los_Angeles | 28 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-22 10:30:00 America/Los_Angeles | 2012-10-22 11:00:00 America/Los_Angeles | 29 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-23 10:30:00 America/Los_Angeles | 2012-10-23 11:00:00 America/Los_Angeles | 30 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-24 10:30:00 America/Los_Angeles | 2012-10-24 11:00:00 America/Los_Angeles | 31 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-25 10:30:00 America/Los_Angeles | 2012-10-25 11:00:00 America/Los_Angeles | 32 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-26 10:30:00 America/Los_Angeles | 2012-10-26 11:00:00 America/Los_Angeles | 33 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-29 10:30:00 America/Los_Angeles | 2012-10-29 11:00:00 America/Los_Angeles | 34 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-30 10:30:00 America/Los_Angeles | 2012-10-30 11:00:00 America/Los_Angeles | 35 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-10-31 10:30:00 America/Los_Angeles | 2012-10-31 11:00:00 America/Los_Angeles | 36 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-01 10:30:00 America/Los_Angeles | 2012-11-01 11:00:00 America/Los_Angeles | 37 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-02 10:30:00 America/Los_Angeles | 2012-11-02 11:00:00 America/Los_Angeles | 38 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-05 10:30:00 America/Los_Angeles | 2012-11-05 11:00:00 America/Los_Angeles | 39 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-06 10:30:00 America/Los_Angeles | 2012-11-06 11:00:00 America/Los_Angeles | 40 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-07 10:30:00 America/Los_Angeles | 2012-11-07 11:00:00 America/Los_Angeles | 41 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-08 10:30:00 America/Los_Angeles | 2012-11-08 11:00:00 America/Los_Angeles | 42 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-09 10:30:00 America/Los_Angeles | 2012-11-09 11:00:00 America/Los_Angeles | 43 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-12 10:30:00 America/Los_Angeles | 2012-11-12 11:00:00 America/Los_Angeles | 44 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-13 10:30:00 America/Los_Angeles | 2012-11-13 11:00:00 America/Los_Angeles | 45 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-14 10:30:00 America/Los_Angeles | 2012-11-14 11:00:00 America/Los_Angeles | 46 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-15 10:30:00 America/Los_Angeles | 2012-11-15 11:00:00 America/Los_Angeles | 47 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-16 10:30:00 America/Los_Angeles | 2012-11-16 11:00:00 America/Los_Angeles | 48 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-19 10:30:00 America/Los_Angeles | 2012-11-19 11:00:00 America/Los_Angeles | 49 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-20 10:30:00 America/Los_Angeles | 2012-11-20 11:00:00 America/Los_Angeles | 50 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-21 10:30:00 America/Los_Angeles | 2012-11-21 11:00:00 America/Los_Angeles | 51 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-22 10:30:00 America/Los_Angeles | 2012-11-22 11:00:00 America/Los_Angeles | 52 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-23 10:30:00 America/Los_Angeles | 2012-11-23 11:00:00 America/Los_Angeles | 53 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-26 10:30:00 America/Los_Angeles | 2012-11-26 11:00:00 America/Los_Angeles | 54 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-27 10:30:00 America/Los_Angeles | 2012-11-27 11:00:00 America/Los_Angeles | 55 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-28 10:30:00 America/Los_Angeles | 2012-11-28 11:00:00 America/Los_Angeles | 56 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-29 10:30:00 America/Los_Angeles | 2012-11-29 11:00:00 America/Los_Angeles | 57 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-11-30 10:30:00 America/Los_Angeles | 2012-11-30 11:00:00 America/Los_Angeles | 58 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2012-12-03 10:30:00 America/Los_Angeles | 2012-12-03 11:00:00 America/Los_Angeles | 59 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+... 4184 events omitted ...
+2028-12-18 10:30:00 America/Los_Angeles | 2028-12-18 11:00:00 America/Los_Angeles | 4244 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2028-12-19 10:30:00 America/Los_Angeles | 2028-12-19 11:00:00 America/Los_Angeles | 4245 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2028-12-20 10:30:00 America/Los_Angeles | 2028-12-20 11:00:00 America/Los_Angeles | 4246 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2028-12-21 10:30:00 America/Los_Angeles | 2028-12-21 11:00:00 America/Los_Angeles | 4247 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2028-12-22 10:30:00 America/Los_Angeles | 2028-12-22 11:00:00 America/Los_Angeles | 4248 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2028-12-25 10:30:00 America/Los_Angeles | 2028-12-25 11:00:00 America/Los_Angeles | 4249 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2028-12-26 10:30:00 America/Los_Angeles | 2028-12-26 11:00:00 America/Los_Angeles | 4250 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2028-12-27 10:30:00 America/Los_Angeles | 2028-12-27 11:00:00 America/Los_Angeles | 4251 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2028-12-28 10:30:00 America/Los_Angeles | 2028-12-28 11:00:00 America/Los_Angeles | 4252 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar
+2028-12-29 10:30:00 America/Los_Angeles | 2028-12-29 11:00:00 America/Los_Angeles | 4253 | - | 44c10eaa-db0b-4223-8653-cf2b63f26326 | Calendar

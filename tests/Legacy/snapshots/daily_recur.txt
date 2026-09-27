@@ -1,0 +1,153 @@
+# data
+{
+    "PRODID": "-//Google Inc//Google Calendar 70.9054//EN",
+    "VERSION": "2.0",
+    "CALSCALE": "GREGORIAN",
+    "X-WR-CALNAME": "calmozilla1@gmail.com",
+    "X-WR-TIMEZONE": "America/Los_Angeles",
+    "VTIMEZONE": [
+        {
+            "TZID": "America/Los_Angeles",
+            "X-LIC-LOCATION": "America/Los_Angeles"
+        }
+    ],
+    "DAYLIGHT": [
+        {
+            "TZOFFSETFROM": "-0800",
+            "TZOFFSETTO": "-0700",
+            "TZNAME": "PDT",
+            "DTSTART": "1970-03-08 02:00:00 America/Los_Angeles",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "3",
+                "BYDAY": "2SU"
+            }
+        }
+    ],
+    "STANDARD": [
+        {
+            "TZOFFSETFROM": "-0700",
+            "TZOFFSETTO": "-0800",
+            "TZNAME": "PST",
+            "DTSTART": "1970-11-01 02:00:00 America/Los_Angeles",
+            "RRULE": {
+                "FREQ": "YEARLY",
+                "BYMONTH": "11",
+                "BYDAY": "1SU"
+            }
+        }
+    ],
+    "VEVENT": [
+        {
+            "DTSTART": "2012-08-01 05:00:00 America/Los_Angeles",
+            "DTEND": "2012-08-01 06:00:00 America/Los_Angeles",
+            "RRULE": {
+                "FREQ": "DAILY"
+            },
+            "DTSTAMP": "2012-08-03 22:12:36 Z",
+            "UID": "tgh9qho17b07pk2n2ji3gluans@google.com",
+            "CREATED": "2012-08-03 22:12:36 Z",
+            "DESCRIPTION": "",
+            "LAST-MODIFIED": "2012-08-03 22:12:36 Z",
+            "LOCATION": "",
+            "SEQUENCE": "0",
+            "STATUS": "CONFIRMED",
+            "SUMMARY": "Every day recurring",
+            "TRANSP": "OPAQUE",
+            "RECURRENCES": "5997 dates"
+        }
+    ],
+    "VALARM": [
+        {
+            "ACTION": "EMAIL",
+            "DESCRIPTION": "This is an event reminder",
+            "SUMMARY": "Alarm notification",
+            "ATTENDEES": [
+                {
+                    "middle": "",
+                    "VALUE": "mailto:calmozilla1@gmail.com"
+                }
+            ],
+            "ATTENDEE": "mailto:calmozilla1@gmail.com",
+            "TRIGGER": "-P0DT0H30M0S"
+        },
+        {
+            "ACTION": "DISPLAY",
+            "DESCRIPTION": "This is an event reminder",
+            "TRIGGER": "-P0DT0H30M0S"
+        }
+    ]
+}
+
+# events: 5997, md5 432ced22e5284d1a98862ab5d12f006a
+2012-08-01 05:00:00 America/Los_Angeles | 2012-08-01 06:00:00 America/Los_Angeles | 0 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-02 05:00:00 America/Los_Angeles | 2012-08-02 06:00:00 America/Los_Angeles | 1 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-03 05:00:00 America/Los_Angeles | 2012-08-03 06:00:00 America/Los_Angeles | 2 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-04 05:00:00 America/Los_Angeles | 2012-08-04 06:00:00 America/Los_Angeles | 3 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-05 05:00:00 America/Los_Angeles | 2012-08-05 06:00:00 America/Los_Angeles | 4 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-06 05:00:00 America/Los_Angeles | 2012-08-06 06:00:00 America/Los_Angeles | 5 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-07 05:00:00 America/Los_Angeles | 2012-08-07 06:00:00 America/Los_Angeles | 6 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-08 05:00:00 America/Los_Angeles | 2012-08-08 06:00:00 America/Los_Angeles | 7 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-09 05:00:00 America/Los_Angeles | 2012-08-09 06:00:00 America/Los_Angeles | 8 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-10 05:00:00 America/Los_Angeles | 2012-08-10 06:00:00 America/Los_Angeles | 9 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-11 05:00:00 America/Los_Angeles | 2012-08-11 06:00:00 America/Los_Angeles | 10 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-12 05:00:00 America/Los_Angeles | 2012-08-12 06:00:00 America/Los_Angeles | 11 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-13 05:00:00 America/Los_Angeles | 2012-08-13 06:00:00 America/Los_Angeles | 12 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-14 05:00:00 America/Los_Angeles | 2012-08-14 06:00:00 America/Los_Angeles | 13 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-15 05:00:00 America/Los_Angeles | 2012-08-15 06:00:00 America/Los_Angeles | 14 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-16 05:00:00 America/Los_Angeles | 2012-08-16 06:00:00 America/Los_Angeles | 15 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-17 05:00:00 America/Los_Angeles | 2012-08-17 06:00:00 America/Los_Angeles | 16 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-18 05:00:00 America/Los_Angeles | 2012-08-18 06:00:00 America/Los_Angeles | 17 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-19 05:00:00 America/Los_Angeles | 2012-08-19 06:00:00 America/Los_Angeles | 18 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-20 05:00:00 America/Los_Angeles | 2012-08-20 06:00:00 America/Los_Angeles | 19 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-21 05:00:00 America/Los_Angeles | 2012-08-21 06:00:00 America/Los_Angeles | 20 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-22 05:00:00 America/Los_Angeles | 2012-08-22 06:00:00 America/Los_Angeles | 21 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-23 05:00:00 America/Los_Angeles | 2012-08-23 06:00:00 America/Los_Angeles | 22 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-24 05:00:00 America/Los_Angeles | 2012-08-24 06:00:00 America/Los_Angeles | 23 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-25 05:00:00 America/Los_Angeles | 2012-08-25 06:00:00 America/Los_Angeles | 24 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-26 05:00:00 America/Los_Angeles | 2012-08-26 06:00:00 America/Los_Angeles | 25 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-27 05:00:00 America/Los_Angeles | 2012-08-27 06:00:00 America/Los_Angeles | 26 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-28 05:00:00 America/Los_Angeles | 2012-08-28 06:00:00 America/Los_Angeles | 27 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-29 05:00:00 America/Los_Angeles | 2012-08-29 06:00:00 America/Los_Angeles | 28 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-30 05:00:00 America/Los_Angeles | 2012-08-30 06:00:00 America/Los_Angeles | 29 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-08-31 05:00:00 America/Los_Angeles | 2012-08-31 06:00:00 America/Los_Angeles | 30 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-01 05:00:00 America/Los_Angeles | 2012-09-01 06:00:00 America/Los_Angeles | 31 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-02 05:00:00 America/Los_Angeles | 2012-09-02 06:00:00 America/Los_Angeles | 32 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-03 05:00:00 America/Los_Angeles | 2012-09-03 06:00:00 America/Los_Angeles | 33 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-04 05:00:00 America/Los_Angeles | 2012-09-04 06:00:00 America/Los_Angeles | 34 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-05 05:00:00 America/Los_Angeles | 2012-09-05 06:00:00 America/Los_Angeles | 35 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-06 05:00:00 America/Los_Angeles | 2012-09-06 06:00:00 America/Los_Angeles | 36 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-07 05:00:00 America/Los_Angeles | 2012-09-07 06:00:00 America/Los_Angeles | 37 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-08 05:00:00 America/Los_Angeles | 2012-09-08 06:00:00 America/Los_Angeles | 38 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-09 05:00:00 America/Los_Angeles | 2012-09-09 06:00:00 America/Los_Angeles | 39 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-10 05:00:00 America/Los_Angeles | 2012-09-10 06:00:00 America/Los_Angeles | 40 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-11 05:00:00 America/Los_Angeles | 2012-09-11 06:00:00 America/Los_Angeles | 41 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-12 05:00:00 America/Los_Angeles | 2012-09-12 06:00:00 America/Los_Angeles | 42 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-13 05:00:00 America/Los_Angeles | 2012-09-13 06:00:00 America/Los_Angeles | 43 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-14 05:00:00 America/Los_Angeles | 2012-09-14 06:00:00 America/Los_Angeles | 44 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-15 05:00:00 America/Los_Angeles | 2012-09-15 06:00:00 America/Los_Angeles | 45 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-16 05:00:00 America/Los_Angeles | 2012-09-16 06:00:00 America/Los_Angeles | 46 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-17 05:00:00 America/Los_Angeles | 2012-09-17 06:00:00 America/Los_Angeles | 47 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-18 05:00:00 America/Los_Angeles | 2012-09-18 06:00:00 America/Los_Angeles | 48 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-19 05:00:00 America/Los_Angeles | 2012-09-19 06:00:00 America/Los_Angeles | 49 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-20 05:00:00 America/Los_Angeles | 2012-09-20 06:00:00 America/Los_Angeles | 50 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-21 05:00:00 America/Los_Angeles | 2012-09-21 06:00:00 America/Los_Angeles | 51 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-22 05:00:00 America/Los_Angeles | 2012-09-22 06:00:00 America/Los_Angeles | 52 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-23 05:00:00 America/Los_Angeles | 2012-09-23 06:00:00 America/Los_Angeles | 53 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-24 05:00:00 America/Los_Angeles | 2012-09-24 06:00:00 America/Los_Angeles | 54 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-25 05:00:00 America/Los_Angeles | 2012-09-25 06:00:00 America/Los_Angeles | 55 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-26 05:00:00 America/Los_Angeles | 2012-09-26 06:00:00 America/Los_Angeles | 56 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-27 05:00:00 America/Los_Angeles | 2012-09-27 06:00:00 America/Los_Angeles | 57 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-28 05:00:00 America/Los_Angeles | 2012-09-28 06:00:00 America/Los_Angeles | 58 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2012-09-29 05:00:00 America/Los_Angeles | 2012-09-29 06:00:00 America/Los_Angeles | 59 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+... 5927 events omitted ...
+2028-12-22 05:00:00 America/Los_Angeles | 2028-12-22 06:00:00 America/Los_Angeles | 5987 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2028-12-23 05:00:00 America/Los_Angeles | 2028-12-23 06:00:00 America/Los_Angeles | 5988 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2028-12-24 05:00:00 America/Los_Angeles | 2028-12-24 06:00:00 America/Los_Angeles | 5989 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2028-12-25 05:00:00 America/Los_Angeles | 2028-12-25 06:00:00 America/Los_Angeles | 5990 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2028-12-26 05:00:00 America/Los_Angeles | 2028-12-26 06:00:00 America/Los_Angeles | 5991 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2028-12-27 05:00:00 America/Los_Angeles | 2028-12-27 06:00:00 America/Los_Angeles | 5992 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2028-12-28 05:00:00 America/Los_Angeles | 2028-12-28 06:00:00 America/Los_Angeles | 5993 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2028-12-29 05:00:00 America/Los_Angeles | 2028-12-29 06:00:00 America/Los_Angeles | 5994 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2028-12-30 05:00:00 America/Los_Angeles | 2028-12-30 06:00:00 America/Los_Angeles | 5995 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring
+2028-12-31 05:00:00 America/Los_Angeles | 2028-12-31 06:00:00 America/Los_Angeles | 5996 | - | tgh9qho17b07pk2n2ji3gluans@google.com | Every day recurring

@@ -1,0 +1,32 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+    ],
+    "calendars": [
+        {
+            "name": "G. C. Hawley Middle School",
+            "method": "PUBLISH",
+            "timezone": "America/New_York",
+            "timezones": [
+                "America/New_York => America/New_York (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "d28i2lkvhp2qb2v7n6oe9poikc@google.com",
+                    "summary": "Early Release for Students",
+                    "start": "2016-09-15 12:30:00 -04:00 (America/New_York = America/New_York)",
+                    "end": "2016-09-15 16:00:00 -04:00 (America/New_York = America/New_York)",
+                    "rrules": [
+                        "FREQ=MONTHLY;UNTIL=20161020T035959Z;BYDAY=3TH"
+                    ],
+                    "overrides": 1,
+                    "status": "CONFIRMED",
+                    "occurrences": [
+                        "2016-09-29 12:30:00 -04:00 (America/New_York = America/New_York) – 2016-09-29 16:00:00 -04:00 (America/New_York = America/New_York) [Early Release for Students]"
+                    ]
+                }
+            ]
+        }
+    ]
+}

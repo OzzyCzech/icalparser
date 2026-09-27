@@ -4,7 +4,10 @@
 # Exclude non-essential files from dist to minimize package size.
 /.github/ export-ignore
 /bin/ export-ignore
-/example/ export-ignore
+/examples/ export-ignore
+/docs/ export-ignore
+/website/ export-ignore
+/apigen.neon export-ignore
 /tests/ export-ignore
 /.editorconfig export-ignore
 /.gitattributes export-ignore

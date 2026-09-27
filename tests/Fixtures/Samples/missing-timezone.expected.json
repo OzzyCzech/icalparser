@@ -1,0 +1,79 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]"
+    ],
+    "calendars": [
+        {
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "1418fdfasfdasdfsad@airbnb.com",
+                    "summary": "Reserved",
+                    "start": "2022-04-12 (date)",
+                    "end": "2022-05-20 (date)",
+                    "occurrences": [
+                        "2022-04-12 (date) – 2022-05-20 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "1418fb94e984-dfasdfasdfsdfsdfsd@airbnb.com",
+                    "summary": "Reserved",
+                    "start": "2022-06-17 (date)",
+                    "end": "2022-06-20 (date)",
+                    "occurrences": [
+                        "2022-06-17 (date) – 2022-06-20 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "1418fb94e984-dafdfdfadfdfadsfasdafsd@airbnb.com",
+                    "summary": "Reserved",
+                    "start": "2022-06-25 (date)",
+                    "end": "2022-06-28 (date)",
+                    "occurrences": [
+                        "2022-06-25 (date) – 2022-06-28 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "6fec1092d3fa-afdfasdfdsfasdfasdfsdfasd@airbnb.com",
+                    "summary": "Airbnb (Not available)",
+                    "start": "2022-07-23 (date)",
+                    "end": "2022-07-24 (date)",
+                    "occurrences": [
+                        "2022-07-23 (date) – 2022-07-24 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "6fec1092d3fa-afdfsdfsdfasdfadsfsfs@airbnb.com",
+                    "summary": "Airbnb (Not available)",
+                    "start": "2022-07-25 (date)",
+                    "end": "2022-08-07 (date)",
+                    "occurrences": [
+                        "2022-07-25 (date) – 2022-08-07 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "6fec1092d3fa-afdafdsafsdfdfsdfsd@airbnb.com",
+                    "summary": "Airbnb (Not available)",
+                    "start": "2022-11-07 (date)",
+                    "end": "2023-05-12 (date)",
+                    "occurrences": [
+                        "2022-11-07 (date) – 2023-05-12 (date)"
+                    ]
+                }
+            ],
+            "issues": [
+                "ERROR VEVENT.DTSTAMP: DTSTAMP is required. [component.missing-property]",
+                "ERROR VEVENT.DTSTAMP: DTSTAMP is required. [component.missing-property]",
+                "ERROR VEVENT.DTSTAMP: DTSTAMP is required. [component.missing-property]",
+                "ERROR VEVENT.DTSTAMP: DTSTAMP is required. [component.missing-property]",
+                "ERROR VEVENT.DTSTAMP: DTSTAMP is required. [component.missing-property]",
+                "ERROR VEVENT.DTSTAMP: DTSTAMP is required. [component.missing-property]"
+            ]
+        }
+    ]
+}

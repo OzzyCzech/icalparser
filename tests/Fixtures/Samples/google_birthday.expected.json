@@ -1,0 +1,91 @@
+{
+    "warnings": [
+        "line 1: Line breaks other than CRLF were normalized. [syntax.line-ending]",
+        "line 12: The date 20131210 has a \"Z\" suffix, it was read as a date. [value.nonstandard]",
+        "line 13: The date 20121210 has a \"Z\" suffix, it was read as a date. [value.nonstandard]"
+    ],
+    "calendars": [
+        {
+            "name": "Contacts' birthdays and events",
+            "timezone": "America/Los_Angeles",
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "2014_BIRTHDAY_79d389868f96182e@google.com",
+                    "summary": "PErson #2's birthday",
+                    "start": "2014-12-10 (date)",
+                    "end": "2014-12-11 (date)",
+                    "rrules": [
+                        "FREQ=DAILY;COUNT=1"
+                    ],
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "4dhmurjkc5hn8sq0ctp6utbg5pr2sor1dhimsp31e8n6errfctm6abj3dtmg@virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "occurrences": [
+                        "2012-12-10 (date) – 2012-12-11 (date)",
+                        "2013-12-10 (date) – 2013-12-11 (date)",
+                        "2014-12-10 (date) – 2014-12-11 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "BIRTHDAY_79d389868f96182e@google.com",
+                    "summary": "PErson #2's birthday",
+                    "start": "2012-12-10 (date)",
+                    "end": "2012-12-11 (date)",
+                    "recurrenceId": "2012-12-10 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "4dhmurjkc5hn8sq0ctp6utbg5pr2sor1dhimsp31e8n6errfctm6abj3dtmg@virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "x-properties": [
+                        "X-GOOGLE-CALENDAR-CONTENT-ICON",
+                        "X-GOOGLE-CALENDAR-CONTENT-DISPLAY"
+                    ],
+                    "occurrences": [
+                        "2012-12-10 (date) – 2012-12-11 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "BIRTHDAY_79d389868f96182e@google.com",
+                    "summary": "PErson #2's birthday",
+                    "start": "2013-12-10 (date)",
+                    "end": "2013-12-11 (date)",
+                    "recurrenceId": "2013-12-10 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "4dhmurjkc5hn8sq0ctp6utbg5pr2sor1dhimsp31e8n6errfctm6abj3dtmg@virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "x-properties": [
+                        "X-GOOGLE-CALENDAR-CONTENT-ICON",
+                        "X-GOOGLE-CALENDAR-CONTENT-DISPLAY"
+                    ],
+                    "occurrences": [
+                        "2013-12-10 (date) – 2013-12-11 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "BIRTHDAY_79d389868f96182e@google.com",
+                    "summary": "PErson #2's birthday",
+                    "start": "2014-12-10 (date)",
+                    "end": "2014-12-11 (date)",
+                    "recurrenceId": "2014-12-10 (date)",
+                    "status": "CONFIRMED",
+                    "attendees": [
+                        "4dhmurjkc5hn8sq0ctp6utbg5pr2sor1dhimsp31e8n6errfctm6abj3dtmg@virtual REQ-PARTICIPANT/ACCEPTED"
+                    ],
+                    "x-properties": [
+                        "X-GOOGLE-CALENDAR-CONTENT-ICON",
+                        "X-GOOGLE-CALENDAR-CONTENT-DISPLAY"
+                    ],
+                    "occurrences": [
+                        "2014-12-10 (date) – 2014-12-11 (date)"
+                    ]
+                }
+            ]
+        }
+    ]
+}
