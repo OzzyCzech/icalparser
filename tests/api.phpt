@@ -131,6 +131,7 @@ test('Rule validation', function () {
 	foreach ([
 		'FREQ=DAILY;WKST=XX', 'FREQ=DAILY;BYHOUR=24', 'FREQ=DAILY;BYHOUR=a', 'FREQ=DAILY;BYMONTHDAY=0', 'FREQ=DAILY;BYDAY=1XX',
 		'FREQ=YEARLY;BYDAY=54MO', 'FREQ=DAILY;BYMONTH=13', 'FREQ=DAILY;BYSETPOS=0', 'FREQ=DAILY;UNTIL=soon', 'FREQ=DAILY;COUNT=x',
+		'FREQ=DAILY;UNTIL=55555555T555555Z', 'FREQ=DAILY;UNTIL=20261350T000000', 'FREQ=DAILY;UNTIL=20269999',
 	] as $rule) {
 		Assert::exception(fn() => Rule::fromString($rule), InvalidArgumentException::class);
 	}

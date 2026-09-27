@@ -6,6 +6,7 @@ namespace om\RRule;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
+use Exception;
 use InvalidArgumentException;
 
 /**
@@ -140,18 +141,18 @@ final readonly class Rule {
 			return new DateTimeImmutable('@' . $value);
 		}
 		$value = strtoupper(self::scalar($value, 'UNTIL'));
-		if (preg_match('/^\d{8}$/D', $value)) {
-			return $value;
-		}
-		if (preg_match('/^\d{8}T\d{6}Z$/D', $value)) {
-			return new DateTimeImmutable($value);
-		}
-		if (preg_match('/^\d{8}T\d{6}$/D', $value)) {
-			return $value;
+		if (preg_match('/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})(Z?))?$/D', $value, $match, PREG_UNMATCHED_AS_NULL)) {
+			[, $year, $month, $day, $hour, $minute, $second, $utc] = $match;
+			$validTime = $hour === null || ((int) $hour < 24 && (int) $minute < 60 && (int) $second <= 60);
+			if (!$validTime || !checkdate((int) $month, (int) $day, (int) $year)) {
+				throw new InvalidArgumentException("Invalid UNTIL value: $value");
+			}
+			// a date or a floating date-time is resolved later in the timezone of DTSTART
+			return $utc === 'Z' ? new DateTimeImmutable($value) : $value;
 		}
 		try {
 			return new DateTimeImmutable($value);
-		} catch (\Exception) {
+		} catch (Exception) {
 			throw new InvalidArgumentException('UNTIL must be a valid date or timestamp.');
 		}
 	}
