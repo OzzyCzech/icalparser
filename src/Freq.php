@@ -354,8 +354,8 @@ class Freq {
 		}
 
 		if (isset($this->rules['bymonth'])) {
-			$months = explode(',', $this->rules['bymonth']);
-			if (!in_array(date('m', $t), $months, true)) {
+			$months = array_map('intval', explode(',', $this->rules['bymonth']));
+			if (!in_array((int) date('m', $t), $months, true)) {
 				return false;
 			}
 		}
@@ -369,25 +369,25 @@ class Freq {
 			}
 		}
 		if (isset($this->rules['byweekno'])) {
-			$weeks = explode(',', $this->rules['byweekno']);
-			if (!in_array(date('W', $t), $weeks, true)) {
+			$weeks = array_map('intval', explode(',', $this->rules['byweekno']));
+			if (!in_array((int) date('W', $t), $weeks, true)) {
 				return false;
 			}
 		}
 		if (isset($this->rules['bymonthday'])) {
-			$weekdays = explode(',', $this->rules['bymonthday']);
+			$weekdays = array_map('intval', explode(',', $this->rules['bymonthday']));
 			foreach ($weekdays as $i => $k) {
 				if ($k < 0) {
 					$weekdays[$i] = (int) date('t', $t) + (int) $k + 1;
 				}
 			}
-			if (!in_array(date('d', $t), $weekdays, true)) {
+			if (!in_array((int) date('d', $t), $weekdays, true)) {
 				return false;
 			}
 		}
 		if (isset($this->rules['byhour'])) {
-			$hours = explode(',', $this->rules['byhour']);
-			if (!in_array(date('H', $t), $hours, true)) {
+			$hours = array_map('intval', explode(',', $this->rules['byhour']));
+			if (!in_array((int) date('H', $t), $hours, true)) {
 				return false;
 			}
 		}
