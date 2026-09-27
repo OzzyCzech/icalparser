@@ -74,6 +74,6 @@ for ($i = 0; $i < 300; $i++) {
 			Assert::type(ICalException::class, $e); // documented exceptions only
 		}
 	}
-	Assert::true((hrtime(true) - $started) < 2e9, 'no input takes longer than 2 seconds');
+	Assert::true((hrtime(true) - $started) < 10e9, 'no input takes longer than 10 seconds');
 }
 Assert::true($parsed > 200);

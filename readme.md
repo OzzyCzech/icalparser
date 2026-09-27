@@ -140,7 +140,7 @@ The [examples](examples) directory contains a web page listing upcoming events o
 ## Upgrading from version 4
 
 The array based `IcalParser` of version 4 is still available and deprecated; it keeps its output and fixes many bugs.
-See [UPGRADING.md](UPGRADING.md) and [CHANGELOG.md](CHANGELOG.md).
+See [UPGRADING.md](UPGRADING.md) and [CHANGELOG.md](CHANGELOG.md).  
 
 ## Development
 
@@ -152,11 +152,15 @@ composer install
 composer test               # unit tests and tests of the version 4 API
 composer test:integration   # public API, parser modes, golden files of tests/Fixtures
 composer test:fuzz          # corrupted and pathological input
-composer test:differential  # comparison with sabre/vobject and python-dateutil (set ICALPARSER_PYTHON)
+composer test:differential  # comparison with sabre/vobject and python-dateutil, see below
 composer analyse            # PHPStan
 composer cs                 # coding standard (cs:fix fixes it)
 composer check              # all of the above except differential tests
 ```
+
+The differential tests are skipped without their oracles, which are not dependencies of the project:
+`composer require --dev sabre/vobject --no-update && composer update` and
+`python3 -m venv .venv && .venv/bin/pip install python-dateutil`, then run them with `ICALPARSER_PYTHON=.venv/bin/python`.
 
 Every calendar in `tests/Fixtures` has a golden file with the normalized output. After an intended change,
 regenerate them with `UPDATE_SNAPSHOTS=1 composer test:integration` and review the diff. Every bug gets a fixture

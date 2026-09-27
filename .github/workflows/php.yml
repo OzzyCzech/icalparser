@@ -70,7 +70,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer install --prefer-dist --no-progress --no-interaction
+          composer require --dev sabre/vobject:^4.5 --no-update --no-interaction
+          composer update --prefer-dist --no-progress --no-interaction
           pip install python-dateutil
 
       - name: Differential tests (sabre/vobject, python-dateutil)

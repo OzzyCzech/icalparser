@@ -112,5 +112,5 @@ foreach ($cases as $index => $case) {
 	}
 }
 Assert::same([], array_slice($mismatches, 0, 20), sprintf('%d of %d rules differ from dateutil', count($mismatches), $compared));
-Assert::true($compared > 1400, "$compared rules compared, dateutil failed on $oracleErrors");
+Assert::true($compared > count($cases) * 0.8, "$compared rules compared, dateutil failed on $oracleErrors");
 echo "$compared rules match dateutil, dateutil failed on $oracleErrors\n";

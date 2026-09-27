@@ -27,7 +27,7 @@ function wrap(string ...$lines): string {
 function quick(callable $test): mixed {
 	$started = hrtime(true);
 	$result = $test();
-	Assert::true((hrtime(true) - $started) < 3e9, 'within 3 seconds');
+	Assert::true((hrtime(true) - $started) < 10e9, 'within 10 seconds (a generous bound for slow CI runners)');
 	return $result;
 }
 

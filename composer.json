@@ -49,7 +49,6 @@
 	"require-dev": {
 		"nette/tester": "^2.6.1",
 		"phpstan/phpstan": "^2.1",
-		"sabre/vobject": "^4.5",
 		"friendsofphp/php-cs-fixer": "^3"
 	},
 	"scripts-descriptions": {

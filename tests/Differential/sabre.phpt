@@ -2,7 +2,8 @@
 declare(strict_types=1);
 
 /**
- * Differential test against sabre/vobject (a dev dependency).
+ * Differential test against sabre/vobject. It is not a dependency of the project; the CI job
+ * installs it: composer require --dev sabre/vobject --no-update && composer update
  *
  * sabre/vobject supports a subset of the rule parts well: BY* parts that only limit
  * DAILY or HOURLY rules and BYSETPOS with most frequencies are ignored or applied

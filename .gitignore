@@ -5,3 +5,4 @@ tests/**/output/
 /docs/modernization.md
 coverage.html
 .php-cs-fixer.cache
+/.venv/
