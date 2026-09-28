@@ -113,6 +113,38 @@ test('A definition with RDATE transitions', function () {
 	Assert::same(3600, (new DateTimeImmutable('2026-12-01', $resolved->timezone))->getOffset());
 });
 
+test('UNTIL of an observance is in UTC, also east of UTC (#110)', function () {
+	// Moscow 2008-2013 under a name the IANA resolver does not know
+	$calendar = calendarWith(implode("\r\n", [
+		'BEGIN:VTIMEZONE', 'TZID:Custom/Moscow',
+		'BEGIN:STANDARD', 'DTSTART:19961027T030000', 'TZOFFSETFROM:+0400', 'TZOFFSETTO:+0300', 'RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU;UNTIL=20101030T230000Z', 'END:STANDARD',
+		'BEGIN:DAYLIGHT', 'DTSTART:19930328T020000', 'TZOFFSETFROM:+0300', 'TZOFFSETTO:+0400', 'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU;UNTIL=20100327T230000Z', 'END:DAYLIGHT',
+		'BEGIN:STANDARD', 'DTSTART:20110327T020000', 'TZOFFSETFROM:+0300', 'TZOFFSETTO:+0400', 'END:STANDARD',
+		'BEGIN:STANDARD', 'DTSTART:20141026T020000', 'TZOFFSETFROM:+0400', 'TZOFFSETTO:+0300', 'END:STANDARD',
+		'END:VTIMEZONE',
+	]));
+	foreach (['2010-06-01', '2011-06-01'] as $reference) {
+		$resolved = (new VTimezoneResolver(reference: new DateTimeImmutable($reference)))->resolve('Custom/Moscow', $calendar);
+		Assert::notNull($resolved, $reference);
+		Assert::same(TimezoneSource::VTimezone, $resolved->source);
+		foreach (['2010-03-27 12:00' => 10800, '2010-07-01' => 14400, '2010-12-01' => 10800, '2011-07-01' => 14400, '2012-01-01' => 14400] as $date => $offset) {
+			Assert::same($offset, (new DateTimeImmutable($date, $resolved->timezone))->getOffset(), "$reference $date");
+		}
+	}
+});
+
+test('UNTIL of an observance is in UTC, west of UTC no transition after it is kept (#110)', function () {
+	// daylight time until 2009: 2010-03-14 02:00 local is 07:00 UTC, after UNTIL
+	$calendar = calendarWith(implode("\r\n", [
+		'BEGIN:VTIMEZONE', 'TZID:Custom/Eastern',
+		'BEGIN:STANDARD', 'DTSTART:20071104T020000', 'TZOFFSETFROM:-0400', 'TZOFFSETTO:-0500', 'RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU', 'END:STANDARD',
+		'BEGIN:DAYLIGHT', 'DTSTART:20070311T020000', 'TZOFFSETFROM:-0500', 'TZOFFSETTO:-0400', 'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU;UNTIL=20100314T030000Z', 'END:DAYLIGHT',
+		'END:VTIMEZONE',
+	]));
+	$resolved = (new VTimezoneResolver(reference: new DateTimeImmutable('2009-06-01')))->resolve('Custom/Eastern', $calendar);
+	Assert::null($resolved); // not America/New_York, which has daylight time in 2010
+});
+
 test('Invalid definitions are not resolved', function () {
 	$calendar = calendarWith("BEGIN:VTIMEZONE\r\nTZID:Broken\r\nBEGIN:STANDARD\r\nDTSTART:x\r\nTZOFFSETFROM:+01\r\nTZOFFSETTO:bad\r\nEND:STANDARD\r\nEND:VTIMEZONE");
 	Assert::null((new VTimezoneResolver())->resolve('Broken', $calendar));

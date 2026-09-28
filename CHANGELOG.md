@@ -80,6 +80,8 @@ See [UPGRADING.md](UPGRADING.md). The fixes of 4.1.4 (#37, #88) are included.
 
 ### Fixed
 
+- VTIMEZONE rules with `UNTIL` are compared in UTC: definitions east of UTC whose daylight saving time ended (e.g. Europe/Moscow
+  before 2011) are resolved again, west of UTC no transition after `UNTIL` is kept (#110)
 - `RDATE` without `RRULE` no longer fails with `TypeError` and adds no yearly occurrences (#37, also in 4.1.4)
 - `RDATE` values are always part of the recurrence set (one was lost together with `COUNT`)
 - a `RECURRENCE-ID` replaces only the matching instance of the same UID, compared as an instant in any timezone

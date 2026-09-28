@@ -60,26 +60,26 @@ final class TimezoneGuesser {
 	 * @return array{int, list<array{int, int}>}
 	 */
 	private static function transitions(array $observances, int $from, int $until): array {
-		$utc = new DateTimeZone('UTC');
 		$all = [];
 		foreach ($observances as $observance) {
 			$offsetFrom = self::offset($observance['offsetFrom']);
 			$offsetTo = self::offset($observance['offsetTo']);
-			// wall-clock times are expanded as if they were UTC, then shifted by TZOFFSETFROM
-			$start = new DateTimeImmutable($observance['start'], $utc);
-			$local = [];
+			// local times are in TZOFFSETFROM; the UNTIL of a rule is in UTC (RFC 5545, section 3.3.10),
+			// so the rule is expanded in the fixed offset and gives UTC timestamps
+			$zone = self::fixedOffsetZone($offsetFrom);
+			$start = new DateTimeImmutable($observance['start'], $zone);
+			$instants = [$start->getTimestamp()];
 			if (!empty($observance['rrule'])) {
+				$instants = [];
 				foreach (new Expander(Rule::fromString($observance['rrule'], true), $start, $until + 2 * 86400) as $timestamp) {
-					$local[] = $timestamp; // includes DTSTART
+					$instants[] = $timestamp; // includes DTSTART
 				}
-			} else {
-				$local[] = $start->getTimestamp();
 			}
 			foreach ($observance['rdates'] ?? [] as $rdate) {
-				$local[] = (new DateTimeImmutable($rdate, $utc))->getTimestamp();
+				$instants[] = (new DateTimeImmutable($rdate, $zone))->getTimestamp();
 			}
-			foreach ($local as $timestamp) {
-				$all[] = [$timestamp - $offsetFrom, $offsetTo];
+			foreach ($instants as $timestamp) {
+				$all[] = [$timestamp, $offsetTo];
 			}
 		}
 		usort($all, static fn(array $a, array $b): int => $a[0] <=> $b[0]);
@@ -143,6 +143,15 @@ final class TimezoneGuesser {
 		$sign = $offset < 0 ? '-' : '+';
 		$offset = abs($offset);
 		return new DateTimeZone(sprintf('%s%02d:%02d', $sign, intdiv($offset, 3600), intdiv($offset % 3600, 60)));
+	}
+
+	/**
+	 * Timezone with a fixed offset, e.g. "+03:00", or "+00:19:32" for a local mean time.
+	 */
+	private static function fixedOffsetZone(int $offset): DateTimeZone {
+		$seconds = abs($offset);
+		$name = sprintf('%s%02d:%02d', $offset < 0 ? '-' : '+', intdiv($seconds, 3600), intdiv($seconds % 3600, 60));
+		return new DateTimeZone($seconds % 60 === 0 ? $name : sprintf('%s:%02d', $name, $seconds % 60));
 	}
 
 	/**
