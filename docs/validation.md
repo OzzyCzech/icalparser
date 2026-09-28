@@ -27,6 +27,7 @@ the `property`, the `line` and the `uid`.
 | `recurrence.until-type` | Error | UNTIL is not a date for a date DTSTART, not UTC for a UTC or zoned DTSTART, not local for a floating DTSTART |
 | `recurrence.without-start` | Error | RRULE or RDATE without DTSTART |
 | `recurrence.multiple-rrule` | Warning | more than one RRULE |
+| `recurrence.skip-without-rscale` | Error | SKIP without RSCALE (RFC 7529) |
 | `value.invalid` | Error | a value that does not match its type |
 | `timezone.not-defined` | Warning | a TZID without a VTIMEZONE definition |
 | `timezone.unresolved` | Warning | a TZID that cannot be resolved |

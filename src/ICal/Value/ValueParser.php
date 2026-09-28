@@ -207,6 +207,11 @@ final class ValueParser {
 			if ($this->strict) {
 				throw InvalidRecurrenceRuleException::create($e->errorCode(), $e->getMessage(), $property->line, $property->name, $property->value, $e);
 			}
+			if ($e->errorCode() === 'recurrence.skip-without-rscale') {
+				// the rule without SKIP is the rule of RFC 5545, which omits invalid dates
+				$this->problem('value.invalid', $e->getMessage() . ' SKIP was ignored.');
+				return $this->recur($property->withValue((string) preg_replace('/(?:^|;)SKIP=[^;]*/i', '', $property->value)));
+			}
 			$this->problem('value.invalid', $e->getMessage() . ' The RRULE was ignored.');
 			return null;
 		}
