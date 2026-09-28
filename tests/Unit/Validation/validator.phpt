@@ -68,6 +68,15 @@ test('Invalid values and timezones', function () use ($base) {
 	Assert::contains('ERROR timezone.no-observance', issues(['BEGIN:VTIMEZONE', 'TZID:Empty', 'END:VTIMEZONE']));
 });
 
+test('ACKNOWLEDGED of an alarm is a UTC time (RFC 9074)', function () use ($base) {
+	$alarm = fn(string ...$lines) => issues([...$base, 'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:x', 'TRIGGER:-PT5M', ...$lines, 'END:VALARM', 'END:VEVENT']);
+	Assert::same([], $alarm('ACKNOWLEDGED:20260101T095500Z'));
+	Assert::same(['ERROR value.invalid'], $alarm('ACKNOWLEDGED:yesterday'));
+	Assert::same(['WARNING value.not-utc'], $alarm('ACKNOWLEDGED:20260101T095500'));
+	Assert::same(['WARNING value.not-utc', 'WARNING timezone.not-defined'], $alarm('ACKNOWLEDGED;TZID=America/New_York:20260101T095500'));
+	Assert::same(['ERROR component.duplicate-property'], $alarm('ACKNOWLEDGED:20260101T095500Z', 'ACKNOWLEDGED:20260102T095500Z'));
+});
+
 test('Invalid values of RFC 7986 properties', function () use ($base) {
 	Assert::same(['ERROR value.invalid', 'ERROR value.invalid'], issues(['REFRESH-INTERVAL:weekly', ...$base, 'IMAGE;VALUE=BINARY;ENCODING=BASE64:***', 'IMAGE:https://example.com/a.png', 'CONFERENCE:https://meet.example.com/1', 'END:VEVENT']));
 	Assert::same([], issues(['REFRESH-INTERVAL;VALUE=DURATION:P1W', 'SOURCE:https://example.com/a.ics', ...$base, 'IMAGE;VALUE=BINARY;ENCODING=BASE64;FMTTYPE=image/png:aGVsbG8=', 'END:VEVENT']));

@@ -36,6 +36,7 @@ final class ValueParser {
 		'TZOFFSETFROM' => 'UTC-OFFSET', 'TZOFFSETTO' => 'UTC-OFFSET',
 		// RFC 7986
 		'IMAGE' => 'URI', 'CONFERENCE' => 'URI', 'SOURCE' => 'URI', 'REFRESH-INTERVAL' => 'DURATION',
+		'ACKNOWLEDGED' => 'DATE-TIME', // RFC 9074, in UTC
 	];
 
 	/** Properties with a list of values. */

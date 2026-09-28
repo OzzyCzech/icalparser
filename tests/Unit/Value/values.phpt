@@ -185,6 +185,16 @@ test('Default types of RFC 7986 properties', function () {
 	Assert::same('P1W', $values->value(property('REFRESH-INTERVAL;VALUE=TEXT:P1W')), 'the VALUE parameter takes precedence');
 });
 
+test('ACKNOWLEDGED is a DATE-TIME (RFC 9074)', function () {
+	$values = new ValueParser();
+	$acknowledged = $values->value(property('ACKNOWLEDGED:20090604T084500Z'));
+	Assert::type(DateTimeValue::class, $acknowledged);
+	Assert::true($acknowledged->isUtc());
+	Assert::true($values->value(property('ACKNOWLEDGED:20090604T084500'))->isFloating(), 'a local time is read, the Validator reports it');
+	Assert::null($values->value(property('ACKNOWLEDGED:yesterday')));
+	Assert::exception(fn() => (new ValueParser(strict: true))->value(property('ACKNOWLEDGED:yesterday')), InvalidValueException::class);
+});
+
 test('Invalid values of RFC 7986 properties', function () {
 	$values = new ValueParser();
 	$strict = new ValueParser(strict: true);

@@ -28,6 +28,7 @@ the `property`, the `line` and the `uid`.
 | `recurrence.without-start` | Error | RRULE or RDATE without DTSTART |
 | `recurrence.multiple-rrule` | Warning | more than one RRULE |
 | `value.invalid` | Error | a value that does not match its type |
+| `value.not-utc` | Warning | ACKNOWLEDGED of VALARM (RFC 9074) that is not a UTC time |
 | `timezone.not-defined` | Warning | a TZID without a VTIMEZONE definition |
 | `timezone.unresolved` | Warning | a TZID that cannot be resolved |
 | `timezone.no-observance` | Error | a VTIMEZONE without STANDARD and DAYLIGHT |
