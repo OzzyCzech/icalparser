@@ -84,3 +84,25 @@ test('Strict mode throws for an image with invalid data', function () {
 	Assert::exception(fn() => $calendar->images(), InvalidValueException::class);
 	Assert::exception(fn() => ICal::parser()->mode(ParserMode::Strict)->parse($calendar->serialize()), InvalidValueException::class);
 });
+
+test('conferences() of events and tasks (RFC 7986)', function () {
+	$calendar = calendar(
+		'BEGIN:VEVENT', 'UID:1', 'DTSTAMP:20260101T000000Z', 'DTSTART:20260105T100000Z',
+		'CONFERENCE;VALUE=URI;FEATURE=PHONE,MODERATOR;LABEL=Moderator dial-in:tel:+1-412-555-0123,,,654321',
+		'CONFERENCE;VALUE=URI;FEATURE=audio,VIDEO,X-RECORDING;LABEL="Web video chat, access code=76543":https://video-chat.example.com/;group-id=1234',
+		'CONFERENCE: xmpp:chat-123@conference.example.com ',
+		'END:VEVENT',
+		'BEGIN:VTODO', 'UID:2', 'DTSTAMP:20260101T000000Z', 'END:VTODO',
+	);
+	[$moderator, $video, $chat] = $calendar->events()[0]->conferences();
+	Assert::same('tel:+1-412-555-0123,,,654321', $moderator->uri);
+	Assert::same(['PHONE', 'MODERATOR'], $moderator->features());
+	Assert::same('Moderator dial-in', $moderator->label());
+	Assert::same('https://video-chat.example.com/;group-id=1234', (string) $video);
+	Assert::same(['AUDIO', 'VIDEO', 'X-RECORDING'], $video->features());
+	Assert::same('Web video chat, access code=76543', $video->label());
+	Assert::same('xmpp:chat-123@conference.example.com', $chat->uri, 'the URI is trimmed');
+	Assert::same([], $chat->features());
+	Assert::null($chat->label());
+	Assert::same([], $calendar->todos()[0]->conferences());
+});

@@ -54,6 +54,7 @@ other ones (VAVAILABILITY, PARTICIPANT, VRESOURCE, STRUCTURED-DATA, ...) stay av
 | `Calendar::images()`, `Item::images()` | IMAGE (RFC 7986) | `list<Image>` |
 | `Calendar::source()` | SOURCE (RFC 7986) | `?string`, a URI |
 | `Calendar::refreshInterval()` | REFRESH-INTERVAL (RFC 7986) | `?DateInterval` |
+| `Item::conferences()` | CONFERENCE (RFC 7986) | `list<Conference>` |
 
 `Item` covers events, tasks, journal entries and free/busy components. The values are immutable:
 
@@ -65,7 +66,16 @@ foreach ($event->images() as $image) {
 	$image->mediaType();  // FMTTYPE, e.g. image/png
 	$image->altRep();     // ALTREP, the URI launched by a click on the image
 }
+
+foreach ($event->conferences() as $conference) {
+	$conference->uri;         // e.g. https://video-chat.example.com/;group-id=1234 or tel:+1-412-555-0123,,,654321
+	$conference->features();  // FEATURE: AUDIO, CHAT, FEED, MODERATOR, PHONE, SCREEN, VIDEO or an X- value
+	$conference->label();     // LABEL, e.g. "Moderator dial-in"
+}
 ```
+
+Google Calendar and Outlook do not write CONFERENCE; the link of a Google Meet is in
+`$event->property('X-GOOGLE-CONFERENCE')`.
 
 ## Dates and times
 

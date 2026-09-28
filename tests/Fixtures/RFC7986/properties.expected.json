@@ -33,6 +33,14 @@
                     "summary": "Planning call",
                     "start": "2026-01-15 15:00:00 UTC",
                     "end": "2026-01-15 16:00:00 UTC",
+                    "conferences": [
+                        "tel:+1-412-555-0123,,,654321 PHONE,MODERATOR \"Moderator dial-in\"",
+                        "tel:+1-412-555-0123,,,555123 PHONE \"Attendee dial-in\"",
+                        "tel:+1-888-555-0456,,,555123 PHONE \"Attendee dial-in\"",
+                        "xmpp:chat-123@conference.example.com CHAT \"Chat room\"",
+                        "https://chat.example.com/audio?id=123456 AUDIO,VIDEO \"Attendee dial-in\"",
+                        "https://video-chat.example.com/;group-id=1234 VIDEO \"Web video chat, access code=76543\""
+                    ],
                     "occurrences": [
                         "2026-01-15 15:00:00 UTC – 2026-01-15 16:00:00 UTC"
                     ]
@@ -42,7 +50,10 @@
                     "uid": "rfc7986-task",
                     "summary": "Book the venue",
                     "end": "2026-01-20 (date)",
-                    "color": "navy"
+                    "color": "navy",
+                    "conferences": [
+                        "xmpp:venue@conference.example.com CHAT"
+                    ]
                 },
                 {
                     "type": "VJOURNAL",

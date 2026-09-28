@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Generator;
 use om\ICal\Exception\ResourceLimitException;
 use om\ICal\Value\CalAddress;
+use om\ICal\Value\Conference;
 use om\ICal\Value\DateTimeValue;
 use om\ICal\Value\Image;
 use om\RRule\RecurrenceSet;
@@ -141,6 +142,15 @@ abstract class Item {
 	 */
 	public function images(): array {
 		return array_values(array_filter(array_map($this->calendar->values()->image(...), $this->properties('IMAGE'))));
+	}
+
+	/**
+	 * CONFERENCE properties (RFC 7986).
+	 *
+	 * @return list<Conference>
+	 */
+	public function conferences(): array {
+		return array_map(fn(Property $property): Conference => new Conference($this->calendar->values()->uri($property), $property->parameters), $this->properties('CONFERENCE'));
 	}
 
 	public function created(): ?DateTimeValue {
