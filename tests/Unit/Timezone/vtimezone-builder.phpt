@@ -9,6 +9,7 @@ use om\ICal\Component;
 use om\ICal\Event;
 use om\ICal\Serializer;
 use om\ICal\Timezone\VTimezoneBuilder;
+use om\ICal\Timezone\VTimezoneResolver;
 use om\ICal\Value\UtcOffset;
 use om\RRule\Expander;
 use om\RRule\Rule;
@@ -164,4 +165,30 @@ test('forComponents(): a definition for every TZID used, for the range of the da
 	$definitions = VTimezoneBuilder::forComponents([$event->component], ['Asia/Tokyo']);
 	Assert::same(['Europe/Prague', 'America/New_York'], array_map(fn(Component $c) => $c->property('TZID')->value, $definitions));
 	Assert::same([], VTimezoneBuilder::forComponents([new Component('VEVENT', [om\ICal\Property::create('DTSTART', '20260105T093000', ['TZID' => 'Custom Zone'])])]), 'only IANA timezones');
+});
+
+test('Definitions with UNTIL resolve east and west of UTC under another TZID (#110)', function () {
+	$offsets = function (DateTimeZone $timezone, int $from, int $to): array {
+		$result = [];
+		foreach (array_slice($timezone->getTransitions($from, $to) ?: [], 1) as $transition) {
+			if (($result === [] ? null : end($result)[1]) !== $transition['offset']) {
+				$result[] = [$transition['ts'], $transition['offset']];
+			}
+		}
+		return $result;
+	};
+	foreach (['Europe/Moscow' => [2008, 2013], 'Europe/Minsk' => [2008, 2013], 'America/Sao_Paulo' => [2015, 2022], 'Europe/Istanbul' => [2013, 2019]] as $name => [$first, $last]) {
+		$timezone = new DateTimeZone($name);
+		$vtimezone = VTimezoneBuilder::build($timezone, new DateTimeImmutable("$first-01-01", $timezone), new DateTimeImmutable("$last-12-31", $timezone), 'Custom/Zone');
+		$vtimezone = new Component('VTIMEZONE', array_values(array_filter($vtimezone->properties, fn($property) => $property->name !== 'X-LIC-LOCATION')), $vtimezone->components);
+		Assert::contains('UNTIL=', Serializer::serialize($vtimezone), $name);
+		$calendar = new Component('VCALENDAR', [], [$vtimezone]);
+		for ($year = $first + 1; $year <= $last - 2; $year++) {
+			$resolved = (new VTimezoneResolver(reference: new DateTimeImmutable("$year-06-01")))->resolve('Custom/Zone', $calendar);
+			Assert::notNull($resolved, "$name $year");
+			$from = gmmktime(0, 0, 0, 1, 1, $year - 1);
+			$to = gmmktime(0, 0, 0, 1, 1, $year + 2);
+			Assert::same($offsets($timezone, $from, $to), $offsets($resolved->timezone, $from, $to), "$name $year");
+		}
+	}
 });
