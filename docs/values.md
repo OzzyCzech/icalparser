@@ -29,6 +29,15 @@ the default type of the property):
 | BINARY | `string` (decoded) |
 | GEO | `array{float, float}` |
 
+Properties of the RFC 5545 updates have these default types (an explicit VALUE parameter takes
+precedence, e.g. `IMAGE;VALUE=BINARY;ENCODING=BASE64`):
+
+| Property | Type | RFC |
+|----------|------|-----|
+| IMAGE, CONFERENCE, SOURCE | URI | RFC 7986 |
+| REFRESH-INTERVAL | DURATION | RFC 7986 |
+| COLOR, NAME | TEXT | RFC 7986 |
+
 ## Dates and times
 
 `DateTimeValue` keeps the meaning of the value (RFC 5545, sections 3.3.4 and 3.3.5):

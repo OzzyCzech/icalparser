@@ -68,6 +68,11 @@ test('Invalid values and timezones', function () use ($base) {
 	Assert::contains('ERROR timezone.no-observance', issues(['BEGIN:VTIMEZONE', 'TZID:Empty', 'END:VTIMEZONE']));
 });
 
+test('Invalid values of RFC 7986 properties', function () use ($base) {
+	Assert::same(['ERROR value.invalid', 'ERROR value.invalid'], issues(['REFRESH-INTERVAL:weekly', ...$base, 'IMAGE;VALUE=BINARY;ENCODING=BASE64:***', 'IMAGE:https://example.com/a.png', 'CONFERENCE:https://meet.example.com/1', 'END:VEVENT']));
+	Assert::same([], issues(['REFRESH-INTERVAL;VALUE=DURATION:P1W', 'SOURCE:https://example.com/a.ics', ...$base, 'IMAGE;VALUE=BINARY;ENCODING=BASE64;FMTTYPE=image/png:aGVsbG8=', 'END:VEVENT']));
+});
+
 test('Issues and exceptions', function () use ($base) {
 	$calendar = ICal::parse("BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nDTSTART:20260105T100000Z\r\nDURATION:PT1H\r\nDTEND:20260105T110000Z\r\nEND:VEVENT\r\nEND:VCALENDAR");
 	$issues = (new Validator())->validate($calendar);

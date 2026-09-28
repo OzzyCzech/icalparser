@@ -20,7 +20,11 @@ use om\RRule\Rule;
  * returns null (or skips the invalid item of a list).
  */
 final class ValueParser {
-	/** Default value types of properties (RFC 5545, section 3.8), TEXT otherwise. */
+	/**
+	 * Default value types of properties (RFC 5545, section 3.8, and its updates), TEXT otherwise.
+	 * RFC 7986 requires the VALUE parameter for IMAGE, CONFERENCE and REFRESH-INTERVAL; it is
+	 * assumed when missing.
+	 */
 	public const array TYPES = [
 		'DTSTART' => 'DATE-TIME', 'DTEND' => 'DATE-TIME', 'DUE' => 'DATE-TIME', 'DTSTAMP' => 'DATE-TIME',
 		'CREATED' => 'DATE-TIME', 'LAST-MODIFIED' => 'DATE-TIME', 'COMPLETED' => 'DATE-TIME',
@@ -30,6 +34,8 @@ final class ValueParser {
 		'RRULE' => 'RECUR', 'EXRULE' => 'RECUR', 'ATTENDEE' => 'CAL-ADDRESS', 'ORGANIZER' => 'CAL-ADDRESS',
 		'URL' => 'URI', 'TZURL' => 'URI', 'ATTACH' => 'URI', 'GEO' => 'FLOAT',
 		'TZOFFSETFROM' => 'UTC-OFFSET', 'TZOFFSETTO' => 'UTC-OFFSET',
+		// RFC 7986
+		'IMAGE' => 'URI', 'CONFERENCE' => 'URI', 'SOURCE' => 'URI', 'REFRESH-INTERVAL' => 'DURATION',
 	];
 
 	/** Properties with a list of values. */
