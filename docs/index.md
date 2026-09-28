@@ -5,6 +5,7 @@ A lightweight and robust iCalendar ([RFC 5545](https://www.rfc-editor.org/rfc/rf
 - reads real-world `.ics` files from Google Calendar, Apple Calendar, Outlook, Exchange, Nextcloud, Fastmail
   and others, repairs damaged files and reports every repair
 - keeps unknown and X- properties, writes calendars back
+- creates calendars with named arguments (`Event::new(summary: ..., start: ...)`), with VTIMEZONE definitions
 - keeps the meaning of dates, floating, UTC and zoned times, resolves Windows timezones and custom VTIMEZONE
   definitions
 - expands recurring events lazily: the complete RRULE, RDATE, EXDATE and RECURRENCE-ID overrides
@@ -41,6 +42,7 @@ Read on:
 - [Values and timezones](values.md): the model, typed values, dates and times, timezone resolution
 - [Recurrence](recurrence.md): recurrence sets, rules, series with overrides
 - [Validation](validation.md): RFC 5545 checks of a parsed calendar
+- [Creating calendars](creating.md): events, tasks, alarms and timezones from named arguments
 - [API reference](api/index.md): every public class, generated from the source code
 
 The [examples](https://github.com/OzzyCzech/icalparser/tree/main/examples) directory contains a web page and

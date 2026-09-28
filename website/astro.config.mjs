@@ -21,6 +21,7 @@ export default defineConfig({
 						{ label: 'Values and timezones', link: '/values/' },
 						{ label: 'Recurrence', link: '/recurrence/' },
 						{ label: 'Validation', link: '/validation/' },
+						{ label: 'Creating calendars', link: '/creating/' },
 					],
 				},
 				{
