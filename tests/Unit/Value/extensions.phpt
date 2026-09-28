@@ -106,3 +106,21 @@ test('conferences() of events and tasks (RFC 7986)', function () {
 	Assert::null($chat->label());
 	Assert::same([], $calendar->todos()[0]->conferences());
 });
+
+test('links() with each value type (RFC 9253)', function () {
+	$calendar = calendar(
+		'BEGIN:VTODO', 'UID:1', 'DTSTAMP:20260101T000000Z',
+		'LINK;LINKREL=SOURCE;LABEL=Venue;VALUE=URI:https://example.com/events',
+		'LINK;LINKREL="https://example.com/linkrel/derivedFrom";FMTTYPE=text/calendar;LANGUAGE=en:https://example.com/tasks/01234567-abcd1234.ics',
+		'LINK;LINKREL="https://example.com/linkrel/costStructure";VALUE=XML-REFERENCE:https://example.com/xmlDocs/bidFramework.xml#xpointer(descendant::CostStruc/range-to(following::CostStrucEND[1]))',
+		'LINK;LINKREL=next;VALUE=uid:task\,2',
+		'END:VTODO',
+	);
+	[$source, $derived, $xml, $uid] = $calendar->todos()[0]->links();
+	Assert::same(['https://example.com/events', 'URI', 'SOURCE', 'Venue', null, null], [$source->value, $source->valueType(), $source->relation(), $source->label(), $source->mediaType(), $source->language()]);
+	Assert::same(['URI', 'https://example.com/linkrel/derivedFrom', 'text/calendar', 'en'], [$derived->valueType(), $derived->relation(), $derived->mediaType(), $derived->language()]);
+	Assert::same('XML-REFERENCE', $xml->valueType());
+	Assert::same('https://example.com/xmlDocs/bidFramework.xml#xpointer(descendant::CostStruc/range-to(following::CostStrucEND[1]))', (string) $xml);
+	Assert::same(['UID', 'task,2'], [$uid->valueType(), $uid->value], 'a UID is unescaped like TEXT');
+	Assert::same([], calendar('BEGIN:VEVENT', 'UID:2', 'END:VEVENT')->events()[0]->links());
+});

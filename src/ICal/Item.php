@@ -11,6 +11,8 @@ use om\ICal\Value\CalAddress;
 use om\ICal\Value\Conference;
 use om\ICal\Value\DateTimeValue;
 use om\ICal\Value\Image;
+use om\ICal\Value\Link;
+use om\ICal\Value\ValueParser;
 use om\RRule\RecurrenceSet;
 use om\RRule\Rule;
 
@@ -151,6 +153,15 @@ abstract class Item {
 	 */
 	public function conferences(): array {
 		return array_map(fn(Property $property): Conference => new Conference($this->calendar->values()->uri($property), $property->parameters), $this->properties('CONFERENCE'));
+	}
+
+	/**
+	 * LINK properties (RFC 9253).
+	 *
+	 * @return list<Link>
+	 */
+	public function links(): array {
+		return array_map(fn(Property $property): Link => new Link($this->reference($property), $property->parameters), $this->properties('LINK'));
 	}
 
 	public function created(): ?DateTimeValue {
@@ -414,6 +425,14 @@ abstract class Item {
 	protected function text(string $name): ?string {
 		$property = $this->property($name);
 		return $property === null ? null : $this->calendar->values()->text($property);
+	}
+
+	/**
+	 * A URI or an XML reference, otherwise a UID or text (LINK and RELATED-TO of RFC 9253).
+	 */
+	private function reference(Property $property): string {
+		$values = $this->calendar->values();
+		return in_array(ValueParser::type($property), ['URI', 'XML-REFERENCE'], true) ? $values->uri($property) : $values->text($property);
 	}
 
 	protected function integer(string $name): ?int {

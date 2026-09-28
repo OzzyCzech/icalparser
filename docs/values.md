@@ -55,6 +55,7 @@ other ones (VAVAILABILITY, PARTICIPANT, VRESOURCE, STRUCTURED-DATA, ...) stay av
 | `Calendar::source()` | SOURCE (RFC 7986) | `?string`, a URI |
 | `Calendar::refreshInterval()` | REFRESH-INTERVAL (RFC 7986) | `?DateInterval` |
 | `Item::conferences()` | CONFERENCE (RFC 7986) | `list<Conference>` |
+| `Item::links()` | LINK (RFC 9253) | `list<Link>` |
 
 `Item` covers events, tasks, journal entries and free/busy components. The values are immutable:
 
@@ -71,6 +72,15 @@ foreach ($event->conferences() as $conference) {
 	$conference->uri;         // e.g. https://video-chat.example.com/;group-id=1234 or tel:+1-412-555-0123,,,654321
 	$conference->features();  // FEATURE: AUDIO, CHAT, FEED, MODERATOR, PHONE, SCREEN, VIDEO or an X- value
 	$conference->label();     // LABEL, e.g. "Moderator dial-in"
+}
+
+foreach ($event->links() as $link) {
+	$link->value;        // the target
+	$link->valueType();  // URI (default), XML-REFERENCE (a URI with an XPointer anchor) or UID
+	$link->relation();   // LINKREL, e.g. latest-version or a URI; there is no default
+	$link->label();      // LABEL
+	$link->mediaType();  // FMTTYPE
+	$link->language();   // LANGUAGE
 }
 ```
 

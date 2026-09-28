@@ -29,7 +29,7 @@ See [UPGRADING.md](UPGRADING.md).
   `CONCEPT` are URIs, `REFRESH-INTERVAL` is a `DURATION`, `ACKNOWLEDGED` is a `DATE-TIME` (the `Validator` reports a
   non-UTC value); `VALUE=UID` and `VALUE=XML-REFERENCE` of RFC 9253 (#91)
 - typed getters of RFC 7986: `color()` and `images()` (`Image`) of calendars and items, `Calendar::source()`,
-  `Calendar::refreshInterval()` and `Item::conferences()` (`Conference`) (#92)
+  `Calendar::refreshInterval()` and `Item::conferences()` (`Conference`); of RFC 9253: `Item::links()` (`Link`) (#92)
 
 ### Added
 

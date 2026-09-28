@@ -1,0 +1,51 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//om//icalparser tests//EN
+BEGIN:VTODO
+UID:paint-the-room
+DTSTAMP:20260101T000000Z
+DTSTART:20260302T080000Z
+DUE:20260303T160000Z
+SUMMARY:Paint the room
+CONCEPT:https://example.com/event-types/renovation
+REFID:renovation-2026
+RELATED-TO;RELTYPE=FINISHTOSTART;GAP=P1D:lay-the-carpet
+LINK;LINKREL=SOURCE;LABEL=Venue;VALUE=URI:
+ https://example.com/events
+LINK;LINKREL="https://example.com/linkrel/derivedFrom";
+ VALUE=URI:
+ https://example.com/tasks/01234567-abcd1234.ics
+LINK;LINKREL="https://example.com/linkrel/costStructure";
+ VALUE=XML-REFERENCE:
+ https://example.com/xmlDocs/bidFramework.xml
+ #xpointer(descendant::CostStruc/range-to(
+ following::CostStrucEND[1]))
+LINK;LINKREL=next;VALUE=UID:lay-the-carpet
+END:VTODO
+BEGIN:VTODO
+UID:lay-the-carpet
+DTSTAMP:20260101T000000Z
+DTSTART:20260305T080000Z
+DUE:20260305T160000Z
+SUMMARY:Lay the carpet
+REFID:renovation-2026
+RELATED-TO:paint-the-room
+RELATED-TO;RELTYPE=DEPENDS-ON:paint-the-room
+RELATED-TO;VALUE=URI;RELTYPE=STARTTOFINISH:
+ https://example.com/caldav/user/jb/cal/
+ 19960401-080045-4000F192713.ics
+RELATED-TO;RELTYPE=FINISHTOFINISH;GAP=-PT4H:electrical-work
+END:VTODO
+BEGIN:VEVENT
+UID:itinerary-flight
+DTSTAMP:20260101T000000Z
+DTSTART:20260417T083000Z
+DTEND:20260417T103000Z
+SUMMARY:Flight
+REFID:itinerary-2026-04-17
+RELATED-TO;RELTYPE=FIRST:itinerary-flight
+RELATED-TO;RELTYPE=NEXT:itinerary-hotel
+RELATED-TO;RELTYPE=REFID:itinerary-2026-04-17
+RELATED-TO;RELTYPE=CONCEPT:https://example.com/event-types/travel
+END:VEVENT
+END:VCALENDAR

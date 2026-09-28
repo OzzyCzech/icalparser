@@ -60,6 +60,7 @@ function item(Item $item): array {
 		'categories' => $item->categories(),
 		'color' => $item->color(),
 		'images' => array_map(image(...), $item->images()),
+		'links' => array_map(fn($link) => $link->relation() . ' ' . $link->valueType() . ' ' . $link->value, $item->links()),
 		'conferences' => array_map(fn($conference) => $conference->uri . ' ' . implode(',', $conference->features()) . ($conference->label() !== null ? ' "' . $conference->label() . '"' : ''), $item->conferences()),
 		'attendees' => array_map(fn($a) => $a->email() . ' ' . $a->role() . '/' . $a->status(), $item->attendees()),
 		'alarms' => array_map(fn($alarm) => $alarm->action() . ' ' . (is_object($trigger = $alarm->trigger()) ? ($trigger instanceof DateInterval ? ICal\Value\Duration::format($trigger) : describe($trigger)) : '-'), $item->alarms()),
