@@ -25,8 +25,9 @@ See [UPGRADING.md](UPGRADING.md).
 - exceptions with error code, line, property and raw value (`SyntaxException`, `InvalidValueException`,
   `InvalidRecurrenceRuleException`, `TimezoneResolutionException`, `ResourceLimitException`, `ValidationException`)
 - documentation in `docs/`, examples in `examples/`
-- default value types of RFC 7986 and RFC 9074 properties: `IMAGE`, `CONFERENCE` and `SOURCE` are URIs,
-  `REFRESH-INTERVAL` is a `DURATION`, `ACKNOWLEDGED` is a `DATE-TIME` (the `Validator` reports a non-UTC value) (#91)
+- default value types of RFC 7986, RFC 9074 and RFC 9253 properties: `IMAGE`, `CONFERENCE`, `SOURCE`, `LINK` and
+  `CONCEPT` are URIs, `REFRESH-INTERVAL` is a `DURATION`, `ACKNOWLEDGED` is a `DATE-TIME` (the `Validator` reports a
+  non-UTC value); `VALUE=UID` and `VALUE=XML-REFERENCE` of RFC 9253 (#91)
 
 ### Added
 

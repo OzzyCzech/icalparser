@@ -37,6 +37,7 @@ final class ValueParser {
 		// RFC 7986
 		'IMAGE' => 'URI', 'CONFERENCE' => 'URI', 'SOURCE' => 'URI', 'REFRESH-INTERVAL' => 'DURATION',
 		'ACKNOWLEDGED' => 'DATE-TIME', // RFC 9074, in UTC
+		'LINK' => 'URI', 'CONCEPT' => 'URI', // RFC 9253
 	];
 
 	/** Properties with a list of values. */
@@ -69,7 +70,8 @@ final class ValueParser {
 
 	/**
 	 * Value converted according to its type: DateTimeValue (list for EXDATE and RDATE), Period list,
-	 * DateInterval, int, float, bool, Rule, CalAddress, GEO pair, list of TEXT (CATEGORIES) or string.
+	 * DateInterval, int, float, bool, Rule, CalAddress, GEO pair, list of TEXT (CATEGORIES) or string
+	 * (TEXT, URI, BINARY, and UID and XML-REFERENCE of RFC 9253).
 	 */
 	public function value(Property $property): mixed {
 		$list = isset(self::LISTS[$property->name]);
@@ -84,7 +86,7 @@ final class ValueParser {
 			'CAL-ADDRESS' => $this->calAddress($property),
 			'UTC-OFFSET' => $this->utcOffset($property),
 			'BINARY' => $this->binary($property),
-			'URI' => $this->uri($property),
+			'URI', 'XML-REFERENCE' => $this->uri($property),
 			default => $list ? $this->texts($property) : $this->text($property),
 		};
 	}

@@ -25,7 +25,8 @@ the default type of the property):
 | RECUR | `om\RRule\Rule` |
 | CAL-ADDRESS | `om\ICal\Value\CalAddress` |
 | UTC-OFFSET | `int` (seconds) |
-| URI | `string` |
+| URI, XML-REFERENCE (RFC 9253) | `string` |
+| UID (RFC 9253) | `string` (unescaped like TEXT) |
 | BINARY | `string` (decoded) |
 | GEO | `array{float, float}` |
 
@@ -38,6 +39,8 @@ precedence, e.g. `IMAGE;VALUE=BINARY;ENCODING=BASE64`):
 | REFRESH-INTERVAL | DURATION | RFC 7986 |
 | COLOR, NAME | TEXT | RFC 7986 |
 | ACKNOWLEDGED | DATE-TIME (UTC) | RFC 9074 |
+| LINK (also VALUE=UID and VALUE=XML-REFERENCE), CONCEPT | URI | RFC 9253 |
+| REFID | TEXT | RFC 9253 |
 
 ## Dates and times
 

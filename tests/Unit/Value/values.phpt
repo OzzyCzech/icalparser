@@ -195,6 +195,19 @@ test('ACKNOWLEDGED is a DATE-TIME (RFC 9074)', function () {
 	Assert::exception(fn() => (new ValueParser(strict: true))->value(property('ACKNOWLEDGED:yesterday')), InvalidValueException::class);
 });
 
+test('LINK, CONCEPT and REFID (RFC 9253)', function () {
+	$values = new ValueParser();
+	Assert::same('URI', ValueParser::type(property('LINK;LINKREL=SOURCE:https://example.com/events')));
+	Assert::same('https://example.com/events', $values->value(property('LINK;LINKREL=SOURCE:https://example.com/events')));
+	Assert::same('https://example.com/events', $values->value(property('LINK;LINKREL=SOURCE;VALUE=URI:https://example.com/events')));
+	Assert::same('https://example.com/bid.xml#xpointer(descendant::CostStruc)', $values->value(property('LINK;LINKREL="https://example.com/linkrel/costStructure";VALUE=XML-REFERENCE:https://example.com/bid.xml#xpointer(descendant::CostStruc)')));
+	Assert::same('event-1, part 2', $values->value(property('LINK;LINKREL=next;VALUE=UID:event-1\, part 2')), 'a UID is TEXT');
+	Assert::same('see; also', $values->value(property('LINK;VALUE=TEXT:see\; also')));
+	Assert::same('https://example.com/event-types/arts/music', $values->value(property('CONCEPT:https://example.com/event-types/arts/music')));
+	Assert::same('TEXT', ValueParser::type(property('REFID:itinerary-2014-11-17')));
+	Assert::same('itinerary-2014-11-17', $values->value(property('REFID:itinerary-2014-11-17')));
+});
+
 test('Invalid values of RFC 7986 properties', function () {
 	$values = new ValueParser();
 	$strict = new ValueParser(strict: true);
