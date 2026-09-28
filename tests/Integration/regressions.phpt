@@ -69,6 +69,17 @@ test('PR 88 padded numbers in BY rules', function () {
 	Assert::same(['01-01', '01-02', '01-03'], legacy('pr-88-numeric-filters.ics', 'm-d'));
 });
 
+test('#90 SKIP of RFC 7529 moves instances on invalid days', function () {
+	$expected = [
+		'2012-02-29', '2013-03-01', '2014-03-01', '2015-03-01', '2016-02-29', '2017-03-01', // leap day, SKIP=FORWARD
+		'2026-01-31', '2026-01-31', '2026-01-31', '2026-02-28', '2026-03-01', '2026-03-31', '2026-03-31', '2026-03-31', // monthly
+		'2026-04-30', '2026-05-01', '2026-05-31', '2026-07-31',
+		'2028-02-29', '2029-02-28', '2030-02-28', '2031-02-28', '2032-02-29', // leap day, SKIP=BACKWARD
+	];
+	Assert::same($expected, modern('issue-90-rscale-skip.ics', 'Y-m-d'));
+	Assert::same($expected, legacy('issue-90-rscale-skip.ics', 'Y-m-d'));
+});
+
 test('#63 getEvents() returns a sortable list', function () {
 	$parser = new IcalParser();
 	$parser->parseFile(REGRESSION . 'issue-82-utc-z.ics');
