@@ -4,8 +4,8 @@
 
 Version 5 adds a new, layered API (`om\ICal`) and keeps the array based API of version 4 (`IcalParser`, `EventsList`,
 `Freq`, `Recurrence`, `ParserOptions`) with the shape of its data, now deprecated and to be removed in 5.5 at the latest. Both use a new recurrence engine and
-content line parser, which fixes many bugs; the results of affected calendars differ from 4.1.3.
-See [UPGRADING.md](UPGRADING.md).
+content line parser, which fixes many bugs; the results of affected calendars differ from 4.x.
+See [UPGRADING.md](UPGRADING.md). The fixes of 4.1.4 (#37, #88) are included.
 
 ### New API
 
@@ -70,16 +70,16 @@ See [UPGRADING.md](UPGRADING.md).
 - `IcalParser::$timezone` is reset for every calendar that is not appended
 - `Freq` is an adapter over the new engine: invalid rules throw `InvalidArgumentException`, `maxOccurrences` limits
   the expansion, `Freq::$debug` has no effect, `lastOccurrence()` returns `false` for an empty set and
-  `previousOccurrence()` returns `false` when there is no earlier occurrence (4.1.3 returned DTSTART)
+  `previousOccurrence()` returns `false` when there is no earlier occurrence (4.x returned DTSTART)
 
 ### Fixed
 
-- `RDATE` without `RRULE` no longer fails with `TypeError` and adds no yearly occurrences (#37)
+- `RDATE` without `RRULE` no longer fails with `TypeError` and adds no yearly occurrences (#37, also in 4.1.4)
 - `RDATE` values are always part of the recurrence set (one was lost together with `COUNT`)
 - a `RECURRENCE-ID` replaces only the matching instance of the same UID, compared as an instant in any timezone
-  (4.1.3 compared strings for all events, so it could hide instances of other events or a wrong instance)
+  (4.x compared strings for all events, so it could hide instances of other events or a wrong instance)
 - an excluded or overridden first occurrence is no longer returned with the original `DTSTART`
-- series with `COUNT` reaching beyond the 3 year horizon are complete (4.1.3 failed with `TypeError`)
+- series with `COUNT` reaching beyond the 3 year horizon are complete (4.x failed with `TypeError`)
 - yearly rules in January return every year, not only the first occurrence (#59)
 - rules the previous engine expanded incorrectly, for example negative weekday ordinals (`BYDAY=-2MO` returned
   every third Monday), `BYHOUR` combined with `BYMINUTE` (minutes were lost) and `INTERVAL` of weekly rules

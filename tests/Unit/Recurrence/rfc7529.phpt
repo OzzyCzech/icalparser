@@ -118,6 +118,18 @@ test('SKIP without RSCALE: a warning in permissive mode, the rule is kept withou
 	Assert::same(8, $exception->line());
 });
 
+test('SKIP without RSCALE after whitespace is ignored the same way', function () {
+	foreach (['RRULE: SKIP=FORWARD;FREQ=MONTHLY;COUNT=3', "RRULE:SKIP=FORWARD;FREQ=MONTHLY;COUNT=3\t"] as $line) {
+		$content = str_replace('RRULE:FREQ=DAILY', $line, calendar('FREQ=DAILY'));
+		Assert::same(['value.invalid@8'], warnings($content), $line);
+		$rule = ICal::parse($content)->events()[0]->recurrenceRule();
+		Assert::notNull($rule);
+		Assert::null($rule->skip);
+		Assert::same(3, $rule->count);
+		Assert::same(['ERROR recurrence.skip-without-rscale'], issues($content), $line);
+	}
+});
+
 /**
  * @return list<string>
  */
