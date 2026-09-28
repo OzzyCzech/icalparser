@@ -10,6 +10,7 @@ UPDATE_SNAPSHOTS=1 composer test:integration
 | Directory | Content |
 |-----------|---------|
 | `RFC5545` | examples from RFC 5545, sections 3.8.5.3 and 4 |
+| `RFC7986` | properties of RFC 7986 (COLOR, IMAGE, SOURCE, REFRESH-INTERVAL, CONFERENCE) with the examples of the RFC |
 | `Google`, `Apple`, `Outlook`, `Exchange`, `Nextcloud`, `Fastmail` | synthetic calendars following the export format of these programs (their typical properties, X- properties, VTIMEZONE styles and quirks) |
 | `Broken` | damaged input for the permissive parser |
 | `Regression` | bugs found in the past; every bug gets a fixture or a test |

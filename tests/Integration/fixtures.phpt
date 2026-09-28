@@ -15,6 +15,7 @@ use om\ICal\Parser\ParseWarning;
 use om\ICal\Validation\Issue;
 use om\ICal\Validation\Validator;
 use om\ICal\Value\DateTimeValue;
+use om\ICal\Value\Image;
 use Tester\Assert;
 use Tester\Environment;
 
@@ -31,6 +32,10 @@ function describe(?DateTimeValue $value): ?string {
 		$value->isUtc() => $value->format('Y-m-d H:i:s') . ' UTC',
 		default => $value->format('Y-m-d H:i:s P') . " ($value->tzid = " . $value->timezone()?->getName() . ')',
 	};
+}
+
+function image(Image $image): string {
+	return ($image->uri ?? 'binary, ' . strlen((string) $image->data) . ' bytes') . ' ' . implode(',', $image->display()) . ($image->mediaType() !== null ? ' ' . $image->mediaType() : '');
 }
 
 function item(Item $item): array {
@@ -53,6 +58,8 @@ function item(Item $item): array {
 		'overrides' => count($item->overrides()),
 		'status' => $item->status(),
 		'categories' => $item->categories(),
+		'color' => $item->color(),
+		'images' => array_map(image(...), $item->images()),
 		'attendees' => array_map(fn($a) => $a->email() . ' ' . $a->role() . '/' . $a->status(), $item->attendees()),
 		'alarms' => array_map(fn($alarm) => $alarm->action() . ' ' . (is_object($trigger = $alarm->trigger()) ? ($trigger instanceof DateInterval ? ICal\Value\Duration::format($trigger) : describe($trigger)) : '-'), $item->alarms()),
 		'x-properties' => array_values(array_unique(array_map(fn($p) => $p->name, array_filter($item->component->properties, fn($p) => str_starts_with($p->name, 'X-'))))),
@@ -65,6 +72,10 @@ function calendar(Calendar $calendar): array {
 		'name' => $calendar->name(),
 		'method' => $calendar->method(),
 		'timezone' => $calendar->timezone()?->getName(),
+		'color' => $calendar->color(),
+		'source' => $calendar->source(),
+		'refreshInterval' => ($interval = $calendar->refreshInterval()) === null ? null : ICal\Value\Duration::format($interval),
+		'images' => array_map(image(...), $calendar->images()),
 		'timezones' => array_map(fn($definition) => $definition->tzid() . ' => ' . ($definition->resolve()?->timezone->getName() ?? 'unresolved') . ($definition->resolve() ? ' (' . $definition->resolve()->source->name . ')' : ''), $calendar->timezones()),
 		'items' => array_map(item(...), [...$calendar->events(), ...$calendar->todos(), ...$calendar->journals(), ...$calendar->freeBusy()]),
 		'issues' => array_map(fn(Issue $issue) => (string) $issue, (new Validator())->validate($calendar)),

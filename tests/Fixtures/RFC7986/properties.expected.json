@@ -1,0 +1,64 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "name": "Holidays and meetings",
+            "color": "turquoise",
+            "source": "https://example.com/holidays.ics",
+            "refreshInterval": "P7D",
+            "images": [
+                "https://example.com/images/logo.png BADGE image/png",
+                "https://example.com/images/weather-cloudy.png BADGE,THUMBNAIL image/png"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "rfc7986-party",
+                    "summary": "Summer party",
+                    "start": "2026-07-10 18:00:00 UTC",
+                    "end": "2026-07-10 23:00:00 UTC",
+                    "color": "tomato",
+                    "images": [
+                        "http://example.com/images/party.png BADGE image/png",
+                        "https://example.com/images/party-large.jpg FULLSIZE",
+                        "binary, 42 bytes THUMBNAIL image/gif"
+                    ],
+                    "occurrences": [
+                        "2026-07-10 18:00:00 UTC – 2026-07-10 23:00:00 UTC"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "rfc7986-conference",
+                    "summary": "Planning call",
+                    "start": "2026-01-15 15:00:00 UTC",
+                    "end": "2026-01-15 16:00:00 UTC",
+                    "occurrences": [
+                        "2026-01-15 15:00:00 UTC – 2026-01-15 16:00:00 UTC"
+                    ]
+                },
+                {
+                    "type": "VTODO",
+                    "uid": "rfc7986-task",
+                    "summary": "Book the venue",
+                    "end": "2026-01-20 (date)",
+                    "color": "navy"
+                },
+                {
+                    "type": "VJOURNAL",
+                    "uid": "rfc7986-journal",
+                    "summary": "Notes",
+                    "start": "2026-01-11 (date)",
+                    "end": "2026-01-11 (date)",
+                    "color": "DarkGreen",
+                    "images": [
+                        "https://example.com/images/whiteboard.jpg BADGE"
+                    ],
+                    "occurrences": [
+                        "2026-01-11 (date) – 2026-01-11 (date)"
+                    ]
+                }
+            ]
+        }
+    ]
+}

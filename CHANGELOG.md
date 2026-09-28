@@ -28,6 +28,8 @@ See [UPGRADING.md](UPGRADING.md).
 - default value types of RFC 7986, RFC 9074 and RFC 9253 properties: `IMAGE`, `CONFERENCE`, `SOURCE`, `LINK` and
   `CONCEPT` are URIs, `REFRESH-INTERVAL` is a `DURATION`, `ACKNOWLEDGED` is a `DATE-TIME` (the `Validator` reports a
   non-UTC value); `VALUE=UID` and `VALUE=XML-REFERENCE` of RFC 9253 (#91)
+- typed getters of RFC 7986: `color()` and `images()` (`Image`) of calendars and items, `Calendar::source()` and
+  `Calendar::refreshInterval()` (#92)
 
 ### Added
 

@@ -45,7 +45,8 @@ foreach ($calendar->occurrencesBetween($from, $to) as $occurrence) {
 
 Events, tasks (`todos()`), journal entries (`journals()`) and free/busy components (`freeBusy()`) have typed getters:
 `uid()`, `summary()`, `description()`, `location()`, `start()`, `end()`, `duration()`, `status()`, `categories()`,
-`organizer()`, `attendees()`, `alarms()`, `recurrenceRule()` and more. Any property, including unknown ones, is available too:
+`organizer()`, `attendees()`, `alarms()`, `recurrenceRule()`, `color()`, `images()` and more (see
+[the getters of RFC 7986, RFC 9073, RFC 9074 and RFC 9253](docs/values.md#properties-of-the-rfc-5545-updates)). Any property, including unknown ones, is available too:
 
 ```php
 $event->property('X-APPLE-STRUCTURED-LOCATION')?->parameter('X-TITLE');

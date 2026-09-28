@@ -201,6 +201,17 @@ final class ValueParser {
 		return new CalAddress(trim($property->value), $property->parameters);
 	}
 
+	/**
+	 * IMAGE (RFC 7986) with a URI or the decoded data of VALUE=BINARY; null for invalid data.
+	 */
+	public function image(Property $property): ?Image {
+		if (self::type($property) !== 'BINARY') {
+			return new Image($this->uri($property), null, $property->parameters);
+		}
+		$data = $this->binary($property);
+		return $data === null ? null : new Image(null, $data, $property->parameters);
+	}
+
 	public function utcOffset(Property $property): ?int {
 		try {
 			return UtcOffset::parse($property->value);

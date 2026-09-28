@@ -42,6 +42,31 @@ precedence, e.g. `IMAGE;VALUE=BINARY;ENCODING=BASE64`):
 | LINK (also VALUE=UID and VALUE=XML-REFERENCE), CONCEPT | URI | RFC 9253 |
 | REFID | TEXT | RFC 9253 |
 
+## Properties of the RFC 5545 updates
+
+Typed getters for the properties and components of RFC 7986, RFC 9073, RFC 9074 and RFC 9253;
+other ones (VAVAILABILITY, PARTICIPANT, VRESOURCE, STRUCTURED-DATA, ...) stay available through
+`Component` and `Property`.
+
+| Getter | Property | Value |
+|--------|----------|-------|
+| `Calendar::color()`, `Item::color()` | COLOR (RFC 7986) | `?string`, a CSS3 color name |
+| `Calendar::images()`, `Item::images()` | IMAGE (RFC 7986) | `list<Image>` |
+| `Calendar::source()` | SOURCE (RFC 7986) | `?string`, a URI |
+| `Calendar::refreshInterval()` | REFRESH-INTERVAL (RFC 7986) | `?DateInterval` |
+
+`Item` covers events, tasks, journal entries and free/busy components. The values are immutable:
+
+```php
+foreach ($event->images() as $image) {
+	$image->uri;          // the URI, null for inline data
+	$image->data;         // the decoded data of VALUE=BINARY, null for a URI
+	$image->display();    // DISPLAY: ['BADGE'] by default, GRAPHIC, FULLSIZE, THUMBNAIL
+	$image->mediaType();  // FMTTYPE, e.g. image/png
+	$image->altRep();     // ALTREP, the URI launched by a click on the image
+}
+```
+
 ## Dates and times
 
 `DateTimeValue` keeps the meaning of the value (RFC 5545, sections 3.3.4 and 3.3.5):

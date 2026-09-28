@@ -9,6 +9,7 @@ use Generator;
 use om\ICal\Exception\ResourceLimitException;
 use om\ICal\Value\CalAddress;
 use om\ICal\Value\DateTimeValue;
+use om\ICal\Value\Image;
 use om\RRule\RecurrenceSet;
 use om\RRule\Rule;
 
@@ -124,6 +125,22 @@ abstract class Item {
 			array_push($categories, ...$this->calendar->values()->texts($property));
 		}
 		return $categories;
+	}
+
+	/**
+	 * COLOR (RFC 7986): a CSS3 color name.
+	 */
+	public function color(): ?string {
+		return $this->text('COLOR');
+	}
+
+	/**
+	 * IMAGE properties (RFC 7986); images with invalid binary data are skipped.
+	 *
+	 * @return list<Image>
+	 */
+	public function images(): array {
+		return array_values(array_filter(array_map($this->calendar->values()->image(...), $this->properties('IMAGE'))));
 	}
 
 	public function created(): ?DateTimeValue {
