@@ -13,6 +13,9 @@ use om\ICal\Validation\Validator;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+if (PHP_SAPI !== 'cli') {
+	header('Content-Type: text/plain; charset=utf-8');
+}
 $result = ICal::parser()->parseFile($argv[1] ?? __DIR__ . '/calendar.ics');
 foreach ($result->warnings() as $warning) {
 	echo "repaired: $warning\n";

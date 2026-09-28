@@ -7,6 +7,7 @@ use om\ICal\Parser\ParserMode;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+// Browse the examples with: php -S localhost:8000 -t examples
 // A local file or a URL, e.g. a public Google calendar:
 // https://calendar.google.com/calendar/ical/cs.czech%23holiday%40group.v.calendar.google.com/public/basic.ics
 // Never pass a user-supplied value here: parseFile() reads any path or stream wrapper.
@@ -58,9 +59,19 @@ function when(Occurrence $occurrence): string {
 		th { font-size: .875rem; color: #666; }
 		.muted { color: #666; font-size: .875rem; }
 		.error { padding: 1rem; background: #fdecea; color: #611a15; border-radius: .25rem; }
+		nav { margin-bottom: 1.5rem; font-size: .875rem; }
+		nav a { margin-right: 1rem; }
 	</style>
 </head>
 <body>
+<nav>
+	Examples:
+	<a href="index.php">Upcoming events</a>
+	<a href="create.php" title="create a calendar with named arguments">Create a calendar</a>
+	<a href="validate.php" title="repairs of the parser and RFC 5545 violations">Validate</a>
+	<a href="stream.php" title="read a large calendar event by event">Stream</a>
+	<a href="calendar.ics">calendar.ics</a>
+</nav>
 <h1><?= e($title) ?></h1>
 <p class="muted">Events from <?= $from->format('j M Y') ?> to <?= $to->format('j M Y') ?></p>
 
