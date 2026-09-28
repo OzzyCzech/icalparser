@@ -69,7 +69,7 @@ final class TimezoneGuesser {
 			$start = new DateTimeImmutable($observance['start'], $utc);
 			$local = [];
 			if (!empty($observance['rrule'])) {
-				foreach (new Expander(Rule::fromString($observance['rrule']), $start, $until + 2 * 86400) as $timestamp) {
+				foreach (new Expander(Rule::fromString($observance['rrule'], true), $start, $until + 2 * 86400) as $timestamp) {
 					$local[] = $timestamp; // includes DTSTART
 				}
 			} else {

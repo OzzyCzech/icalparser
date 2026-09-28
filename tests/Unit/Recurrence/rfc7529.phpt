@@ -85,6 +85,9 @@ test('Invalid RSCALE, SKIP and leap months', function () {
 		$exception = Assert::exception(fn() => Rule::fromString($rule), InvalidRecurrenceRuleException::class);
 		Assert::same('recurrence.skip-without-rscale', $exception->errorCode(), $rule);
 	}
+	Assert::null(Rule::fromString('FREQ=MONTHLY;SKIP=BACKWARD', true)->skip);
+	Assert::null(Rule::fromArray(['FREQ' => 'MONTHLY', 'SKIP' => 'BACKWARD'], true)->skip);
+	Assert::same(Skip::Backward, Rule::fromString('FREQ=MONTHLY;RSCALE=GREGORIAN;SKIP=BACKWARD', true)->skip);
 	Assert::exception(fn() => new Rule(Frequency::Monthly, skip: Skip::Forward), InvalidRecurrenceRuleException::class);
 	Assert::exception(fn() => new Rule(Frequency::Yearly, byLeapMonth: [5]), InvalidRecurrenceRuleException::class);
 });
@@ -280,4 +283,17 @@ test('A rule of another calendar system is rejected by the expander', function (
 test('Only the unsupported rule of several is not expanded', function () {
 	$content = calendar('RSCALE=CHINESE;FREQ=YEARLY', 'DTSTART;VALUE=DATE:20260131', 'RRULE:FREQ=MONTHLY;RSCALE=GREGORIAN;SKIP=BACKWARD;COUNT=3');
 	Assert::same(['2026-01-31', '2026-02-28', '2026-03-31'], days($content));
+});
+
+test('the version 4 API ignores SKIP without RSCALE, as before RFC 7529', function () {
+	$content = calendar('FREQ=MONTHLY;COUNT=4;SKIP=BACKWARD', 'DTSTART:20250131T100000Z');
+	foreach ([false, true] as $strict) {
+		$parser = new om\IcalParser(new om\ParserOptions(strict: $strict));
+		$parser->parseString($content);
+		$events = $parser->getEvents()->sorted()->getArrayCopy();
+		Assert::same(['2025-01-31', '2025-03-31', '2025-05-31', '2025-07-31'], array_map(fn(DateTimeInterface $date) => $date->format('Y-m-d'), $events[0]['RECURRENCES']));
+	}
+
+	$freq = new Freq('FREQ=MONTHLY;COUNT=2;SKIP=BACKWARD', (new DateTimeImmutable('2025-01-31 10:00:00 UTC'))->getTimestamp());
+	Assert::same(['2025-01-31', '2025-03-31'], array_map(fn(int $timestamp) => gmdate('Y-m-d', $timestamp), $freq->getAllOccurrences()));
 });

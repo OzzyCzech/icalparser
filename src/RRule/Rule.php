@@ -69,8 +69,9 @@ final readonly class Rule {
 
 	/**
 	 * Parse a rule like "FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE".
+	 * With $ignoreSkipWithoutRscale, SKIP without RSCALE is ignored instead of rejected.
 	 */
-	public static function fromString(string $rule): self {
+	public static function fromString(string $rule, bool $ignoreSkipWithoutRscale = false): self {
 		$parts = [];
 		foreach (explode(';', trim($rule)) as $part) {
 			if ($part === '') {
@@ -82,17 +83,22 @@ final readonly class Rule {
 			}
 			$parts[$pair[0]] = $pair[1];
 		}
-		return self::fromArray($parts);
+		return self::fromArray($parts, $ignoreSkipWithoutRscale);
 	}
 
 	/**
 	 * Build a rule from rule parts; keys are case-insensitive and unknown parts are ignored.
 	 * UNTIL may be a string, a DateTimeInterface or a Unix timestamp.
+	 * With $ignoreSkipWithoutRscale, SKIP without RSCALE is ignored instead of rejected,
+	 * which is how rules were read before RFC 7529.
 	 *
 	 * @param array<string, mixed> $parts
 	 */
-	public static function fromArray(array $parts): self {
+	public static function fromArray(array $parts, bool $ignoreSkipWithoutRscale = false): self {
 		$parts = array_change_key_case($parts, CASE_UPPER);
+		if ($ignoreSkipWithoutRscale && !isset($parts['RSCALE'])) {
+			unset($parts['SKIP']);
+		}
 		$freq = Frequency::tryFrom(strtoupper(self::scalar($parts['FREQ'] ?? '', 'FREQ')));
 		if ($freq === null) {
 			throw InvalidRecurrenceRuleException::create('recurrence.invalid-rule', 'Unsupported recurrence frequency: ' . self::scalar($parts['FREQ'] ?? '', 'FREQ'));
