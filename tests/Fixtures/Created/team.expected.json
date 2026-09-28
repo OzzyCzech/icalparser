@@ -1,0 +1,95 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "name": "Team A",
+            "method": "PUBLISH",
+            "color": "steelblue",
+            "timezones": [
+                "Europe/Prague => Europe/Prague (VTimezone)",
+                "America/New_York => America/New_York (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "standup@example.org",
+                    "summary": "Standup, team A",
+                    "start": "2026-01-05 09:30:00 +01:00 (Europe/Prague = Europe/Prague)",
+                    "end": "2026-01-05 09:45:00 +01:00 (Europe/Prague = Europe/Prague)",
+                    "rrules": [
+                        "FREQ=WEEKLY;BYDAY=MO,WE,FR"
+                    ],
+                    "overrides": 1,
+                    "categories": [
+                        "Meeting",
+                        "Team A"
+                    ],
+                    "conferences": [
+                        "https://meet.example.org/team-a "
+                    ],
+                    "attendees": [
+                        "a@example.org REQ-PARTICIPANT/NEEDS-ACTION",
+                        "b@example.org OPT-PARTICIPANT/NEEDS-ACTION"
+                    ],
+                    "alarms": [
+                        "DISPLAY -PT5M uid standup-alarm"
+                    ],
+                    "x-properties": [
+                        "X-EXAMPLE"
+                    ],
+                    "occurrences": [
+                        "2026-01-05 09:30:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-05 09:45:00 +01:00 (Europe/Prague = Europe/Prague)",
+                        "2026-01-07 09:30:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-07 09:45:00 +01:00 (Europe/Prague = Europe/Prague)",
+                        "2026-01-09 09:30:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-09 09:45:00 +01:00 (Europe/Prague = Europe/Prague)",
+                        "2026-01-12 09:30:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-12 09:45:00 +01:00 (Europe/Prague = Europe/Prague)",
+                        "2026-01-14 09:30:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-14 09:45:00 +01:00 (Europe/Prague = Europe/Prague)",
+                        "2026-01-16 09:30:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-16 09:45:00 +01:00 (Europe/Prague = Europe/Prague)",
+                        "2026-01-19 09:30:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-19 09:45:00 +01:00 (Europe/Prague = Europe/Prague)",
+                        "2026-01-21 09:30:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-21 09:45:00 +01:00 (Europe/Prague = Europe/Prague)",
+                        "2026-01-23 09:30:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-23 09:45:00 +01:00 (Europe/Prague = Europe/Prague)",
+                        "2026-01-26 09:30:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-01-26 09:45:00 +01:00 (Europe/Prague = Europe/Prague)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "offsite@example.org",
+                    "summary": "Offsite",
+                    "start": "2026-10-22 (date)",
+                    "end": "2026-10-24 (date)",
+                    "status": "CONFIRMED",
+                    "locations": [
+                        "offsite-hotel Hotel Krkonoše (hotel)"
+                    ],
+                    "occurrences": [
+                        "2026-10-22 (date) – 2026-10-24 (date)"
+                    ]
+                },
+                {
+                    "type": "VTODO",
+                    "uid": "report@example.org",
+                    "summary": "Quarterly report",
+                    "start": "2026-03-23 09:00:00 +01:00 (Europe/Prague = Europe/Prague)",
+                    "end": "2026-03-31 17:00:00 +02:00 (Europe/Prague = Europe/Prague)",
+                    "status": "IN-PROCESS",
+                    "alarms": [
+                        "EMAIL -P1D"
+                    ],
+                    "occurrences": [
+                        "2026-03-23 09:00:00 +01:00 (Europe/Prague = Europe/Prague) – 2026-03-31 17:00:00 +02:00 (Europe/Prague = Europe/Prague)"
+                    ]
+                },
+                {
+                    "type": "VJOURNAL",
+                    "uid": "minutes@example.org",
+                    "summary": "Minutes",
+                    "start": "2026-01-05 (date)",
+                    "end": "2026-01-05 (date)",
+                    "status": "FINAL",
+                    "occurrences": [
+                        "2026-01-05 (date) – 2026-01-05 (date)"
+                    ]
+                }
+            ]
+        }
+    ]
+}

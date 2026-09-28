@@ -12,6 +12,7 @@ Documentation: [ozzyczech.github.io/icalparser](https://ozzyczech.github.io/ical
 - reads real-world `.ics` files from Google Calendar, Apple Calendar, Outlook, Exchange, Nextcloud, Fastmail and others,
   repairs damaged files and reports every repair
 - keeps unknown and X- properties, writes calendars back
+- creates calendars with named arguments (`Event::new(summary: ..., start: ...)`), with VTIMEZONE definitions
 - keeps the meaning of dates, floating, UTC and zoned times, resolves Windows timezones and custom VTIMEZONE definitions
 - expands recurring events lazily: the complete RRULE (including BYSETPOS and BYWEEKNO), RDATE, EXDATE and
   RECURRENCE-ID overrides (moved, cancelled and THISANDFUTURE)
@@ -119,20 +120,27 @@ foreach (ICal::stream('huge.ics') as $item) { // events, tasks, ... one by one, 
 ### Writing
 
 ```php
+use om\ICal\Alarm;
 use om\ICal\Calendar;
-use om\ICal\Component;
-use om\ICal\Property;
+use om\ICal\Event;
+use om\ICal\Value\CalAddress;
 
-$event = new Component('VEVENT', [
-	Property::create('UID', 'meeting-1@example.org'),
-	Property::create('DTSTAMP', '20260101T000000Z'),
-	Property::create('DTSTART', '20260105T093000', ['TZID' => 'Europe/Prague']),
-	Property::create('SUMMARY', 'Standup'),
+$calendar = Calendar::create('-//example//standup//EN', name: 'Team A', events: [
+	Event::new(
+		summary: 'Standup, team A',
+		start: new DateTimeImmutable('2026-01-05 09:30', new DateTimeZone('Europe/Prague')),
+		duration: new DateInterval('PT15M'),
+		rrule: 'FREQ=WEEKLY;BYDAY=MO,WE,FR',
+		attendees: [CalAddress::create('mailto:a@example.org', name: 'A', rsvp: true)],
+		alarms: [Alarm::display('Standup', trigger: '-PT5M')],
+	),
 ]);
-echo Calendar::create()->withComponent($event)->serialize();
+echo $calendar->serialize(); // or $calendar->writeFile('team.ics')
 ```
 
-Parsed calendars are serialized with all their properties, lines are folded at 75 octets.
+Values are formatted and escaped, UID, DTSTAMP and a VTIMEZONE for every timezone used are added, invalid
+combinations are rejected. Parsed calendars are serialized with all their properties, lines are folded at
+75 octets.
 
 ## Examples
 

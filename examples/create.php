@@ -2,27 +2,43 @@
 declare(strict_types=1);
 
 /**
- * Create a calendar with a recurring event and write it as iCalendar data.
+ * Create a calendar with a recurring event, a task and alarms and write it as iCalendar data.
  *
  * Usage: php examples/create.php > team.ics
  */
 
+use om\ICal\Alarm;
 use om\ICal\Calendar;
-use om\ICal\Component;
-use om\ICal\Property;
-use om\ICal\Value\Text;
-use om\RRule\Rule;
+use om\ICal\Event;
+use om\ICal\Todo;
+use om\ICal\Validation\Validator;
+use om\ICal\Value\CalAddress;
+use om\ICal\Value\DateTimeValue;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$event = new Component('VEVENT', [
-	Property::create('UID', 'standup-' . bin2hex(random_bytes(8)) . '@example.org'),
-	Property::create('DTSTAMP', gmdate('Ymd\THis\Z')),
-	Property::create('DTSTART', '20260105T093000', ['TZID' => 'Europe/Prague']),
-	Property::create('DURATION', 'PT15M'),
-	Property::create('RRULE', Rule::fromString('FREQ=WEEKLY;BYDAY=MO,WE,FR')->toString()),
-	Property::create('SUMMARY', Text::escape('Standup, team A')),
-	Property::create('X-EXAMPLE', 'custom properties are kept'),
+$prague = new DateTimeZone('Europe/Prague');
+
+$calendar = Calendar::create('-//example//standup//EN', name: 'Team A', events: [
+	Event::new(
+		uid: 'standup@example.org',
+		summary: 'Standup, team A',
+		start: new DateTimeImmutable('2026-01-05 09:30', $prague),
+		duration: new DateInterval('PT15M'),
+		rrule: 'FREQ=WEEKLY;BYDAY=MO,WE,FR',
+		exdates: [new DateTimeImmutable('2026-04-06 09:30', $prague)],
+		organizer: CalAddress::create('mailto:boss@example.org', name: 'Boss'),
+		attendees: [CalAddress::create('mailto:a@example.org', name: 'A', rsvp: true)],
+		alarms: [Alarm::display('Standup in 5 minutes', trigger: '-PT5M')],
+		properties: ['X-EXAMPLE' => 'custom properties are kept'],
+	),
+	Event::new(summary: 'Offsite', start: DateTimeValue::date(2026, 10, 22), end: DateTimeValue::date(2026, 10, 24), transparency: 'TRANSPARENT'),
+], todos: [
+	Todo::new(summary: 'Quarterly report', due: new DateTimeImmutable('2026-03-31 17:00', $prague), priority: 1),
 ]);
 
-echo Calendar::create('-//example//standup//EN')->withComponent($event)->serialize();
+foreach ((new Validator())->validate($calendar) as $issue) {
+	fwrite(STDERR, $issue . PHP_EOL); // there are none
+}
+
+echo $calendar->serialize(); // with a VTIMEZONE for Europe/Prague

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace om\ICal\Value;
 
+use InvalidArgumentException;
 use om\ICal\Parameters;
 use Stringable;
 
@@ -14,6 +15,44 @@ final readonly class CalAddress implements Stringable {
 		public string $uri,
 		public Parameters $parameters,
 	) {
+	}
+
+	/**
+	 * An organizer or attendee: CN, ROLE, PARTSTAT, RSVP and CUTYPE parameters from the arguments.
+	 * An e-mail address without a scheme becomes a "mailto:" URI.
+	 *
+	 *     CalAddress::create('mailto:a@example.org', name: 'A', role: 'CHAIR', status: 'ACCEPTED', rsvp: true)
+	 *
+	 * @param ?string $role ROLE, e.g. CHAIR, REQ-PARTICIPANT, OPT-PARTICIPANT, NON-PARTICIPANT
+	 * @param ?string $status PARTSTAT, e.g. NEEDS-ACTION, ACCEPTED, DECLINED, TENTATIVE, DELEGATED
+	 * @param ?string $type CUTYPE, e.g. INDIVIDUAL, GROUP, RESOURCE, ROOM
+	 * @param array<string, string|list<string>> $parameters other parameters, e.g. DELEGATED-TO, SENT-BY, LANGUAGE
+	 * @throws InvalidArgumentException for an empty URI
+	 */
+	public static function create(
+		string $uri,
+		?string $name = null,
+		?string $role = null,
+		?string $status = null,
+		?bool $rsvp = null,
+		?string $type = null,
+		array $parameters = [],
+	): self {
+		$uri = trim($uri);
+		if ($uri === '' || preg_match('/[\x00-\x20\x7F]/', $uri)) {
+			throw new InvalidArgumentException("Invalid calendar user address: $uri");
+		}
+		if (!preg_match('/^[A-Za-z][A-Za-z0-9+.-]*:/', $uri) && str_contains($uri, '@')) {
+			$uri = 'mailto:' . $uri;
+		}
+		$values = array_filter([
+			'CN' => $name,
+			'CUTYPE' => $type === null ? null : strtoupper($type),
+			'ROLE' => $role === null ? null : strtoupper($role),
+			'PARTSTAT' => $status === null ? null : strtoupper($status),
+			'RSVP' => $rsvp === null ? null : ($rsvp ? 'TRUE' : 'FALSE'),
+		], static fn(?string $value): bool => $value !== null);
+		return new self($uri, Parameters::from([...$values, ...$parameters]));
 	}
 
 	/**

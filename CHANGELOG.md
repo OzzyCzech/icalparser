@@ -33,6 +33,12 @@ See [UPGRADING.md](UPGRADING.md). The fixes of 4.1.4 (#37, #88) are included.
   `Item::relatedTo()` (`Relation` with `RELTYPE` and `GAP`); of RFC 9073: `Item::locations()` (`Location` of
   VLOCATION components, kept inside their event or task also when their END is missing); of RFC 9074:
   `Alarm::uid()` and `Alarm::acknowledged()` (#92)
+- creating calendars with named arguments: `Calendar::create()` with `name`, `description`, `color`, `method`,
+  `events`, `todos`, `journals`, `components` and `properties` (backward compatible), `Event::new()`,
+  `Todo::new()`, `Journal::new()`, `Location::new()`, `Alarm::display()`, `audio()` and `email()`,
+  `CalAddress::create()`; values are formatted and escaped, invalid combinations are rejected, a VTIMEZONE is
+  generated for every TZID used (`VTimezoneBuilder`), `Calendar::writeFile()`; `Status`, `Classification` and
+  `Transparency` enums (#108)
 
 ### Added
 

@@ -19,8 +19,12 @@ use om\RRule\Rule;
  *     $issues = (new Validator())->validate($calendar);
  */
 final class Validator {
-	/** Properties that must not occur more than once (RFC 5545, section 3.6, RFC 9073 and RFC 9074). */
-	private const array SINGLE = [
+	/**
+	 * Properties that must not occur more than once (RFC 5545, section 3.6, RFC 9073 and RFC 9074).
+	 *
+	 * @internal
+	 */
+	public const array SINGLE = [
 		'VCALENDAR' => ['PRODID', 'VERSION', 'CALSCALE', 'METHOD'],
 		'VEVENT' => ['DTSTAMP', 'UID', 'DTSTART', 'CLASS', 'CREATED', 'DESCRIPTION', 'GEO', 'LAST-MODIFIED', 'LOCATION', 'ORGANIZER', 'PRIORITY', 'SEQUENCE', 'STATUS', 'SUMMARY', 'TRANSP', 'URL', 'RECURRENCE-ID', 'DTEND', 'DURATION'],
 		'VTODO' => ['DTSTAMP', 'UID', 'CLASS', 'COMPLETED', 'CREATED', 'DESCRIPTION', 'DTSTART', 'GEO', 'LAST-MODIFIED', 'LOCATION', 'ORGANIZER', 'PERCENT-COMPLETE', 'PRIORITY', 'RECURRENCE-ID', 'SEQUENCE', 'STATUS', 'SUMMARY', 'URL', 'DUE', 'DURATION'],

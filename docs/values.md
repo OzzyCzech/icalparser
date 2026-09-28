@@ -135,7 +135,9 @@ UTC offset before the gap.
 
 `Property::create()` validates the property name, `Parameters` validates parameter names and encodes
 values as RFC 6868 requires (`^n`, `^'`, `^^`), and newlines of raw values are written as `\n`, so
-no value can start another content line. Use `Text::escape()` for TEXT values.
+no value can start another content line. Use `Text::escape()` for TEXT values. The factories of
+[Creating calendars](creating.md) (`Calendar::create()`, `Event::new()`, ...) format and escape the
+values for you.
 
 ## Timezones
 
