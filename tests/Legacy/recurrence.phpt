@@ -156,3 +156,15 @@ test('An invalid recurrence rule is ignored by default and the event keeps DTSTA
 	$parser->parseString("BEGIN:VCALENDAR\nBEGIN:VEVENT\nUID:x\nDTSTART:20260101T100000Z\nRRULE:FREQ=DAILY;INTERVAL=0\nEND:VEVENT\nEND:VCALENDAR");
 	Assert::same(['2026-01-01 10:00'], array_map(fn($e) => $e['DTSTART']->format('Y-m-d H:i'), $parser->getEvents()->getArrayCopy()));
 });
+
+test('RDATE without RRULE adds only its dates, as in 4.1.4 (#37)', function () {
+	$parser = new IcalParser();
+	$parser->parseFile(__DIR__ . '/../Fixtures/Regression/issue-37-rdate-without-rrule.ics');
+	$events = $parser->getEvents()->sorted();
+	Assert::count(4, $events);
+	Assert::same('15.4.2016 21:00:00', $events[0]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::same('16.12.2016 21:00:00', $events[1]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::same('23.12.2016 21:00:00', $events[2]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::same('30.12.2016 21:00:00', $events[3]['DTSTART']->format('j.n.Y H:i:s'));
+	Assert::same('17.12.2016 04:00:00', $events[1]['DTEND']->format('j.n.Y H:i:s'));
+});

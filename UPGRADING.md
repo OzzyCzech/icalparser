@@ -14,6 +14,9 @@ the shape of the parsed data. The recurrence engine was replaced, so results of 
 - `getEvents()` adds `DTEND` from `DURATION` and to all-day events, instance dates are copies,
 - an invalid `RRULE` is ignored (`ParserOptions::$strict` throws instead),
 - `Freq::previousOccurrence()` and `lastOccurrence()` return `false` when there is no occurrence,
+- a rule of another calendar system than Gregorian (`RSCALE=HEBREW`, RFC 7529) or with a leap month (`BYMONTH=5L`)
+  is not expanded as Gregorian any more: `IcalParser` keeps only DTSTART and RDATE, `new Freq()` throws
+  (`SKIP` without `RSCALE` is still ignored as before),
 - exceptions: `om\ICal\Exception\InvalidRecurrenceRuleException` (an `InvalidArgumentException`) and
   `ResourceLimitException` (a `RuntimeException`), so existing `catch` blocks still work.
 
@@ -43,7 +46,7 @@ the shape of the parsed data. The recurrence engine was replaced, so results of 
 | `$parser->getTimezones()` | `$calendar->timezones()` |
 | `$parser->data['X-WR-CALNAME']` | `$calendar->name()` |
 | callback of `parseString()` | `ICal::stream($file)`, or `Tokenizer::fromFile($file)` for content lines |
-| `new Freq($rule, $timestamp)` | `new Expander(Rule::fromString($rule), $start)` |
+| `new Freq($rule, $timestamp)` | `new Expander(Rule::fromString($rule, true), $start)` (`true` ignores `SKIP` without `RSCALE` as `Freq` does) |
 | `new Recurrence($rrule)` | `Rule::fromArray($rrule)` |
 
 ### Behavior to be aware of
