@@ -6,10 +6,15 @@ namespace om\ICal;
 use DateInterval;
 use DateTimeInterface;
 use DateTimeZone;
+use InvalidArgumentException;
 use om\ICal\Timezone\TimezoneResolver;
+use om\ICal\Timezone\VTimezoneBuilder;
 use om\ICal\Value\Image;
+use om\ICal\Value\PropertyFactory;
+use om\ICal\Value\Text;
 use om\ICal\Value\ValueParser;
 use om\RRule\RecurrenceLimits;
+use RuntimeException;
 
 /**
  * VCALENDAR (RFC 5545, section 3.4) with typed access to its components.
@@ -17,6 +22,8 @@ use om\RRule\RecurrenceLimits;
  * Components with the same UID form a series: events(), todos() and journals() return the
  * recurring (or single) items, their overrides (RECURRENCE-ID) are available through
  * Item::overrides() and are applied by the occurrence methods.
+ *
+ * @phpstan-import-type PropertyList from PropertyFactory
  */
 final class Calendar {
 	private const array ITEMS = ['VEVENT' => Event::class, 'VTODO' => Todo::class, 'VJOURNAL' => Journal::class, 'VFREEBUSY' => FreeBusy::class];
@@ -39,10 +46,74 @@ final class Calendar {
 	}
 
 	/**
-	 * A new, empty calendar.
+	 * A new calendar (VERSION 2.0 and PRODID) with the given properties and components.
+	 *
+	 *     Calendar::create('-//example//team//EN', name: 'Team', events: [Event::new(summary: 'Standup', start: ...)])
+	 *
+	 * A VTIMEZONE is added for every IANA TZID used by the components (see VTimezoneBuilder::forComponents())
+	 * unless $timezones is false or $components already define it. Components are written in the order:
+	 * VTIMEZONE, events, tasks, journal entries, other components.
+	 *
+	 * @param ?string $name NAME (RFC 7986), also written as X-WR-CALNAME for older programs
+	 * @param ?string $description DESCRIPTION (RFC 7986), also written as X-WR-CALDESC
+	 * @param ?string $color COLOR (RFC 7986), a CSS3 color name
+	 * @param ?string $method METHOD (RFC 5546), e.g. PUBLISH or REQUEST
+	 * @param iterable<Event|Component> $events VEVENT components, see Event::new()
+	 * @param iterable<Todo|Component> $todos VTODO components, see Todo::new()
+	 * @param iterable<Journal|Component> $journals VJOURNAL components, see Journal::new()
+	 * @param iterable<Item|Component> $components other components, e.g. VTIMEZONE or VFREEBUSY
+	 * @param PropertyList $properties other properties, see Event::new()
+	 * @param bool $timezones add a VTIMEZONE for every TZID used
+	 * @throws InvalidArgumentException for an invalid value or a component of another type
 	 */
-	public static function create(string $productId = '-//om//icalparser//EN'): self {
-		return new self(new Component('VCALENDAR', [Property::create('VERSION', '2.0'), Property::create('PRODID', $productId)]));
+	public static function create(
+		string $productId = '-//om//icalparser//EN',
+		?string $name = null,
+		?string $description = null,
+		?string $color = null,
+		?string $method = null,
+		iterable $events = [],
+		iterable $todos = [],
+		iterable $journals = [],
+		iterable $components = [],
+		array $properties = [],
+		bool $timezones = true,
+	): self {
+		if ($method !== null && !preg_match('/^[A-Za-z0-9-]+$/D', $method)) {
+			throw new InvalidArgumentException("Invalid METHOD value: $method");
+		}
+		$calendar = (new ComponentBuilder('VCALENDAR'))
+			->add(Property::create('VERSION', '2.0'))
+			->text('PRODID', $productId)
+			->add($method === null ? null : Property::create('METHOD', strtoupper($method)))
+			->text('NAME', $name)
+			->text('X-WR-CALNAME', $name)
+			->text('DESCRIPTION', $description)
+			->text('X-WR-CALDESC', $description)
+			->text('COLOR', $color)
+			->build($properties);
+
+		$items = [...self::components($events, 'VEVENT'), ...self::components($todos, 'VTODO'), ...self::components($journals, 'VJOURNAL')];
+		$defined = $others = [];
+		foreach (self::components($components, null) as $component) {
+			$component->name === 'VTIMEZONE' ? $defined[] = $component : $others[] = $component;
+		}
+		$generated = $timezones ? VTimezoneBuilder::forComponents([...$items, ...$others], array_map(
+			static fn(Component $definition): string => Text::unescape($definition->property('TZID')->value ?? ''),
+			$defined,
+		)) : [];
+		return new self($calendar->withComponents([...$defined, ...$generated, ...$items, ...$others]));
+	}
+
+	/**
+	 * Write the calendar to a file.
+	 *
+	 * @throws RuntimeException when the file cannot be written
+	 */
+	public function writeFile(string $file): void {
+		if (@file_put_contents($file, $this->serialize(), LOCK_EX) === false) {
+			throw new RuntimeException("Unable to write the file $file.");
+		}
 	}
 
 	public function values(): ValueParser {
@@ -257,6 +328,25 @@ final class Calendar {
 			}
 		}
 		return $this->items[$name] = $items;
+	}
+
+	/**
+	 * @param iterable<Item|Component> $components
+	 * @return list<Component>
+	 */
+	private static function components(iterable $components, ?string $name): array {
+		$result = [];
+		foreach ($components as $component) {
+			$component = $component instanceof Item ? $component->component : $component;
+			if ($name !== null && $component->name !== $name) {
+				throw new InvalidArgumentException("Expected a $name component, $component->name given.");
+			}
+			if ($component->name === 'VCALENDAR') {
+				throw new InvalidArgumentException('A VCALENDAR cannot be a component of a calendar.');
+			}
+			$result[] = $component;
+		}
+		return $result;
 	}
 
 	private function text(string $name): ?string {

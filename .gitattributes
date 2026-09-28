@@ -1,5 +1,7 @@
 *.php  text diff=php
 *.phpt text diff=php
+# golden files of created calendars are compared byte by byte (CRLF line breaks)
+/tests/Fixtures/Created/*.ics -text
 
 # Exclude non-essential files from dist to minimize package size.
 /.github/ export-ignore

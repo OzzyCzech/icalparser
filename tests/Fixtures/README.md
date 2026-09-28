@@ -15,6 +15,7 @@ UPDATE_SNAPSHOTS=1 composer test:integration
 | `RFC9074` | alarms with UID and ACKNOWLEDGED, the snooze example of RFC 9074 |
 | `RFC9253` | LINK, RELATED-TO with the relation types and GAP of RFC 9253, CONCEPT and REFID |
 | `Google`, `Apple`, `Outlook`, `Exchange`, `Nextcloud`, `Fastmail` | synthetic calendars following the export format of these programs (their typical properties, X- properties, VTIMEZONE styles and quirks) |
+| `Created` | calendars created by `Calendar::create()` and `Event::new()`, golden files of `tests/Unit/Create/calendar.phpt` (regenerate with `UPDATE_SNAPSHOTS=1 composer test`) |
 | `Broken` | damaged input for the permissive parser |
 | `Regression` | bugs found in the past; every bug gets a fixture or a test |
 | `Samples` | sample calendars of [ical.js](https://github.com/mozilla-comm/ical.js/tree/master/samples), tested with the new API (`tests/Integration/samples.phpt`) and with the deprecated `IcalParser` (`tests/Legacy/snapshots.phpt`) |
