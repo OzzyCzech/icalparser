@@ -182,3 +182,21 @@ test('locations() of events and tasks (RFC 9073)', function () {
 	Assert::same('office', $calendar->todos()[0]->locations()[0]->uid());
 	Assert::same([], calendar('BEGIN:VJOURNAL', 'UID:3', 'END:VJOURNAL')->journals()[0]->locations());
 });
+
+test('uid() and acknowledged() of alarms (RFC 9074)', function () {
+	$calendar = calendar(
+		'BEGIN:VEVENT', 'UID:AC67C078-CED3-4BF5-9726-832C3749F627', 'DTSTAMP:20210302T151516Z', 'DTSTART:20210302T153000Z',
+		'BEGIN:VALARM', 'UID:8297C37D-BA2D-4476-91AE-C1EAA364F8E1', 'TRIGGER:-PT15M', 'DESCRIPTION:Event reminder', 'ACTION:DISPLAY', 'ACKNOWLEDGED:20210302T151514Z', 'END:VALARM',
+		'BEGIN:VALARM', 'TRIGGER:-PT5M', 'ACTION:AUDIO', 'ACKNOWLEDGED:20210302T152500', 'END:VALARM',
+		'BEGIN:VALARM', 'TRIGGER:-PT1M', 'ACTION:AUDIO', 'ACKNOWLEDGED:soon', 'END:VALARM',
+		'END:VEVENT',
+	);
+	[$acknowledged, $local, $invalid] = $calendar->events()[0]->alarms();
+	Assert::same('8297C37D-BA2D-4476-91AE-C1EAA364F8E1', $acknowledged->uid());
+	Assert::true($acknowledged->acknowledged()->isUtc());
+	Assert::same('2021-03-02 15:15:14', $acknowledged->acknowledged()->format('Y-m-d H:i:s'));
+	Assert::null($local->uid());
+	Assert::true($local->acknowledged()->isFloating(), 'a local time is read, the Validator reports it');
+	Assert::null($invalid->acknowledged());
+	Assert::null(calendar('BEGIN:VEVENT', 'UID:1', 'BEGIN:VALARM', 'ACTION:AUDIO', 'END:VALARM', 'END:VEVENT')->events()[0]->alarms()[0]->acknowledged());
+});

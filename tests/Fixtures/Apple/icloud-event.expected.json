@@ -13,8 +13,8 @@
                     "start": "2026-03-20 19:00:00 +01:00 (Europe/Prague = Europe/Prague)",
                     "end": "2026-03-20 20:00:00 +01:00 (Europe/Prague = Europe/Prague)",
                     "alarms": [
-                        "AUDIO -PT1H",
-                        "NONE 1976-04-01 00:55:45 UTC"
+                        "AUDIO -PT1H uid 0B8F7E2A-1F3D-4A5B-8C9D-0E1F2A3B4C5D",
+                        "NONE 1976-04-01 00:55:45 UTC uid 9A8B7C6D-5E4F-3A2B-1C0D-E9F8A7B6C5D4"
                     ],
                     "x-properties": [
                         "X-APPLE-TRAVEL-ADVISORY-BEHAVIOR",

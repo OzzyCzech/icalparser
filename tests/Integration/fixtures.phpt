@@ -65,7 +65,8 @@ function item(Item $item): array {
 		'locations' => array_map(fn($location) => trim($location->uid() . ' ' . $location->name() . ($location->types() !== [] ? ' (' . implode(', ', $location->types()) . ')' : '')), $item->locations()),
 		'conferences' => array_map(fn($conference) => $conference->uri . ' ' . implode(',', $conference->features()) . ($conference->label() !== null ? ' "' . $conference->label() . '"' : ''), $item->conferences()),
 		'attendees' => array_map(fn($a) => $a->email() . ' ' . $a->role() . '/' . $a->status(), $item->attendees()),
-		'alarms' => array_map(fn($alarm) => $alarm->action() . ' ' . (is_object($trigger = $alarm->trigger()) ? ($trigger instanceof DateInterval ? ICal\Value\Duration::format($trigger) : describe($trigger)) : '-'), $item->alarms()),
+		'alarms' => array_map(fn($alarm) => $alarm->action() . ' ' . (is_object($trigger = $alarm->trigger()) ? ($trigger instanceof DateInterval ? ICal\Value\Duration::format($trigger) : describe($trigger)) : '-')
+			. ($alarm->uid() !== null ? ' uid ' . $alarm->uid() : '') . ($alarm->acknowledged() !== null ? ' acknowledged ' . describe($alarm->acknowledged()) : ''), $item->alarms()),
 		'x-properties' => array_values(array_unique(array_map(fn($p) => $p->name, array_filter($item->component->properties, fn($p) => str_starts_with($p->name, 'X-'))))),
 		'occurrences' => $occurrences,
 	], fn($value) => $value !== null && $value !== [] && $value !== 0);

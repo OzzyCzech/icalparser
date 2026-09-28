@@ -75,6 +75,8 @@ test('ACKNOWLEDGED of an alarm is a UTC time (RFC 9074)', function () use ($base
 	Assert::same(['WARNING value.not-utc'], $alarm('ACKNOWLEDGED:20260101T095500'));
 	Assert::same(['WARNING value.not-utc', 'WARNING timezone.not-defined'], $alarm('ACKNOWLEDGED;TZID=America/New_York:20260101T095500'));
 	Assert::same(['ERROR component.duplicate-property'], $alarm('ACKNOWLEDGED:20260101T095500Z', 'ACKNOWLEDGED:20260102T095500Z'));
+	Assert::same([], $alarm('UID:alarm-1'));
+	Assert::same(['ERROR component.duplicate-property'], $alarm('UID:alarm-1', 'UID:alarm-2'));
 });
 
 test('VLOCATION has one UID (RFC 9073)', function () use ($base) {

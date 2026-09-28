@@ -45,8 +45,8 @@ precedence, e.g. `IMAGE;VALUE=BINARY;ENCODING=BASE64`):
 ## Properties of the RFC 5545 updates
 
 Typed getters for the properties and components of RFC 7986, RFC 9073, RFC 9074 and RFC 9253;
-other ones (VAVAILABILITY, PARTICIPANT, VRESOURCE, STRUCTURED-DATA, ...) stay available through
-`Component` and `Property`.
+other ones (VAVAILABILITY, PARTICIPANT, VRESOURCE, STRUCTURED-DATA, PROXIMITY, snoozed alarms
+related by `RELATED-TO;RELTYPE=SNOOZE`, ...) stay available through `Component` and `Property`.
 
 | Getter | Property | Value |
 |--------|----------|-------|
@@ -58,6 +58,8 @@ other ones (VAVAILABILITY, PARTICIPANT, VRESOURCE, STRUCTURED-DATA, ...) stay av
 | `Item::links()` | LINK (RFC 9253) | `list<Link>` |
 | `Item::relatedTo()` | RELATED-TO (RFC 5545, RFC 9253) | `list<Relation>` |
 | `Item::locations()` | VLOCATION components (RFC 9073) | `list<Location>`; `location()` stays the LOCATION text |
+| `Alarm::uid()` | UID of VALARM (RFC 9074) | `?string` |
+| `Alarm::acknowledged()` | ACKNOWLEDGED (RFC 9074) | `?DateTimeValue`, when the alarm was last acknowledged or sent (UTC) |
 
 `Item` covers events, tasks, journal entries and free/busy components. The values are immutable:
 

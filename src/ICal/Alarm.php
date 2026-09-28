@@ -10,7 +10,7 @@ use om\ICal\Value\CalAddress;
 use om\ICal\Value\DateTimeValue;
 
 /**
- * VALARM (RFC 5545, section 3.6.6).
+ * VALARM (RFC 5545, section 3.6.6, with UID and ACKNOWLEDGED of RFC 9074).
  */
 final class Alarm {
 	/**
@@ -24,6 +24,14 @@ final class Alarm {
 
 	public function property(string $name): ?Property {
 		return $this->component->property($name);
+	}
+
+	/**
+	 * UID of the alarm (RFC 9074, section 4).
+	 */
+	public function uid(): ?string {
+		$property = $this->property('UID');
+		return $property === null ? null : $this->calendar->values()->text($property);
 	}
 
 	/**
@@ -51,6 +59,14 @@ final class Alarm {
 	 */
 	public function related(): string {
 		return strtoupper($this->property('TRIGGER')?->parameter('RELATED') ?? 'START');
+	}
+
+	/**
+	 * ACKNOWLEDGED (RFC 9074, section 6): when the alarm was last acknowledged (or sent), in UTC.
+	 */
+	public function acknowledged(): ?DateTimeValue {
+		$property = $this->property('ACKNOWLEDGED');
+		return $property === null ? null : $this->calendar->values()->dateTime($property);
 	}
 
 	/**
