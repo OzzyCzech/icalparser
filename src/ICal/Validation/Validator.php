@@ -18,7 +18,7 @@ use om\RRule\Rule;
  *     $issues = (new Validator())->validate($calendar);
  */
 final class Validator {
-	/** Properties that must not occur more than once (RFC 5545, section 3.6, and RFC 9074). */
+	/** Properties that must not occur more than once (RFC 5545, section 3.6, RFC 9073 and RFC 9074). */
 	private const array SINGLE = [
 		'VCALENDAR' => ['PRODID', 'VERSION', 'CALSCALE', 'METHOD'],
 		'VEVENT' => ['DTSTAMP', 'UID', 'DTSTART', 'CLASS', 'CREATED', 'DESCRIPTION', 'GEO', 'LAST-MODIFIED', 'LOCATION', 'ORGANIZER', 'PRIORITY', 'SEQUENCE', 'STATUS', 'SUMMARY', 'TRANSP', 'URL', 'RECURRENCE-ID', 'DTEND', 'DURATION'],
@@ -27,6 +27,7 @@ final class Validator {
 		'VFREEBUSY' => ['DTSTAMP', 'UID', 'CONTACT', 'DTSTART', 'DTEND', 'ORGANIZER', 'URL'],
 		'VTIMEZONE' => ['TZID', 'LAST-MODIFIED', 'TZURL'],
 		'VALARM' => ['ACTION', 'TRIGGER', 'DURATION', 'REPEAT', 'DESCRIPTION', 'SUMMARY', 'ACKNOWLEDGED'],
+		'VLOCATION' => ['UID', 'DESCRIPTION', 'GEO', 'LOCATION-TYPE', 'NAME'],
 	];
 
 	/** Required properties. */
@@ -40,6 +41,7 @@ final class Validator {
 		'STANDARD' => ['DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM'],
 		'DAYLIGHT' => ['DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM'],
 		'VALARM' => ['ACTION', 'TRIGGER'],
+		'VLOCATION' => ['UID'],
 	];
 
 	/** Properties with a DATE-TIME value in UTC (RFC 9074). */

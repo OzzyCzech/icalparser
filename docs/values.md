@@ -57,6 +57,7 @@ other ones (VAVAILABILITY, PARTICIPANT, VRESOURCE, STRUCTURED-DATA, ...) stay av
 | `Item::conferences()` | CONFERENCE (RFC 7986) | `list<Conference>` |
 | `Item::links()` | LINK (RFC 9253) | `list<Link>` |
 | `Item::relatedTo()` | RELATED-TO (RFC 5545, RFC 9253) | `list<Relation>` |
+| `Item::locations()` | VLOCATION components (RFC 9073) | `list<Location>`; `location()` stays the LOCATION text |
 
 `Item` covers events, tasks, journal entries and free/busy components. The values are immutable:
 
@@ -91,7 +92,19 @@ foreach ($task->relatedTo() as $relation) {
 	                         // STARTTOFINISH, STARTTOSTART, FIRST, NEXT, DEPENDS-ON, REFID, CONCEPT, ...
 	$relation->gap();        // GAP: ?DateInterval, the lag (or the lead when negative) of a temporal relation
 }
+
+foreach ($event->locations() as $location) {
+	$location->uid();
+	$location->name();                        // NAME, e.g. "Parking for the venue"
+	$location->description();
+	$location->types();                       // LOCATION-TYPE, e.g. ['parking']
+	$location->url();
+	$location->value('STRUCTURED-DATA');      // any other property, e.g. a link to a vCard
+}
 ```
+
+A VLOCATION without END is closed before the next component (with a `syntax.missing-end` warning),
+so it stays inside its event or task.
 
 Google Calendar and Outlook do not write CONFERENCE; the link of a Google Meet is in
 `$event->property('X-GOOGLE-CONFERENCE')`.

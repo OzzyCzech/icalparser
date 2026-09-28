@@ -8,6 +8,7 @@ declare(strict_types=1);
 use om\ICal;
 use om\ICal\Calendar;
 use om\ICal\Exception\InvalidValueException;
+use om\ICal\Location;
 use om\ICal\Parameters;
 use om\ICal\Parser\ParserMode;
 use om\ICal\Value\Duration;
@@ -153,4 +154,31 @@ test('relatedTo() with the relation types and GAP (RFC 5545, RFC 9253)', functio
 	Assert::same('-PT4H30M', Duration::format($relations[4]->gap()));
 	Assert::null($relations[6]->gap(), 'an invalid GAP');
 	Assert::same([], calendar('BEGIN:VEVENT', 'UID:2', 'END:VEVENT')->events()[0]->relatedTo());
+});
+
+test('locations() of events and tasks (RFC 9073)', function () {
+	$calendar = calendar(
+		'BEGIN:VEVENT', 'UID:1', 'DTSTAMP:20260101T000000Z', 'DTSTART:20260105T100000Z', 'LOCATION:Big hall\, Main street',
+		'BEGIN:VLOCATION', 'UID:123456-abcdef-98765432', 'NAME:The venue', 'DESCRIPTION:Big hall\, entrance B', 'LOCATION-TYPE:arena,hall',
+		'URL:https://example.com/venue', 'GEO:50.08;14.42', 'STRUCTURED-DATA;VALUE=URI:http://dir.example.com/venues/big-hall.vcf', 'END:VLOCATION',
+		'BEGIN:VLOCATION', 'UID:123456-abcdef-87654321', 'NAME:Parking for the venue', 'LOCATION-TYPE:parking', 'END:VLOCATION',
+		'BEGIN:VALARM', 'ACTION:DISPLAY', 'TRIGGER:-PT5M', 'END:VALARM',
+		'END:VEVENT',
+		'BEGIN:VTODO', 'UID:2', 'DTSTAMP:20260101T000000Z', 'BEGIN:VLOCATION', 'UID:office', 'END:VLOCATION', 'END:VTODO',
+	);
+	$event = $calendar->events()[0];
+	Assert::same('Big hall, Main street', $event->location(), 'location() stays the LOCATION text');
+	[$venue, $parking] = $event->locations();
+	Assert::type(Location::class, $venue);
+	Assert::same(['123456-abcdef-98765432', 'The venue', 'Big hall, entrance B'], [$venue->uid(), $venue->name(), $venue->description()]);
+	Assert::same(['arena', 'hall'], $venue->types());
+	Assert::same('https://example.com/venue', $venue->url());
+	Assert::same([50.08, 14.42], $venue->value('GEO'));
+	Assert::same('http://dir.example.com/venues/big-hall.vcf', $venue->value('STRUCTURED-DATA'));
+	Assert::same(['parking'], $parking->types());
+	Assert::same([null, null, null], [$parking->description(), $parking->url(), $parking->property('GEO')]);
+	Assert::count(1, $event->alarms());
+	Assert::same([], (new Location(new ICal\Component('VLOCATION'), $calendar))->types());
+	Assert::same('office', $calendar->todos()[0]->locations()[0]->uid());
+	Assert::same([], calendar('BEGIN:VJOURNAL', 'UID:3', 'END:VJOURNAL')->journals()[0]->locations());
 });

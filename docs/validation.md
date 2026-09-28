@@ -17,7 +17,7 @@ the `property`, the `line` and the `uid`.
 
 | Code | Severity | Rule |
 |------|----------|------|
-| `component.missing-property` | Error | PRODID and VERSION of VCALENDAR, UID and DTSTAMP of VEVENT, VTODO, VJOURNAL and VFREEBUSY, TZID of VTIMEZONE, DTSTART, TZOFFSETFROM and TZOFFSETTO of observances, ACTION and TRIGGER of VALARM |
+| `component.missing-property` | Error | PRODID and VERSION of VCALENDAR, UID and DTSTAMP of VEVENT, VTODO, VJOURNAL and VFREEBUSY, TZID of VTIMEZONE, DTSTART, TZOFFSETFROM and TZOFFSETTO of observances, ACTION and TRIGGER of VALARM, UID of VLOCATION (RFC 9073) |
 | `component.duplicate-property` | Error | a property that may occur only once occurs again |
 | `component.end-and-duration` | Error | DTEND (DUE) together with DURATION |
 | `component.end-type` | Error | DTEND (DUE) has another value type than DTSTART |

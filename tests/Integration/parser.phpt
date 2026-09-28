@@ -71,6 +71,38 @@ test('Repairs keep the data', function () {
 	Assert::same('bare', $implicit->events()[0]->uid());
 });
 
+test('VLOCATION stays inside its event or task, also when it has no END (RFC 9073)', function () {
+	$content = ics(
+		'BEGIN:VCALENDAR',
+		'BEGIN:VEVENT', 'UID:event',
+		'BEGIN:VLOCATION', 'UID:venue', 'NAME:The venue',
+		'BEGIN:VLOCATION', 'UID:parking', 'NAME:Parking', 'END:VLOCATION',
+		'BEGIN:VLOCATION', 'UID:restaurant',
+		'BEGIN:VALARM', 'ACTION:DISPLAY', 'TRIGGER:-PT5M', 'END:VALARM',
+		'BEGIN:VLOCATION', 'UID:last',
+		'END:VEVENT',
+		'BEGIN:VTODO', 'UID:task',
+		'BEGIN:VLOCATION', 'UID:office',
+		'BEGIN:VEVENT', 'UID:next',
+		'END:VCALENDAR',
+	);
+	Assert::same(['syntax.missing-end@7', 'syntax.missing-end@13', 'syntax.missing-end@19', 'syntax.missing-end@24', 'syntax.missing-end@24', 'syntax.missing-end@26'], warnings($content));
+	$calendar = ICal::parse($content);
+	$event = $calendar->events()[0];
+	Assert::same(['venue', 'parking', 'restaurant', 'last'], array_map(fn($location) => $location->uid(), $event->locations()));
+	Assert::same('The venue', $event->locations()[0]->name());
+	Assert::count(1, $event->alarms());
+	Assert::same(['office'], array_map(fn($location) => $location->uid(), $calendar->todos()[0]->locations()));
+	Assert::same(['event', 'next'], array_map(fn($event) => $event->uid(), $calendar->events()));
+
+	$stream = fopen('php://memory', 'w+');
+	fwrite($stream, $content);
+	rewind($stream);
+	$items = iterator_to_array(ICal::parser()->stream($stream), false);
+	Assert::same([4, 1, 0], array_map(fn($item) => count($item->locations()), $items));
+	Assert::same('syntax.missing-end', strict($content)->errorCode());
+});
+
 test('Input without a calendar', function () {
 	$result = ICal::parser()->parse("hello\r\n");
 	Assert::same([], $result->calendars());

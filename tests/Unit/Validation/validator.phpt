@@ -77,6 +77,12 @@ test('ACKNOWLEDGED of an alarm is a UTC time (RFC 9074)', function () use ($base
 	Assert::same(['ERROR component.duplicate-property'], $alarm('ACKNOWLEDGED:20260101T095500Z', 'ACKNOWLEDGED:20260102T095500Z'));
 });
 
+test('VLOCATION has one UID (RFC 9073)', function () use ($base) {
+	Assert::same([], issues([...$base, 'BEGIN:VLOCATION', 'UID:venue', 'NAME:The venue', 'END:VLOCATION', 'END:VEVENT']));
+	Assert::same(['ERROR component.missing-property'], issues([...$base, 'BEGIN:VLOCATION', 'NAME:The venue', 'END:VLOCATION', 'END:VEVENT']));
+	Assert::same(['ERROR component.duplicate-property'], issues([...$base, 'BEGIN:VLOCATION', 'UID:venue', 'NAME:a', 'NAME:b', 'END:VLOCATION', 'END:VEVENT']));
+});
+
 test('Invalid values of RFC 7986 properties', function () use ($base) {
 	Assert::same(['ERROR value.invalid', 'ERROR value.invalid'], issues(['REFRESH-INTERVAL:weekly', ...$base, 'IMAGE;VALUE=BINARY;ENCODING=BASE64:***', 'IMAGE:https://example.com/a.png', 'CONFERENCE:https://meet.example.com/1', 'END:VEVENT']));
 	Assert::same([], issues(['REFRESH-INTERVAL;VALUE=DURATION:P1W', 'SOURCE:https://example.com/a.ics', ...$base, 'IMAGE;VALUE=BINARY;ENCODING=BASE64;FMTTYPE=image/png:aGVsbG8=', 'END:VEVENT']));

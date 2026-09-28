@@ -30,7 +30,8 @@ See [UPGRADING.md](UPGRADING.md).
   non-UTC value); `VALUE=UID` and `VALUE=XML-REFERENCE` of RFC 9253 (#91)
 - typed getters of RFC 7986: `color()` and `images()` (`Image`) of calendars and items, `Calendar::source()`,
   `Calendar::refreshInterval()` and `Item::conferences()` (`Conference`); of RFC 9253: `Item::links()` (`Link`) and
-  `Item::relatedTo()` (`Relation` with `RELTYPE` and `GAP`) (#92)
+  `Item::relatedTo()` (`Relation` with `RELTYPE` and `GAP`); of RFC 9073: `Item::locations()` (`Location` of
+  VLOCATION components, kept inside their event or task also when their END is missing) (#92)
 
 ### Added
 

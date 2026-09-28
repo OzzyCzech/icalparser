@@ -85,8 +85,20 @@ abstract class Item {
 		return $this->text('DESCRIPTION');
 	}
 
+	/**
+	 * LOCATION text; see locations() for VLOCATION components.
+	 */
 	public function location(): ?string {
 		return $this->text('LOCATION');
+	}
+
+	/**
+	 * VLOCATION components (RFC 9073).
+	 *
+	 * @return list<Location>
+	 */
+	public function locations(): array {
+		return array_map(fn(Component $component): Location => new Location($component, $this->calendar), $this->component->components('VLOCATION'));
 	}
 
 	/**
