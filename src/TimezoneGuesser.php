@@ -146,12 +146,12 @@ final class TimezoneGuesser {
 	}
 
 	/**
-	 * Timezone with a fixed offset, e.g. "+03:00"; offsets with seconds are rounded to minutes,
-	 * which PHP timezones cannot represent.
+	 * Timezone with a fixed offset, e.g. "+03:00", or "+00:19:32" for a local mean time.
 	 */
 	private static function fixedOffsetZone(int $offset): DateTimeZone {
-		$minutes = intdiv(abs($offset) + 30, 60);
-		return new DateTimeZone(sprintf('%s%02d:%02d', $offset < 0 ? '-' : '+', intdiv($minutes, 60), $minutes % 60));
+		$seconds = abs($offset);
+		$name = sprintf('%s%02d:%02d', $offset < 0 ? '-' : '+', intdiv($seconds, 3600), intdiv($seconds % 3600, 60));
+		return new DateTimeZone($seconds % 60 === 0 ? $name : sprintf('%s:%02d', $name, $seconds % 60));
 	}
 
 	/**

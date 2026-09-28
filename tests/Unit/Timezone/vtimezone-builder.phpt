@@ -177,7 +177,7 @@ test('Definitions with UNTIL resolve east and west of UTC under another TZID (#1
 		}
 		return $result;
 	};
-	foreach (['Europe/Moscow' => [2008, 2013], 'Europe/Minsk' => [2008, 2013], 'America/Sao_Paulo' => [2015, 2022], 'Europe/Istanbul' => [2013, 2019]] as $name => [$first, $last]) {
+	foreach (['Europe/Moscow' => [2008, 2013], 'Europe/Minsk' => [2008, 2013], 'America/Sao_Paulo' => [2015, 2022], 'Europe/Istanbul' => [2013, 2019], 'Europe/Amsterdam' => [1934, 1940]] as $name => [$first, $last]) {
 		$timezone = new DateTimeZone($name);
 		$vtimezone = VTimezoneBuilder::build($timezone, new DateTimeImmutable("$first-01-01", $timezone), new DateTimeImmutable("$last-12-31", $timezone), 'Custom/Zone');
 		$vtimezone = new Component('VTIMEZONE', array_values(array_filter($vtimezone->properties, fn($property) => $property->name !== 'X-LIC-LOCATION')), $vtimezone->components);
