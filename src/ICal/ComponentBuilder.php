@@ -20,6 +20,7 @@ use om\ICal\Value\Period;
 use om\ICal\Value\PropertyFactory;
 use om\ICal\Value\Relation;
 use om\ICal\Value\Status;
+use om\ICal\Value\Transparency;
 use om\RRule\Rule;
 
 /**
@@ -195,6 +196,18 @@ final class ComponentBuilder {
 			throw new InvalidArgumentException(sprintf('STATUS of %s must be one of %s, %s given.', $this->name, $allowed, $status instanceof Status ? $status->value : $status));
 		}
 		return $this->add(Property::create('STATUS', $value->value));
+	}
+
+	/**
+	 * TRANSP: OPAQUE or TRANSPARENT.
+	 */
+	public function transparency(Transparency|string|null $transparency): self {
+		if ($transparency === null) {
+			return $this;
+		}
+		$value = $transparency instanceof Transparency ? $transparency : Transparency::tryFrom(strtoupper(trim($transparency)))
+			?? throw new InvalidArgumentException("TRANSP must be OPAQUE or TRANSPARENT, $transparency given.");
+		return $this->add(Property::create('TRANSP', $value->value));
 	}
 
 	/**

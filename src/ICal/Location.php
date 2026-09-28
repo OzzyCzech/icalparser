@@ -3,19 +3,51 @@ declare(strict_types=1);
 
 namespace om\ICal;
 
+use InvalidArgumentException;
+use om\ICal\Value\PropertyFactory;
+
 /**
  * VLOCATION (RFC 9073, section 7.2): rich information about a location of an event or task,
  * e.g. the venue or the parking. Other properties, such as STRUCTURED-DATA, are available
  * through property() and $component.
+ *
+ * @phpstan-import-type PropertyList from PropertyFactory
  */
 final class Location {
 	/**
-	 * @internal use Item::locations()
+	 * @internal use Item::locations() or Location::new()
 	 */
 	public function __construct(
 		public readonly Component $component,
 		private readonly Calendar $calendar,
 	) {
+	}
+
+	/**
+	 * A new VLOCATION for the locations of Event::new() and Todo::new().
+	 *
+	 * @param ?string $uid UID, a random UUID when null
+	 * @param array{float|int, float|int}|null $geo latitude and longitude
+	 * @param iterable<string> $types LOCATION-TYPE values of RFC 4589, e.g. "parking"
+	 * @param PropertyList $properties other properties, e.g. STRUCTURED-DATA
+	 * @throws InvalidArgumentException
+	 */
+	public static function new(
+		?string $uid = null,
+		?string $name = null,
+		?string $description = null,
+		?array $geo = null,
+		iterable $types = [],
+		?string $url = null,
+		array $properties = [],
+	): self {
+		$builder = (new ComponentBuilder('VLOCATION'))
+			->text('UID', ComponentBuilder::uid($uid))
+			->text('NAME', $name)
+			->text('DESCRIPTION', $description)
+			->add($geo === null ? null : PropertyFactory::geo($geo), PropertyFactory::texts('LOCATION-TYPE', $types))
+			->uri('URL', $url);
+		return new self($builder->build($properties), new Calendar());
 	}
 
 	public function property(string $name): ?Property {
