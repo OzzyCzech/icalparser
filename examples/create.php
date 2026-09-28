@@ -5,6 +5,7 @@ declare(strict_types=1);
  * Create a calendar with a recurring event, a task and alarms and write it as iCalendar data.
  *
  * Usage: php examples/create.php > team.ics
+ *        php -S localhost:8000 examples/create.php (shown as plain text)
  */
 
 use om\ICal\Alarm;
@@ -38,7 +39,11 @@ $calendar = Calendar::create('-//example//standup//EN', name: 'Team A', events: 
 ]);
 
 foreach ((new Validator())->validate($calendar) as $issue) {
-	fwrite(STDERR, $issue . PHP_EOL); // there are none
+	error_log((string) $issue); // there are none
 }
 
+if (PHP_SAPI !== 'cli') {
+	// shown in the browser; serve calendars as "text/calendar; charset=utf-8"
+	header('Content-Type: text/plain; charset=utf-8');
+}
 echo $calendar->serialize(); // with a VTIMEZONE for Europe/Prague
