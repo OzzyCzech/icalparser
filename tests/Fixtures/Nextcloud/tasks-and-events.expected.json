@@ -53,7 +53,10 @@
                     "type": "VTODO",
                     "uid": "9f8e7d6c-5b4a-3928-1706-f5e4d3c2b1a0",
                     "summary": "Book appointment",
-                    "status": "COMPLETED"
+                    "status": "COMPLETED",
+                    "relatedTo": [
+                        "PARENT UID 0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0"
+                    ]
                 }
             ]
         }

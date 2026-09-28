@@ -12,6 +12,7 @@ use om\ICal\Parameters;
 use om\ICal\Parser\ParserMode;
 use om\ICal\Value\Duration;
 use om\ICal\Value\Image;
+use om\ICal\Value\Relation;
 use Tester\Assert;
 
 use function tests\test;
@@ -123,4 +124,33 @@ test('links() with each value type (RFC 9253)', function () {
 	Assert::same('https://example.com/xmlDocs/bidFramework.xml#xpointer(descendant::CostStruc/range-to(following::CostStrucEND[1]))', (string) $xml);
 	Assert::same(['UID', 'task,2'], [$uid->valueType(), $uid->value], 'a UID is unescaped like TEXT');
 	Assert::same([], calendar('BEGIN:VEVENT', 'UID:2', 'END:VEVENT')->events()[0]->links());
+});
+
+test('relatedTo() with the relation types and GAP (RFC 5545, RFC 9253)', function () {
+	$calendar = calendar(
+		'BEGIN:VTODO', 'UID:1', 'DTSTAMP:20260101T000000Z',
+		'RELATED-TO:jsmith.part7.19960817T083000.xyzMail@example.com',
+		'RELATED-TO;RELTYPE=child:child-1',
+		'RELATED-TO;RELTYPE=SIBLING;VALUE=UID:sibling-1',
+		'RELATED-TO;RELTYPE=FINISHTOSTART;GAP=P1D:lay-the-carpet',
+		'RELATED-TO;RELTYPE=STARTTOSTART;GAP=-PT4H30M:painting',
+		'RELATED-TO;VALUE=URI;RELTYPE=STARTTOFINISH:https://example.com/caldav/user/jb/cal/19960401-080045-4000F192713.ics',
+		'RELATED-TO;RELTYPE=DEPENDS-ON;GAP=soon:blocker',
+		'RELATED-TO;RELTYPE=X-CUSTOM;VALUE=TEXT:a\, b',
+		'END:VTODO',
+	);
+	$relations = $calendar->todos()[0]->relatedTo();
+	Assert::same(
+		['PARENT', 'CHILD', 'SIBLING', 'FINISHTOSTART', 'STARTTOSTART', 'STARTTOFINISH', 'DEPENDS-ON', 'X-CUSTOM'],
+		array_map(fn(Relation $relation) => $relation->type(), $relations),
+	);
+	Assert::same(['UID', 'UID', 'UID', 'UID', 'UID', 'URI', 'UID', 'TEXT'], array_map(fn(Relation $relation) => $relation->valueType(), $relations));
+	Assert::same('jsmith.part7.19960817T083000.xyzMail@example.com', (string) $relations[0]);
+	Assert::same('https://example.com/caldav/user/jb/cal/19960401-080045-4000F192713.ics', $relations[5]->value);
+	Assert::same('a, b', $relations[7]->value);
+	Assert::null($relations[0]->gap());
+	Assert::same('P1D', Duration::format($relations[3]->gap()));
+	Assert::same('-PT4H30M', Duration::format($relations[4]->gap()));
+	Assert::null($relations[6]->gap(), 'an invalid GAP');
+	Assert::same([], calendar('BEGIN:VEVENT', 'UID:2', 'END:VEVENT')->events()[0]->relatedTo());
 });

@@ -56,6 +56,7 @@ other ones (VAVAILABILITY, PARTICIPANT, VRESOURCE, STRUCTURED-DATA, ...) stay av
 | `Calendar::refreshInterval()` | REFRESH-INTERVAL (RFC 7986) | `?DateInterval` |
 | `Item::conferences()` | CONFERENCE (RFC 7986) | `list<Conference>` |
 | `Item::links()` | LINK (RFC 9253) | `list<Link>` |
+| `Item::relatedTo()` | RELATED-TO (RFC 5545, RFC 9253) | `list<Relation>` |
 
 `Item` covers events, tasks, journal entries and free/busy components. The values are immutable:
 
@@ -81,6 +82,14 @@ foreach ($event->links() as $link) {
 	$link->label();      // LABEL
 	$link->mediaType();  // FMTTYPE
 	$link->language();   // LANGUAGE
+}
+
+foreach ($task->relatedTo() as $relation) {
+	$relation->value;        // the UID of the related component, or a URI
+	$relation->valueType();  // UID (default), URI or TEXT
+	$relation->type();       // RELTYPE: PARENT (default), CHILD, SIBLING, FINISHTOSTART, FINISHTOFINISH,
+	                         // STARTTOFINISH, STARTTOSTART, FIRST, NEXT, DEPENDS-ON, REFID, CONCEPT, ...
+	$relation->gap();        // GAP: ?DateInterval, the lag (or the lead when negative) of a temporal relation
 }
 ```
 

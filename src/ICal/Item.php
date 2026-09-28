@@ -12,6 +12,7 @@ use om\ICal\Value\Conference;
 use om\ICal\Value\DateTimeValue;
 use om\ICal\Value\Image;
 use om\ICal\Value\Link;
+use om\ICal\Value\Relation;
 use om\ICal\Value\ValueParser;
 use om\RRule\RecurrenceSet;
 use om\RRule\Rule;
@@ -162,6 +163,15 @@ abstract class Item {
 	 */
 	public function links(): array {
 		return array_map(fn(Property $property): Link => new Link($this->reference($property), $property->parameters), $this->properties('LINK'));
+	}
+
+	/**
+	 * RELATED-TO properties with the relation types and GAP of RFC 9253.
+	 *
+	 * @return list<Relation>
+	 */
+	public function relatedTo(): array {
+		return array_map(fn(Property $property): Relation => new Relation($this->reference($property), $property->parameters), $this->properties('RELATED-TO'));
 	}
 
 	public function created(): ?DateTimeValue {
