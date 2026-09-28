@@ -1,0 +1,92 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "monthly-backward",
+                    "summary": "Monthly on the 31st, SKIP=BACKWARD",
+                    "start": "2026-01-31 (date)",
+                    "end": "2026-02-01 (date)",
+                    "rrules": [
+                        "FREQ=MONTHLY;RSCALE=GREGORIAN;COUNT=4;SKIP=BACKWARD"
+                    ],
+                    "occurrences": [
+                        "2026-01-31 (date) – 2026-02-01 (date)",
+                        "2026-02-28 (date) – 2026-03-01 (date)",
+                        "2026-03-31 (date) – 2026-04-01 (date)",
+                        "2026-04-30 (date) – 2026-05-01 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "monthly-forward",
+                    "summary": "Monthly on the 31st, SKIP=FORWARD",
+                    "start": "2026-01-31 (date)",
+                    "end": "2026-02-01 (date)",
+                    "rrules": [
+                        "FREQ=MONTHLY;RSCALE=GREGORIAN;COUNT=4;SKIP=FORWARD"
+                    ],
+                    "occurrences": [
+                        "2026-01-31 (date) – 2026-02-01 (date)",
+                        "2026-03-01 (date) – 2026-03-02 (date)",
+                        "2026-03-31 (date) – 2026-04-01 (date)",
+                        "2026-05-01 (date) – 2026-05-02 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "monthly-omit",
+                    "summary": "Monthly on the 31st, SKIP=OMIT",
+                    "start": "2026-01-31 (date)",
+                    "end": "2026-02-01 (date)",
+                    "rrules": [
+                        "FREQ=MONTHLY;RSCALE=GREGORIAN;COUNT=4;SKIP=OMIT"
+                    ],
+                    "occurrences": [
+                        "2026-01-31 (date) – 2026-02-01 (date)",
+                        "2026-03-31 (date) – 2026-04-01 (date)",
+                        "2026-05-31 (date) – 2026-06-01 (date)",
+                        "2026-07-31 (date) – 2026-08-01 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "leap-day-backward",
+                    "summary": "Leap day, SKIP=BACKWARD",
+                    "start": "2028-02-29 10:00:00 UTC",
+                    "end": "2028-02-29 10:00:00 UTC",
+                    "rrules": [
+                        "FREQ=YEARLY;RSCALE=GREGORIAN;COUNT=5;SKIP=BACKWARD"
+                    ],
+                    "occurrences": [
+                        "2028-02-29 10:00:00 UTC – 2028-02-29 10:00:00 UTC",
+                        "2029-02-28 10:00:00 UTC – 2029-02-28 10:00:00 UTC",
+                        "2030-02-28 10:00:00 UTC – 2030-02-28 10:00:00 UTC",
+                        "2031-02-28 10:00:00 UTC – 2031-02-28 10:00:00 UTC",
+                        "2032-02-29 10:00:00 UTC – 2032-02-29 10:00:00 UTC"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "leap-day-forward",
+                    "summary": "Anniversary (RFC 7529, section 4.3.4)",
+                    "start": "2012-02-29 (date)",
+                    "end": "2012-03-01 (date)",
+                    "rrules": [
+                        "FREQ=YEARLY;RSCALE=GREGORIAN;UNTIL=20170301;SKIP=FORWARD"
+                    ],
+                    "occurrences": [
+                        "2012-02-29 (date) – 2012-03-01 (date)",
+                        "2013-03-01 (date) – 2013-03-02 (date)",
+                        "2014-03-01 (date) – 2014-03-02 (date)",
+                        "2015-03-01 (date) – 2015-03-02 (date)",
+                        "2016-02-29 (date) – 2016-03-01 (date)",
+                        "2017-03-01 (date) – 2017-03-02 (date)"
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -314,7 +314,8 @@ abstract class Item {
 		$limits = $this->calendar->recurrenceLimits();
 		$set = new RecurrenceSet(
 			$space->start(),
-			$this->recurrenceRules(),
+			// a rule of another calendar system (RFC 7529) is not expanded, the item keeps DTSTART and RDATE
+			array_values(array_filter($this->recurrenceRules(), static fn(Rule $rule): bool => $rule->isGregorian())),
 			rdates: array_map($space->toBase(...), $this->recurrenceDates()),
 			exdates: $exdates,
 			exdays: $exdays,

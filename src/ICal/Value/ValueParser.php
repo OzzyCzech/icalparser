@@ -200,21 +200,40 @@ final class ValueParser {
 		}
 	}
 
+	/**
+	 * A rule of another calendar system than GREGORIAN (RFC 7529) is returned with a
+	 * "recurrence.unsupported-rscale" problem (it is not expanded), strict mode throws.
+	 */
 	public function recur(Property $property): ?Rule {
 		try {
-			return Rule::fromString($property->value);
+			$rule = Rule::fromString($property->value);
 		} catch (InvalidRecurrenceRuleException $e) {
 			if ($this->strict) {
-				throw InvalidRecurrenceRuleException::create($e->errorCode(), $e->getMessage(), $property->line, $property->name, $property->value, $e);
+				throw self::recurrenceError($e, $property);
+			}
+			if ($e->errorCode() === 'recurrence.skip-without-rscale') {
+				// the rule without SKIP is the rule of RFC 5545, which omits invalid dates
+				$this->problem('value.invalid', $e->getMessage() . ' SKIP was ignored.');
+				return $this->recur($property->withValue((string) preg_replace('/(?:^|;)SKIP=[^;]*/i', '', $property->value)));
 			}
 			$this->problem('value.invalid', $e->getMessage() . ' The RRULE was ignored.');
 			return null;
 		}
+		try {
+			$rule->assertGregorian();
+		} catch (InvalidRecurrenceRuleException $e) {
+			if ($this->strict) {
+				throw self::recurrenceError($e, $property);
+			}
+			$this->problem($e->errorCode(), $e->getMessage());
+		}
+		return $rule;
 	}
 
 	/**
 	 * Problems of a value as [code, message] pairs: "value.invalid" for an invalid value (null in
-	 * permissive mode), "value.nonstandard" for a value accepted although it breaks the RFC.
+	 * permissive mode), "value.nonstandard" for a value accepted although it breaks the RFC,
+	 * "recurrence.unsupported-rscale" for an RRULE of another calendar system than GREGORIAN.
 	 *
 	 * @return list<array{string, string}>
 	 */
@@ -299,6 +318,10 @@ final class ValueParser {
 
 	private function invalid(string $type, Property $property): null {
 		return $this->fail(InvalidValueException::create('value.invalid-' . strtolower($type), "Invalid $type value", rawValue: $property->value), $property);
+	}
+
+	private static function recurrenceError(InvalidRecurrenceRuleException $e, Property $property): InvalidRecurrenceRuleException {
+		return InvalidRecurrenceRuleException::create($e->errorCode(), $e->getMessage(), $property->line, $property->name, $property->value, $e);
 	}
 
 	private function fail(InvalidValueException $e, Property $property): null {

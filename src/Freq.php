@@ -51,7 +51,8 @@ class Freq {
 		if ($maxOccurrences < 1) {
 			throw new InvalidArgumentException('maxOccurrences must be positive.');
 		}
-		$this->rule = is_string($rule) ? Rule::fromString($rule) : Rule::fromArray($rule);
+		$this->rule = is_string($rule) ? Rule::fromString($rule, true) : Rule::fromArray($rule, true);
+		$this->rule->assertGregorian();
 		if (($this->rule->count ?? 0) > $maxOccurrences || count($added) > $maxOccurrences) {
 			throw new RuntimeException('Recurrence occurrence limit exceeded.');
 		}

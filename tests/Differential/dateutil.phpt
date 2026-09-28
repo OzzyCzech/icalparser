@@ -11,7 +11,10 @@ declare(strict_types=1);
  * - BYSETPOS with WEEKLY and finer frequencies (dateutil applies it to the first week only),
  * - negative BYWEEKNO (dateutil does not map it to the adjacent year),
  * - BYWEEKNO 52 and 53 (dateutil assigns the first days of a year to the wrong ISO week: 2022-01-01
- *   is in week 52 of 2021, dateutil treats it as week 53).
+ *   is in week 52 of 2021, dateutil treats it as week 53),
+ * - RSCALE and SKIP (RFC 7529): dateutil does not support them. Some rules are expanded with
+ *   RSCALE=GREGORIAN;SKIP=OMIT here, which must equal the plain rule given to dateutil; rules
+ *   with other RSCALE or SKIP values are not generated.
  *
  * dateutil returns nonexistent local times of DST gaps; they are resolved as RFC 5545 requires
  * (with the offset before the gap) by the helper script.
@@ -74,7 +77,10 @@ for ($i = 0; $i < 1500; $i++) {
 	};
 	$parts['UNTIL'] = $start->modify("+$days days")->setTimezone(new DateTimeZone('UTC'))->format('Ymd\THis\Z');
 	$rule = implode(';', array_map(fn($name, $value) => "$name=$value", array_keys($parts), $parts));
-	$cases[] = ['rule' => $rule, 'start' => $start->format('Y-m-d\TH:i:s'), 'tz' => $timezone->getName(), 'take' => 150];
+	Assert::false(str_contains($rule, 'RSCALE') || str_contains($rule, 'SKIP'), 'dateutil does not support RFC 7529');
+	// without a random number, so that the generated rules stay the same
+	$ours = $i % 10 === 0 ? "$rule;RSCALE=GREGORIAN;SKIP=OMIT" : $rule;
+	$cases[] = ['rule' => $rule, 'ours' => $ours, 'start' => $start->format('Y-m-d\TH:i:s'), 'tz' => $timezone->getName(), 'take' => 150];
 }
 
 $process = proc_open([$python, __DIR__ . '/dateutil_expand.py'], [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
@@ -94,7 +100,7 @@ foreach ($cases as $index => $case) {
 	}
 	$start = new DateTimeImmutable($case['start'], new DateTimeZone($case['tz']));
 	$ours = [];
-	foreach (new Expander(Rule::fromString($case['rule']), $start) as $timestamp) {
+	foreach (new Expander(Rule::fromString($case['ours']), $start) as $timestamp) {
 		$ours[] = $timestamp;
 		if (count($ours) >= 151) {
 			break;
@@ -108,7 +114,7 @@ foreach ($cases as $index => $case) {
 	$ours = array_slice($ours, 0, 150);
 	$compared++;
 	if ($ours !== $theirs) {
-		$mismatches[] = sprintf('%s from %s %s', $case['rule'], $case['start'], $case['tz']);
+		$mismatches[] = sprintf('%s from %s %s', $case['ours'], $case['start'], $case['tz']);
 	}
 }
 Assert::same([], array_slice($mismatches, 0, 20), sprintf('%d of %d rules differ from dateutil', count($mismatches), $compared));

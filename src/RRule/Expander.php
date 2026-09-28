@@ -9,6 +9,7 @@ use DateTimeInterface;
 use DateTimeZone;
 use Generator;
 use IteratorAggregate;
+use om\ICal\Exception\InvalidRecurrenceRuleException;
 use om\ICal\Exception\ResourceLimitException;
 
 /**
@@ -22,6 +23,10 @@ use om\ICal\Exception\ResourceLimitException;
  * Calculations use wall-clock dates in the DTSTART timezone, so daylight saving
  * transitions keep the local time, and the process default timezone is never changed.
  * DTSTART always counts as the first occurrence, even when it does not match the rule.
+ *
+ * SKIP of RFC 7529 moves an instance on an invalid day of the month (e.g. February 30)
+ * to the last day of the month or to the first day of the next month; this happens before
+ * BYDAY, BYSETPOS and COUNT, and duplicate instances are removed.
  *
  * @implements IteratorAggregate<int, int>
  */
@@ -57,6 +62,10 @@ final class Expander implements IteratorAggregate {
 	/** @var array<int, list<int>> ordinals by weekday */
 	private array $weekdayOrdinals = [];
 	private bool $hasDayFilter;
+	/** SKIP=BACKWARD or FORWARD of a MONTHLY or YEARLY rule, null when invalid days are omitted */
+	private ?Skip $skip = null;
+	/** @var list<int> BYMONTHDAY values that are invalid in some months */
+	private array $skipDays = [];
 	private string $ordinalScope;
 	/** @var list<int> */
 	private array $hours;
@@ -73,6 +82,7 @@ final class Expander implements IteratorAggregate {
 	 * @param ?int $horizon additional inclusive end of the expansion (timestamp)
 	 * @param int $limit maximal number of occurrences; exceeding it throws ResourceLimitException
 	 * @param int $maxIterations maximal number of FREQ periods examined; exceeding it throws ResourceLimitException
+	 * @throws InvalidRecurrenceRuleException recurrence.unsupported-rscale for a rule of another calendar system than GREGORIAN
 	 */
 	public function __construct(
 		private readonly Rule $rule,
@@ -81,6 +91,7 @@ final class Expander implements IteratorAggregate {
 		private readonly int $limit = 100000,
 		private readonly int $maxIterations = PHP_INT_MAX,
 	) {
+		$rule->assertGregorian(); // other calendar systems would give wrong dates
 		$timezone = $start->getTimezone();
 		$name = $timezone->getName();
 		if ($name === 'Z' || $name === 'UTC' || $name === 'GMT' || preg_match('/^[+-]\d{2}:\d{2}$/D', $name)) {
@@ -142,6 +153,9 @@ final class Expander implements IteratorAggregate {
 		$emptyPeriods = 0;
 		$maxEmptyPeriods = self::CYCLE_PERIODS[$freq->value] ?? self::MAX_EMPTY_PERIODS;
 		$iterations = 0;
+		/** @var list<array{int, int}> instances moved forward into the next month, see SKIP=FORWARD */
+		$carry = [];
+		$carryFrom = $this->skip === Skip::Forward && $freq === Frequency::Monthly ? 0 : PHP_INT_MAX;
 
 		while (true) {
 			if (++$iterations > $this->maxIterations) {
@@ -153,6 +167,14 @@ final class Expander implements IteratorAggregate {
 			if ($candidates !== [] && $rule->bySetPos !== []) {
 				$candidates = $this->applySetPos($candidates);
 			}
+			if ($carry !== []) {
+				$candidates = array_values(array_unique([...$carry, ...$candidates], SORT_REGULAR));
+				sort($candidates);
+				$carry = [];
+			}
+			if ($carryFrom !== PHP_INT_MAX) {
+				$carryFrom = self::daysFromCivil($year + intdiv($month, 12), $month % 12 + 1, 1);
+			}
 
 			if ($candidates === []) {
 				if (++$emptyPeriods > $maxEmptyPeriods || $this->periodStart($freq, $year, $month, $periodDays, $periodSeconds) > $until) {
@@ -161,6 +183,11 @@ final class Expander implements IteratorAggregate {
 			} else {
 				$emptyPeriods = 0;
 				foreach ($candidates as [$days, $time]) {
+					if ($days >= $carryFrom) {
+						// the next period may produce an earlier instance on the same day
+						$carry[] = [$days, $time];
+						continue;
+					}
 					if ($days >= self::MAX_DAYS) {
 						return;
 					}
@@ -287,6 +314,15 @@ final class Expander implements IteratorAggregate {
 		}
 		$this->hasDayFilter = $this->months || $this->monthDays || $this->yearDays || $this->weekNumbers || $byDay;
 
+		// SKIP applies to invalid days of the month produced by BYMONTHDAY (or the day of DTSTART);
+		// BYYEARDAY and BYWEEKNO select existing days only, negative BYMONTHDAY values are omitted
+		$skip = $rule->skip ?? Skip::Omit;
+		if ($skip !== Skip::Omit && ($rule->freq === Frequency::Monthly || $rule->freq === Frequency::Yearly)
+			&& $this->yearDays === [] && $this->weekNumbers === []) {
+			$this->skipDays = array_values(array_filter($byMonthDay, static fn(int $value): bool => $value > 28));
+			$this->skip = $this->skipDays === [] ? null : $skip;
+		}
+
 		$freq = $rule->freq;
 		$this->hours = $rule->byHour ?: ($freq->isCoarserThan(Frequency::Hourly) ? [$hour] : []);
 		$this->minutes = $rule->byMinute ?: ($freq->isCoarserThan(Frequency::Minutely) ? [$minute] : []);
@@ -386,11 +422,16 @@ final class Expander implements IteratorAggregate {
 				$result[] = $dayNumber;
 			}
 		}
+		if ($this->skip !== null) {
+			$result = array_unique($result);
+		}
 		sort($result);
 		return $result;
 	}
 
 	/**
+	 * Matching days of a month, sorted; with SKIP an invalid day is moved and may be in the next month.
+	 *
 	 * @return list<int>
 	 */
 	private function monthDaysOf(int $year, int $month): array {
@@ -402,7 +443,29 @@ final class Expander implements IteratorAggregate {
 				$result[] = $first + $d;
 			}
 		}
+		if ($this->skip === null || ($this->months !== [] && !isset($this->months[$month]))) {
+			return $result;
+		}
+		foreach ($this->skipDays as $day) {
+			if ($day > $length) {
+				// BYDAY applies after SKIP (RFC 7529, section 4.1)
+				$moved = $this->skip === Skip::Backward ? $first + $length - 1 : $first + $length;
+				if (!in_array($moved, $result, true) && $this->matchesWeekday($moved)) {
+					$result[] = $moved;
+				}
+			}
+		}
+		sort($result);
 		return $result;
+	}
+
+	private function matchesWeekday(int $days): bool {
+		if ($this->weekdays === [] && $this->weekdayOrdinals === []) {
+			return true;
+		}
+		[$year, $month, $day] = self::civilFromDays($days);
+		$weekday = self::weekday($days);
+		return isset($this->weekdays[$weekday]) || $this->matchesWeekdayOrdinal($weekday, $days, $year, $month, $day);
 	}
 
 	private function matchesDayNumber(int $days): bool {
