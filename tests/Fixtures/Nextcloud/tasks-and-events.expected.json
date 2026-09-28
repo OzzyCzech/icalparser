@@ -21,6 +21,7 @@
                         "Finance",
                         "Home"
                     ],
+                    "color": "tomato",
                     "occurrences": [
                         "2026-01-30 17:00:00 +01:00 (Europe/Berlin = Europe/Berlin) – 2026-01-30 18:00:00 +01:00 (Europe/Berlin = Europe/Berlin)",
                         "2026-02-27 17:00:00 +01:00 (Europe/Berlin = Europe/Berlin) – 2026-02-27 18:00:00 +01:00 (Europe/Berlin = Europe/Berlin)",
@@ -52,7 +53,10 @@
                     "type": "VTODO",
                     "uid": "9f8e7d6c-5b4a-3928-1706-f5e4d3c2b1a0",
                     "summary": "Book appointment",
-                    "status": "COMPLETED"
+                    "status": "COMPLETED",
+                    "relatedTo": [
+                        "PARENT UID 0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0"
+                    ]
                 }
             ]
         }

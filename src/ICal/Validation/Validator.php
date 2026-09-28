@@ -19,7 +19,7 @@ use om\RRule\Rule;
  *     $issues = (new Validator())->validate($calendar);
  */
 final class Validator {
-	/** Properties that must not occur more than once (RFC 5545, section 3.6). */
+	/** Properties that must not occur more than once (RFC 5545, section 3.6, RFC 9073 and RFC 9074). */
 	private const array SINGLE = [
 		'VCALENDAR' => ['PRODID', 'VERSION', 'CALSCALE', 'METHOD'],
 		'VEVENT' => ['DTSTAMP', 'UID', 'DTSTART', 'CLASS', 'CREATED', 'DESCRIPTION', 'GEO', 'LAST-MODIFIED', 'LOCATION', 'ORGANIZER', 'PRIORITY', 'SEQUENCE', 'STATUS', 'SUMMARY', 'TRANSP', 'URL', 'RECURRENCE-ID', 'DTEND', 'DURATION'],
@@ -27,7 +27,8 @@ final class Validator {
 		'VJOURNAL' => ['DTSTAMP', 'UID', 'CLASS', 'CREATED', 'DTSTART', 'LAST-MODIFIED', 'ORGANIZER', 'RECURRENCE-ID', 'SEQUENCE', 'STATUS', 'SUMMARY', 'URL'],
 		'VFREEBUSY' => ['DTSTAMP', 'UID', 'CONTACT', 'DTSTART', 'DTEND', 'ORGANIZER', 'URL'],
 		'VTIMEZONE' => ['TZID', 'LAST-MODIFIED', 'TZURL'],
-		'VALARM' => ['ACTION', 'TRIGGER', 'DURATION', 'REPEAT', 'DESCRIPTION', 'SUMMARY'],
+		'VALARM' => ['ACTION', 'TRIGGER', 'DURATION', 'REPEAT', 'DESCRIPTION', 'SUMMARY', 'UID', 'ACKNOWLEDGED'],
+		'VLOCATION' => ['UID', 'DESCRIPTION', 'GEO', 'LOCATION-TYPE', 'NAME'],
 	];
 
 	/** Required properties. */
@@ -41,7 +42,11 @@ final class Validator {
 		'STANDARD' => ['DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM'],
 		'DAYLIGHT' => ['DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM'],
 		'VALARM' => ['ACTION', 'TRIGGER'],
+		'VLOCATION' => ['UID'],
 	];
+
+	/** Properties with a DATE-TIME value in UTC (RFC 9074). */
+	private const array UTC = ['ACKNOWLEDGED' => true];
 
 	/** @var list<Issue> */
 	private array $issues = [];
@@ -123,6 +128,8 @@ final class Validator {
 			$value = $this->values->value($property);
 			if ($value === null || $value === []) {
 				$this->issue(Severity::Error, 'value.invalid', "Invalid value \"$property->value\".", $component, $property->name, $property->line, $uid);
+			} elseif (isset(self::UTC[$property->name]) && $value instanceof DateTimeValue && !$value->isUtc()) {
+				$this->issue(Severity::Warning, 'value.not-utc', "$property->name must be a UTC time.", $component, $property->name, $property->line, $uid);
 			}
 		}
 		$tzid = $property->parameter('TZID');

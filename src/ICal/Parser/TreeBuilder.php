@@ -24,6 +24,9 @@ final class TreeBuilder {
 	/** Components that can only be direct children of VCALENDAR. */
 	private const array CALENDAR_CHILDREN = ['VEVENT' => true, 'VTODO' => true, 'VJOURNAL' => true, 'VFREEBUSY' => true, 'VTIMEZONE' => true];
 
+	/** Components without child components: VLOCATION (RFC 9073, section 7.2). */
+	private const array LEAVES = ['VLOCATION' => true];
+
 	/** @var list<ParseWarning> */
 	private array $warnings = [];
 
@@ -61,6 +64,11 @@ final class TreeBuilder {
 					}
 					// a new event (task, ...) ends components left open, e.g. in truncated feeds
 					while (isset(self::CALENDAR_CHILDREN[$component]) && count($this->stack) > 1) {
+						$this->problem('syntax.missing-end', "END:{$this->current()} is missing before BEGIN:$component, the component was closed.", $number);
+						yield from $this->close();
+					}
+					// e.g. a VLOCATION without END followed by another VLOCATION or VALARM of the event
+					while (isset(self::LEAVES[$this->current()])) {
 						$this->problem('syntax.missing-end', "END:{$this->current()} is missing before BEGIN:$component, the component was closed.", $number);
 						yield from $this->close();
 					}

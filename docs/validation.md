@@ -17,7 +17,7 @@ the `property`, the `line` and the `uid`.
 
 | Code | Severity | Rule |
 |------|----------|------|
-| `component.missing-property` | Error | PRODID and VERSION of VCALENDAR, UID and DTSTAMP of VEVENT, VTODO, VJOURNAL and VFREEBUSY, TZID of VTIMEZONE, DTSTART, TZOFFSETFROM and TZOFFSETTO of observances, ACTION and TRIGGER of VALARM |
+| `component.missing-property` | Error | PRODID and VERSION of VCALENDAR, UID and DTSTAMP of VEVENT, VTODO, VJOURNAL and VFREEBUSY, TZID of VTIMEZONE, DTSTART, TZOFFSETFROM and TZOFFSETTO of observances, ACTION and TRIGGER of VALARM, UID of VLOCATION (RFC 9073) |
 | `component.duplicate-property` | Error | a property that may occur only once occurs again |
 | `component.end-and-duration` | Error | DTEND (DUE) together with DURATION |
 | `component.end-type` | Error | DTEND (DUE) has another value type than DTSTART |
@@ -30,6 +30,7 @@ the `property`, the `line` and the `uid`.
 | `recurrence.skip-without-rscale` | Error | SKIP without RSCALE (RFC 7529) |
 | `recurrence.unsupported-rscale` | Warning | an RRULE of another calendar system than GREGORIAN or with a leap month, it is not expanded |
 | `value.invalid` | Error | a value that does not match its type |
+| `value.not-utc` | Warning | ACKNOWLEDGED of VALARM (RFC 9074) that is not a UTC time |
 | `timezone.not-defined` | Warning | a TZID without a VTIMEZONE definition |
 | `timezone.unresolved` | Warning | a TZID that cannot be resolved |
 | `timezone.no-observance` | Error | a VTIMEZONE without STANDARD and DAYLIGHT |

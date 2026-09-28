@@ -8,7 +8,12 @@ use DateTimeInterface;
 use Generator;
 use om\ICal\Exception\ResourceLimitException;
 use om\ICal\Value\CalAddress;
+use om\ICal\Value\Conference;
 use om\ICal\Value\DateTimeValue;
+use om\ICal\Value\Image;
+use om\ICal\Value\Link;
+use om\ICal\Value\Relation;
+use om\ICal\Value\ValueParser;
 use om\RRule\RecurrenceSet;
 use om\RRule\Rule;
 
@@ -80,8 +85,20 @@ abstract class Item {
 		return $this->text('DESCRIPTION');
 	}
 
+	/**
+	 * LOCATION text; see locations() for VLOCATION components.
+	 */
 	public function location(): ?string {
 		return $this->text('LOCATION');
+	}
+
+	/**
+	 * VLOCATION components (RFC 9073).
+	 *
+	 * @return list<Location>
+	 */
+	public function locations(): array {
+		return array_map(fn(Component $component): Location => new Location($component, $this->calendar), $this->component->components('VLOCATION'));
 	}
 
 	/**
@@ -124,6 +141,49 @@ abstract class Item {
 			array_push($categories, ...$this->calendar->values()->texts($property));
 		}
 		return $categories;
+	}
+
+	/**
+	 * COLOR (RFC 7986): a CSS3 color name.
+	 */
+	public function color(): ?string {
+		return $this->text('COLOR');
+	}
+
+	/**
+	 * IMAGE properties (RFC 7986); images with invalid binary data are skipped.
+	 *
+	 * @return list<Image>
+	 */
+	public function images(): array {
+		return array_values(array_filter(array_map($this->calendar->values()->image(...), $this->properties('IMAGE'))));
+	}
+
+	/**
+	 * CONFERENCE properties (RFC 7986).
+	 *
+	 * @return list<Conference>
+	 */
+	public function conferences(): array {
+		return array_map(fn(Property $property): Conference => new Conference($this->calendar->values()->uri($property), $property->parameters), $this->properties('CONFERENCE'));
+	}
+
+	/**
+	 * LINK properties (RFC 9253).
+	 *
+	 * @return list<Link>
+	 */
+	public function links(): array {
+		return array_map(fn(Property $property): Link => new Link($this->reference($property), $property->parameters), $this->properties('LINK'));
+	}
+
+	/**
+	 * RELATED-TO properties with the relation types and GAP of RFC 9253.
+	 *
+	 * @return list<Relation>
+	 */
+	public function relatedTo(): array {
+		return array_map(fn(Property $property): Relation => new Relation($this->reference($property), $property->parameters), $this->properties('RELATED-TO'));
 	}
 
 	public function created(): ?DateTimeValue {
@@ -388,6 +448,14 @@ abstract class Item {
 	protected function text(string $name): ?string {
 		$property = $this->property($name);
 		return $property === null ? null : $this->calendar->values()->text($property);
+	}
+
+	/**
+	 * A URI or an XML reference, otherwise a UID or text (LINK and RELATED-TO of RFC 9253).
+	 */
+	private function reference(Property $property): string {
+		$values = $this->calendar->values();
+		return in_array(ValueParser::type($property), ['URI', 'XML-REFERENCE'], true) ? $values->uri($property) : $values->text($property);
 	}
 
 	protected function integer(string $name): ?int {

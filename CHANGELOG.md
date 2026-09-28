@@ -25,6 +25,14 @@ See [UPGRADING.md](UPGRADING.md).
 - exceptions with error code, line, property and raw value (`SyntaxException`, `InvalidValueException`,
   `InvalidRecurrenceRuleException`, `TimezoneResolutionException`, `ResourceLimitException`, `ValidationException`)
 - documentation in `docs/`, examples in `examples/`
+- default value types of RFC 7986, RFC 9074 and RFC 9253 properties: `IMAGE`, `CONFERENCE`, `SOURCE`, `LINK` and
+  `CONCEPT` are URIs, `REFRESH-INTERVAL` is a `DURATION`, `ACKNOWLEDGED` is a `DATE-TIME` (the `Validator` reports a
+  non-UTC value); `VALUE=UID` and `VALUE=XML-REFERENCE` of RFC 9253 (#91)
+- typed getters of RFC 7986: `color()` and `images()` (`Image`) of calendars and items, `Calendar::source()`,
+  `Calendar::refreshInterval()` and `Item::conferences()` (`Conference`); of RFC 9253: `Item::links()` (`Link`) and
+  `Item::relatedTo()` (`Relation` with `RELTYPE` and `GAP`); of RFC 9073: `Item::locations()` (`Location` of
+  VLOCATION components, kept inside their event or task also when their END is missing); of RFC 9074:
+  `Alarm::uid()` and `Alarm::acknowledged()` (#92)
 
 ### Added
 

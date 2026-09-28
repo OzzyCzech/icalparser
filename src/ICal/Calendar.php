@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace om\ICal;
 
+use DateInterval;
 use DateTimeInterface;
 use DateTimeZone;
 use om\ICal\Timezone\TimezoneResolver;
+use om\ICal\Value\Image;
 use om\ICal\Value\ValueParser;
 use om\RRule\RecurrenceLimits;
 
@@ -76,6 +78,38 @@ final class Calendar {
 	 */
 	public function description(): ?string {
 		return $this->text('DESCRIPTION') ?? $this->text('X-WR-CALDESC');
+	}
+
+	/**
+	 * COLOR (RFC 7986): a CSS3 color name.
+	 */
+	public function color(): ?string {
+		return $this->text('COLOR');
+	}
+
+	/**
+	 * IMAGE properties (RFC 7986); images with invalid binary data are skipped.
+	 *
+	 * @return list<Image>
+	 */
+	public function images(): array {
+		return array_values(array_filter(array_map($this->values->image(...), $this->component->properties('IMAGE'))));
+	}
+
+	/**
+	 * SOURCE (RFC 7986): the URI the calendar data can be refreshed from.
+	 */
+	public function source(): ?string {
+		$property = $this->property('SOURCE');
+		return $property === null ? null : $this->values->uri($property);
+	}
+
+	/**
+	 * REFRESH-INTERVAL (RFC 7986): the suggested minimum polling interval.
+	 */
+	public function refreshInterval(): ?DateInterval {
+		$property = $this->property('REFRESH-INTERVAL');
+		return $property === null ? null : $this->values->duration($property);
 	}
 
 	public function productId(): ?string {

@@ -25,9 +25,91 @@ the default type of the property):
 | RECUR | `om\RRule\Rule` |
 | CAL-ADDRESS | `om\ICal\Value\CalAddress` |
 | UTC-OFFSET | `int` (seconds) |
-| URI | `string` |
+| URI, XML-REFERENCE (RFC 9253) | `string` |
+| UID (RFC 9253) | `string` (unescaped like TEXT) |
 | BINARY | `string` (decoded) |
 | GEO | `array{float, float}` |
+
+Properties of the RFC 5545 updates have these default types (an explicit VALUE parameter takes
+precedence, e.g. `IMAGE;VALUE=BINARY;ENCODING=BASE64`):
+
+| Property | Type | RFC |
+|----------|------|-----|
+| IMAGE, CONFERENCE, SOURCE | URI | RFC 7986 |
+| REFRESH-INTERVAL | DURATION | RFC 7986 |
+| COLOR, NAME | TEXT | RFC 7986 |
+| ACKNOWLEDGED | DATE-TIME (UTC) | RFC 9074 |
+| LINK (also VALUE=UID and VALUE=XML-REFERENCE), CONCEPT | URI | RFC 9253 |
+| REFID | TEXT | RFC 9253 |
+
+## Properties of the RFC 5545 updates
+
+Typed getters for the properties and components of RFC 7986, RFC 9073, RFC 9074 and RFC 9253;
+other ones (VAVAILABILITY, PARTICIPANT, VRESOURCE, STRUCTURED-DATA, PROXIMITY, snoozed alarms
+related by `RELATED-TO;RELTYPE=SNOOZE`, ...) stay available through `Component` and `Property`.
+
+| Getter | Property | Value |
+|--------|----------|-------|
+| `Calendar::color()`, `Item::color()` | COLOR (RFC 7986) | `?string`, a CSS3 color name |
+| `Calendar::images()`, `Item::images()` | IMAGE (RFC 7986) | `list<Image>` |
+| `Calendar::source()` | SOURCE (RFC 7986) | `?string`, a URI |
+| `Calendar::refreshInterval()` | REFRESH-INTERVAL (RFC 7986) | `?DateInterval` |
+| `Item::conferences()` | CONFERENCE (RFC 7986) | `list<Conference>` |
+| `Item::links()` | LINK (RFC 9253) | `list<Link>` |
+| `Item::relatedTo()` | RELATED-TO (RFC 5545, RFC 9253) | `list<Relation>` |
+| `Item::locations()` | VLOCATION components (RFC 9073) | `list<Location>`; `location()` stays the LOCATION text |
+| `Alarm::uid()` | UID of VALARM (RFC 9074) | `?string` |
+| `Alarm::acknowledged()` | ACKNOWLEDGED (RFC 9074) | `?DateTimeValue`, when the alarm was last acknowledged or sent (UTC) |
+
+`Item` covers events, tasks, journal entries and free/busy components. The values are immutable:
+
+```php
+foreach ($event->images() as $image) {
+	$image->uri;          // the URI, null for inline data
+	$image->data;         // the decoded data of VALUE=BINARY, null for a URI
+	$image->display();    // DISPLAY: ['BADGE'] by default, GRAPHIC, FULLSIZE, THUMBNAIL
+	$image->mediaType();  // FMTTYPE, e.g. image/png
+	$image->altRep();     // ALTREP, the URI launched by a click on the image
+}
+
+foreach ($event->conferences() as $conference) {
+	$conference->uri;         // e.g. https://video-chat.example.com/;group-id=1234 or tel:+1-412-555-0123,,,654321
+	$conference->features();  // FEATURE: AUDIO, CHAT, FEED, MODERATOR, PHONE, SCREEN, VIDEO or an X- value
+	$conference->label();     // LABEL, e.g. "Moderator dial-in"
+}
+
+foreach ($event->links() as $link) {
+	$link->value;        // the target
+	$link->valueType();  // URI (default), XML-REFERENCE (a URI with an XPointer anchor) or UID
+	$link->relation();   // LINKREL, e.g. latest-version or a URI; there is no default
+	$link->label();      // LABEL
+	$link->mediaType();  // FMTTYPE
+	$link->language();   // LANGUAGE
+}
+
+foreach ($task->relatedTo() as $relation) {
+	$relation->value;        // the UID of the related component, or a URI
+	$relation->valueType();  // UID (default), URI or TEXT
+	$relation->type();       // RELTYPE: PARENT (default), CHILD, SIBLING, FINISHTOSTART, FINISHTOFINISH,
+	                         // STARTTOFINISH, STARTTOSTART, FIRST, NEXT, DEPENDS-ON, REFID, CONCEPT, ...
+	$relation->gap();        // GAP: ?DateInterval, the lag (or the lead when negative) of a temporal relation
+}
+
+foreach ($event->locations() as $location) {
+	$location->uid();
+	$location->name();                        // NAME, e.g. "Parking for the venue"
+	$location->description();
+	$location->types();                       // LOCATION-TYPE, e.g. ['parking']
+	$location->url();
+	$location->value('STRUCTURED-DATA');      // any other property, e.g. a link to a vCard
+}
+```
+
+A VLOCATION without END is closed before the next component (with a `syntax.missing-end` warning),
+so it stays inside its event or task.
+
+Google Calendar and Outlook do not write CONFERENCE; the link of a Google Meet is in
+`$event->property('X-GOOGLE-CONFERENCE')`.
 
 ## Dates and times
 

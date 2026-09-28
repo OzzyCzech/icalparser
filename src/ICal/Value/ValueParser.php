@@ -20,7 +20,11 @@ use om\RRule\Rule;
  * returns null (or skips the invalid item of a list).
  */
 final class ValueParser {
-	/** Default value types of properties (RFC 5545, section 3.8), TEXT otherwise. */
+	/**
+	 * Default value types of properties (RFC 5545, section 3.8, and its updates), TEXT otherwise.
+	 * RFC 7986 requires the VALUE parameter for IMAGE, CONFERENCE and REFRESH-INTERVAL; it is
+	 * assumed when missing.
+	 */
 	public const array TYPES = [
 		'DTSTART' => 'DATE-TIME', 'DTEND' => 'DATE-TIME', 'DUE' => 'DATE-TIME', 'DTSTAMP' => 'DATE-TIME',
 		'CREATED' => 'DATE-TIME', 'LAST-MODIFIED' => 'DATE-TIME', 'COMPLETED' => 'DATE-TIME',
@@ -30,6 +34,10 @@ final class ValueParser {
 		'RRULE' => 'RECUR', 'EXRULE' => 'RECUR', 'ATTENDEE' => 'CAL-ADDRESS', 'ORGANIZER' => 'CAL-ADDRESS',
 		'URL' => 'URI', 'TZURL' => 'URI', 'ATTACH' => 'URI', 'GEO' => 'FLOAT',
 		'TZOFFSETFROM' => 'UTC-OFFSET', 'TZOFFSETTO' => 'UTC-OFFSET',
+		// RFC 7986
+		'IMAGE' => 'URI', 'CONFERENCE' => 'URI', 'SOURCE' => 'URI', 'REFRESH-INTERVAL' => 'DURATION',
+		'ACKNOWLEDGED' => 'DATE-TIME', // RFC 9074, in UTC
+		'LINK' => 'URI', 'CONCEPT' => 'URI', // RFC 9253
 	];
 
 	/** Properties with a list of values. */
@@ -62,7 +70,8 @@ final class ValueParser {
 
 	/**
 	 * Value converted according to its type: DateTimeValue (list for EXDATE and RDATE), Period list,
-	 * DateInterval, int, float, bool, Rule, CalAddress, GEO pair, list of TEXT (CATEGORIES) or string.
+	 * DateInterval, int, float, bool, Rule, CalAddress, GEO pair, list of TEXT (CATEGORIES) or string
+	 * (TEXT, URI, BINARY, and UID and XML-REFERENCE of RFC 9253).
 	 */
 	public function value(Property $property): mixed {
 		$list = isset(self::LISTS[$property->name]);
@@ -77,7 +86,7 @@ final class ValueParser {
 			'CAL-ADDRESS' => $this->calAddress($property),
 			'UTC-OFFSET' => $this->utcOffset($property),
 			'BINARY' => $this->binary($property),
-			'URI' => $this->uri($property),
+			'URI', 'XML-REFERENCE' => $this->uri($property),
 			default => $list ? $this->texts($property) : $this->text($property),
 		};
 	}
@@ -190,6 +199,17 @@ final class ValueParser {
 
 	public function calAddress(Property $property): CalAddress {
 		return new CalAddress(trim($property->value), $property->parameters);
+	}
+
+	/**
+	 * IMAGE (RFC 7986) with a URI or the decoded data of VALUE=BINARY; null for invalid data.
+	 */
+	public function image(Property $property): ?Image {
+		if (self::type($property) !== 'BINARY') {
+			return new Image($this->uri($property), null, $property->parameters);
+		}
+		$data = $this->binary($property);
+		return $data === null ? null : new Image(null, $data, $property->parameters);
 	}
 
 	public function utcOffset(Property $property): ?int {

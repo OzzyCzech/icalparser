@@ -1,0 +1,60 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "itinerary-flight",
+                    "summary": "Flight",
+                    "start": "2026-04-17 08:30:00 UTC",
+                    "end": "2026-04-17 10:30:00 UTC",
+                    "relatedTo": [
+                        "FIRST UID itinerary-flight",
+                        "NEXT UID itinerary-hotel",
+                        "REFID UID itinerary-2026-04-17",
+                        "CONCEPT UID https://example.com/event-types/travel"
+                    ],
+                    "occurrences": [
+                        "2026-04-17 08:30:00 UTC – 2026-04-17 10:30:00 UTC"
+                    ]
+                },
+                {
+                    "type": "VTODO",
+                    "uid": "paint-the-room",
+                    "summary": "Paint the room",
+                    "start": "2026-03-02 08:00:00 UTC",
+                    "end": "2026-03-03 16:00:00 UTC",
+                    "relatedTo": [
+                        "FINISHTOSTART UID lay-the-carpet GAP P1D"
+                    ],
+                    "links": [
+                        "SOURCE URI https://example.com/events",
+                        "https://example.com/linkrel/derivedFrom URI https://example.com/tasks/01234567-abcd1234.ics",
+                        "https://example.com/linkrel/costStructure XML-REFERENCE https://example.com/xmlDocs/bidFramework.xml#xpointer(descendant::CostStruc/range-to(following::CostStrucEND[1]))",
+                        "next UID lay-the-carpet"
+                    ],
+                    "occurrences": [
+                        "2026-03-02 08:00:00 UTC – 2026-03-03 16:00:00 UTC"
+                    ]
+                },
+                {
+                    "type": "VTODO",
+                    "uid": "lay-the-carpet",
+                    "summary": "Lay the carpet",
+                    "start": "2026-03-05 08:00:00 UTC",
+                    "end": "2026-03-05 16:00:00 UTC",
+                    "relatedTo": [
+                        "PARENT UID paint-the-room",
+                        "DEPENDS-ON UID paint-the-room",
+                        "STARTTOFINISH URI https://example.com/caldav/user/jb/cal/19960401-080045-4000F192713.ics",
+                        "FINISHTOFINISH UID electrical-work GAP -PT4H"
+                    ],
+                    "occurrences": [
+                        "2026-03-05 08:00:00 UTC – 2026-03-05 16:00:00 UTC"
+                    ]
+                }
+            ]
+        }
+    ]
+}

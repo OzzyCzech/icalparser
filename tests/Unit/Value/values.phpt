@@ -168,3 +168,52 @@ test('TZID parameters use the timezone resolver of the calendar', function () {
 	Assert::true($values->dateTime(property('DTSTART;TZID=Nowhere/Nothing:20261010T100000'))->isFloating());
 	Assert::null($values->timezone('Nowhere/Nothing'));
 });
+
+test('Default types of RFC 7986 properties', function () {
+	$values = new ValueParser();
+	Assert::same('https://example.com/a.png', $values->value(property('IMAGE:https://example.com/a.png')));
+	Assert::same('https://example.com/a.png', $values->value(property('IMAGE;VALUE=URI;DISPLAY=BADGE:https://example.com/a.png')));
+	Assert::same('hello', $values->value(property('IMAGE;ENCODING=BASE64;VALUE=BINARY;FMTTYPE=image/png:aGVsbG8=')));
+	Assert::same('tel:+1-412-555-0123,,,654321', $values->value(property('CONFERENCE:tel:+1-412-555-0123,,,654321')));
+	Assert::same('xmpp:chat-123@conference.example.com', $values->value(property('CONFERENCE;VALUE=URI;FEATURE=CHAT:xmpp:chat-123@conference.example.com')));
+	Assert::same('https://example.com/holidays.ics', $values->value(property('SOURCE:https://example.com/holidays.ics')));
+	Assert::same('https://example.com/holidays.ics', $values->value(property('SOURCE;VALUE=URI:https://example.com/holidays.ics')));
+	Assert::same('P7D', Duration::format($values->value(property('REFRESH-INTERVAL:P1W'))));
+	Assert::same('PT12H', Duration::format($values->value(property('REFRESH-INTERVAL;VALUE=DURATION:PT12H'))));
+	Assert::same('turquoise', $values->value(property('COLOR:turquoise')), 'COLOR is TEXT');
+	Assert::same('Holidays', $values->value(property('NAME:Holidays')), 'NAME is TEXT');
+	Assert::same('P1W', $values->value(property('REFRESH-INTERVAL;VALUE=TEXT:P1W')), 'the VALUE parameter takes precedence');
+});
+
+test('ACKNOWLEDGED is a DATE-TIME (RFC 9074)', function () {
+	$values = new ValueParser();
+	$acknowledged = $values->value(property('ACKNOWLEDGED:20090604T084500Z'));
+	Assert::type(DateTimeValue::class, $acknowledged);
+	Assert::true($acknowledged->isUtc());
+	Assert::true($values->value(property('ACKNOWLEDGED:20090604T084500'))->isFloating(), 'a local time is read, the Validator reports it');
+	Assert::null($values->value(property('ACKNOWLEDGED:yesterday')));
+	Assert::exception(fn() => (new ValueParser(strict: true))->value(property('ACKNOWLEDGED:yesterday')), InvalidValueException::class);
+});
+
+test('LINK, CONCEPT and REFID (RFC 9253)', function () {
+	$values = new ValueParser();
+	Assert::same('URI', ValueParser::type(property('LINK;LINKREL=SOURCE:https://example.com/events')));
+	Assert::same('https://example.com/events', $values->value(property('LINK;LINKREL=SOURCE:https://example.com/events')));
+	Assert::same('https://example.com/events', $values->value(property('LINK;LINKREL=SOURCE;VALUE=URI:https://example.com/events')));
+	Assert::same('https://example.com/bid.xml#xpointer(descendant::CostStruc)', $values->value(property('LINK;LINKREL="https://example.com/linkrel/costStructure";VALUE=XML-REFERENCE:https://example.com/bid.xml#xpointer(descendant::CostStruc)')));
+	Assert::same('event-1, part 2', $values->value(property('LINK;LINKREL=next;VALUE=UID:event-1\, part 2')), 'a UID is TEXT');
+	Assert::same('see; also', $values->value(property('LINK;VALUE=TEXT:see\; also')));
+	Assert::same('https://example.com/event-types/arts/music', $values->value(property('CONCEPT:https://example.com/event-types/arts/music')));
+	Assert::same('TEXT', ValueParser::type(property('REFID:itinerary-2014-11-17')));
+	Assert::same('itinerary-2014-11-17', $values->value(property('REFID:itinerary-2014-11-17')));
+});
+
+test('Invalid values of RFC 7986 properties', function () {
+	$values = new ValueParser();
+	$strict = new ValueParser(strict: true);
+	foreach (['REFRESH-INTERVAL:weekly', 'REFRESH-INTERVAL;VALUE=DURATION:1W', 'IMAGE;ENCODING=BASE64;VALUE=BINARY:***'] as $line) {
+		Assert::null($values->value(property($line)), $line);
+		Assert::same('value.invalid', $values->diagnose(property($line))[0][0] ?? null, $line);
+		Assert::exception(fn() => $strict->value(property($line)), InvalidValueException::class);
+	}
+});

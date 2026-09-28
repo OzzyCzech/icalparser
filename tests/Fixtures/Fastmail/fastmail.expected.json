@@ -16,7 +16,7 @@
                         "FREQ=WEEKLY;COUNT=4;BYDAY=SA"
                     ],
                     "alarms": [
-                        "DISPLAY -PT30M"
+                        "DISPLAY -PT30M uid alarm-1"
                     ],
                     "x-properties": [
                         "X-JMAP-LOCATIONID",

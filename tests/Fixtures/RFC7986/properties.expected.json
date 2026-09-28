@@ -1,0 +1,75 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "name": "Holidays and meetings",
+            "color": "turquoise",
+            "source": "https://example.com/holidays.ics",
+            "refreshInterval": "P7D",
+            "images": [
+                "https://example.com/images/logo.png BADGE image/png",
+                "https://example.com/images/weather-cloudy.png BADGE,THUMBNAIL image/png"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "rfc7986-party",
+                    "summary": "Summer party",
+                    "start": "2026-07-10 18:00:00 UTC",
+                    "end": "2026-07-10 23:00:00 UTC",
+                    "color": "tomato",
+                    "images": [
+                        "http://example.com/images/party.png BADGE image/png",
+                        "https://example.com/images/party-large.jpg FULLSIZE",
+                        "binary, 42 bytes THUMBNAIL image/gif"
+                    ],
+                    "occurrences": [
+                        "2026-07-10 18:00:00 UTC – 2026-07-10 23:00:00 UTC"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "rfc7986-conference",
+                    "summary": "Planning call",
+                    "start": "2026-01-15 15:00:00 UTC",
+                    "end": "2026-01-15 16:00:00 UTC",
+                    "conferences": [
+                        "tel:+1-412-555-0123,,,654321 PHONE,MODERATOR \"Moderator dial-in\"",
+                        "tel:+1-412-555-0123,,,555123 PHONE \"Attendee dial-in\"",
+                        "tel:+1-888-555-0456,,,555123 PHONE \"Attendee dial-in\"",
+                        "xmpp:chat-123@conference.example.com CHAT \"Chat room\"",
+                        "https://chat.example.com/audio?id=123456 AUDIO,VIDEO \"Attendee dial-in\"",
+                        "https://video-chat.example.com/;group-id=1234 VIDEO \"Web video chat, access code=76543\""
+                    ],
+                    "occurrences": [
+                        "2026-01-15 15:00:00 UTC – 2026-01-15 16:00:00 UTC"
+                    ]
+                },
+                {
+                    "type": "VTODO",
+                    "uid": "rfc7986-task",
+                    "summary": "Book the venue",
+                    "end": "2026-01-20 (date)",
+                    "color": "navy",
+                    "conferences": [
+                        "xmpp:venue@conference.example.com CHAT"
+                    ]
+                },
+                {
+                    "type": "VJOURNAL",
+                    "uid": "rfc7986-journal",
+                    "summary": "Notes",
+                    "start": "2026-01-11 (date)",
+                    "end": "2026-01-11 (date)",
+                    "color": "DarkGreen",
+                    "images": [
+                        "https://example.com/images/whiteboard.jpg BADGE"
+                    ],
+                    "occurrences": [
+                        "2026-01-11 (date) – 2026-01-11 (date)"
+                    ]
+                }
+            ]
+        }
+    ]
+}

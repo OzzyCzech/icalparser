@@ -1,0 +1,38 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "timezones": [
+                "America/New_York => America/New_York (VTimezone)"
+            ],
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "123456",
+                    "summary": "Beethoven Piano Sonatas",
+                    "start": "2020-03-15 15:00:00 -04:00 (America/New_York = America/New_York)",
+                    "end": "2020-03-15 16:30:00 -04:00 (America/New_York = America/New_York)",
+                    "images": [
+                        "http://example.com/images/concert.png BADGE image/png"
+                    ],
+                    "locations": [
+                        "123456-abcdef-98765432 The venue (arena)",
+                        "123456-abcdef-87654321 Parking for the venue (parking)"
+                    ],
+                    "occurrences": [
+                        "2020-03-15 15:00:00 -04:00 (America/New_York = America/New_York) – 2020-03-15 16:30:00 -04:00 (America/New_York = America/New_York)"
+                    ]
+                },
+                {
+                    "type": "VTODO",
+                    "uid": "move-the-piano",
+                    "summary": "Move the piano",
+                    "end": "2020-03-15 12:00:00 -04:00 (America/New_York = America/New_York)",
+                    "locations": [
+                        "warehouse Warehouse (industrial, storage)"
+                    ]
+                }
+            ]
+        }
+    ]
+}
