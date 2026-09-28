@@ -46,12 +46,12 @@ foreach ($calendar->occurrencesBetween($from, $to) as $occurrence) {
 
 Events, tasks (`todos()`), journal entries (`journals()`) and free/busy components (`freeBusy()`) have typed getters:
 `uid()`, `summary()`, `description()`, `location()`, `start()`, `end()`, `duration()`, `status()`, `categories()`,
-`organizer()`, `attendees()`, `alarms()`, `recurrenceRule()`, `color()`, `images()` and more (see
-[the getters of RFC 7986, RFC 9073, RFC 9074 and RFC 9253](docs/values.md#properties-of-the-rfc-5545-updates)). Any property, including unknown ones, is available too:
+`organizer()`, `attendees()`, `alarms()`, `recurrenceRule()`, `color()`, `images()` and more, see
+[reading calendars](docs/reading.md). Any property, including unknown ones, is available too:
 
 ```php
 $event->property('X-APPLE-STRUCTURED-LOCATION')?->parameter('X-TITLE');
-$event->value('X-MICROSOFT-CDO-BUSYSTATUS'); // typed value, see docs/values.md
+$event->value('X-MICROSOFT-CDO-BUSYSTATUS'); // the typed value
 ```
 
 ### Dates and times
@@ -117,7 +117,7 @@ foreach (ICal::stream('huge.ics') as $item) { // events, tasks, ... one by one, 
 }
 ```
 
-### Writing
+### Creating calendars
 
 ```php
 use om\ICal\Alarm;
@@ -140,7 +140,7 @@ echo $calendar->serialize(); // or $calendar->writeFile('team.ics')
 
 Values are formatted and escaped, UID, DTSTAMP and a VTIMEZONE for every timezone used are added, invalid
 combinations are rejected. Parsed calendars are serialized with all their properties, lines are folded at
-75 octets.
+75 octets. See [creating calendars](docs/creating.md).
 
 ## Examples
 

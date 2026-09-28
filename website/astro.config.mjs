@@ -17,11 +17,12 @@ export default defineConfig({
 				{
 					label: 'Guides',
 					items: [
-						{ label: 'Parsing', link: '/parsing/' },
+						{ label: 'Reading calendars', link: '/reading/' },
 						{ label: 'Values and timezones', link: '/values/' },
 						{ label: 'Recurrence', link: '/recurrence/' },
-						{ label: 'Validation', link: '/validation/' },
 						{ label: 'Creating calendars', link: '/creating/' },
+						{ label: 'Parsing and limits', link: '/parsing/' },
+						{ label: 'Validation', link: '/validation/' },
 					],
 				},
 				{

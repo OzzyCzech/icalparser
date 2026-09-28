@@ -33,8 +33,8 @@ occurrences and the RDATE values, minus EXDATE values, sorted and without duplic
 
 `om\RRule\Rule` validates every rule part: FREQ (SECONDLY to YEARLY), INTERVAL, COUNT, UNTIL,
 BYSECOND, BYMINUTE, BYHOUR, BYDAY (with ordinals), BYMONTHDAY, BYYEARDAY, BYWEEKNO, BYMONTH,
-BYSETPOS and WKST, and RSCALE, SKIP and leap months (`BYMONTH=5L`) of RFC 7529. `om\RRule\Expander` generates timestamps: every FREQ period is expanded to
-candidate days and times, the BY parts filter them (covering the "expand" and "limit" columns of
+BYSETPOS and WKST, and RSCALE, SKIP and leap months (`BYMONTH=5L`) of RFC 7529.
+`om\RRule\Expander` generates timestamps: every FREQ period is expanded to candidate days and times, the BY parts filter them (covering the "expand" and "limit" columns of
 the RFC table) and BYSETPOS selects from the sorted period.
 
 - calculations use the wall-clock time of DTSTART, so DST changes keep the local time,

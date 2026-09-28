@@ -102,7 +102,7 @@ with a date-time end (and the other way round, also for RDATE, EXDATE, RECURRENC
 to, values out of range, and a property of `properties:` that repeats a single property set by an argument.
 
 ```php
-use om\ICal\Journal;
+use om\ICal\Event;
 use om\ICal\Journal;
 use om\ICal\Todo;
 use om\ICal\Value\DateTimeValue;
