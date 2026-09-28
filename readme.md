@@ -144,6 +144,9 @@ combinations are rejected. Parsed calendars are serialized with all their proper
 
 ## Examples
 
+[Recipes](docs/recipes.md) show common tasks: reading a feed from a URL, events in the viewer's timezone,
+JSON for a web calendar, a filtered copy, a subscription feed, e-mail invitations and checking uploads.
+
 The [examples](examples) directory contains a web page listing upcoming events of a sample calendar
 (`php -S localhost:8000 -t examples`) and command line scripts for streaming, validation and writing.
 

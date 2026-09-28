@@ -23,6 +23,7 @@ export default defineConfig({
 						{ label: 'Creating calendars', link: '/creating/' },
 						{ label: 'Parsing and limits', link: '/parsing/' },
 						{ label: 'Validation', link: '/validation/' },
+						{ label: 'Recipes', link: '/recipes/' },
 					],
 				},
 				{

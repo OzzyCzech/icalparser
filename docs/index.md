@@ -44,6 +44,7 @@ Read on:
 - [Creating calendars](creating.md): events, tasks, alarms and timezones from named arguments
 - [Parsing and limits](parsing.md): strict and permissive mode, warnings, limits, streaming
 - [Validation](validation.md): RFC 5545 checks of a parsed calendar
+- [Recipes](recipes.md): feeds from a URL, the viewer's timezone, JSON, invitations, uploads
 - [API reference](api/index.md): every public class, generated from the source code
 
 The [examples](https://github.com/OzzyCzech/icalparser/tree/main/examples) directory contains a web page and
