@@ -412,10 +412,12 @@ class IcalParser {
 		if (!empty($event['RRULE'])) {
 			try {
 				$rule = isset($meta['rrule']) ? Rule::fromString($meta['rrule']) : Rule::fromArray($event['RRULE']);
+				$rule->assertGregorian(); // another calendar system (RFC 7529) is not expanded
 			} catch (InvalidArgumentException $e) {
 				if ($this->options->strict) {
 					throw $e;
 				}
+				$rule = null;
 			}
 		}
 

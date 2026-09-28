@@ -26,7 +26,8 @@ occurrences and the RDATE values, minus EXDATE values, sorted and without duplic
 - DTSTART is always the first instance, even when it does not match the rule, and counts for COUNT,
 - several RRULE properties are combined (RFC 2445 allowed that, the validator warns),
 - a date-only EXDATE removes all instances of that day,
-- an invalid RRULE is ignored in permissive mode; the item keeps DTSTART and RDATE.
+- an invalid RRULE is ignored in permissive mode; the item keeps DTSTART and RDATE,
+- an RRULE of another calendar system than Gregorian is not expanded (see [calendar systems](#calendar-systems)).
 
 ## Rules
 
@@ -63,6 +64,19 @@ the `SKIP` rule part (together with `RSCALE`) to move such instances instead:
   BYSETPOS, COUNT and UNTIL; instances moved to the same day are one instance,
 - `SKIP` without `RSCALE` is invalid: strict mode throws `InvalidRecurrenceRuleException`
   (`recurrence.skip-without-rscale`), permissive mode ignores `SKIP` with a `value.invalid` warning.
+
+## Calendar systems
+
+Only the Gregorian calendar is supported: rules without `RSCALE` and with `RSCALE=GREGORIAN`.
+Other calendar systems of RFC 7529 (`CHINESE`, `HEBREW`, `ISLAMIC-CIVIL`, `ETHIOPIC`, ...) and leap
+months (`BYMONTH=5L`) would give wrong dates when expanded as Gregorian, so such a rule is not expanded:
+
+- the rule is parsed and available in `recurrenceRules()`, and serialized unchanged,
+- the item keeps DTSTART and RDATE (RFC 7529, section 6: the non-recurring fallback); other RRULE
+  properties of the item are expanded,
+- permissive mode reports a `recurrence.unsupported-rscale` warning with the line and the RSCALE value,
+  strict mode throws `InvalidRecurrenceRuleException` with that code, the validator reports a warning,
+- `Expander` and `RecurrenceSet` throw `InvalidRecurrenceRuleException`; check `Rule::isGregorian()` first.
 
 ## Series
 

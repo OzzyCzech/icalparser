@@ -189,6 +189,27 @@ final readonly class Rule {
 	}
 
 	/**
+	 * Whether the rule uses the Gregorian calendar, the only calendar system the Expander supports:
+	 * no RSCALE or RSCALE=GREGORIAN, and no leap months.
+	 */
+	public function isGregorian(): bool {
+		return ($this->rscale === null || $this->rscale === 'GREGORIAN') && $this->byLeapMonth === [];
+	}
+
+	/**
+	 * @throws InvalidRecurrenceRuleException recurrence.unsupported-rscale for a rule of another calendar system
+	 */
+	public function assertGregorian(): void {
+		if ($this->rscale !== null && $this->rscale !== 'GREGORIAN') {
+			throw InvalidRecurrenceRuleException::create('recurrence.unsupported-rscale', "Unsupported calendar system RSCALE=$this->rscale, the rule is not expanded.");
+		}
+		if ($this->byLeapMonth !== []) {
+			$months = implode(',', array_map(static fn(int $month): string => $month . 'L', $this->byLeapMonth));
+			throw InvalidRecurrenceRuleException::create('recurrence.unsupported-rscale', "Leap months (BYMONTH=$months) are not supported in RSCALE=$this->rscale, the rule is not expanded.");
+		}
+	}
+
+	/**
 	 * Resolve UNTIL to an instant; floating values use the given timezone.
 	 * A date-only UNTIL includes the whole day.
 	 */

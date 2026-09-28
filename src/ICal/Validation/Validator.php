@@ -5,6 +5,7 @@ namespace om\ICal\Validation;
 
 use om\ICal\Calendar;
 use om\ICal\Component;
+use om\ICal\Exception\InvalidRecurrenceRuleException;
 use om\ICal\Exception\ValidationException;
 use om\ICal\Property;
 use om\ICal\Value\DateTimeValue;
@@ -169,6 +170,11 @@ final class Validator {
 			if ($rule->rscale === null && preg_match('/(?:^|;)SKIP=/i', $property->value)) {
 				// the parser ignores SKIP, see ValueParser::recur()
 				$this->issue(Severity::Error, 'recurrence.skip-without-rscale', 'SKIP must not be present without RSCALE (RFC 7529, section 4).', $component, 'RRULE', $property->line, $uid);
+			}
+			try {
+				$rule->assertGregorian();
+			} catch (InvalidRecurrenceRuleException $e) {
+				$this->issue(Severity::Warning, $e->errorCode(), $e->getMessage(), $component, 'RRULE', $property->line, $uid);
 			}
 			if ($rule->count !== null && $rule->until !== null) {
 				$this->issue(Severity::Error, 'recurrence.count-and-until', 'COUNT and UNTIL must not occur together.', $component, 'RRULE', $property->line, $uid);

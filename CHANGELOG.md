@@ -30,6 +30,8 @@ See [UPGRADING.md](UPGRADING.md).
 
 - RFC 5545 recurrence engine `om\RRule\Rule` and `om\RRule\Expander` with all rule parts: `BYSETPOS`, `BYSECOND`,
   `SECONDLY`, negative `BYWEEKNO` and `BYYEARDAY`, `WKST` for weekly intervals, date-only `UNTIL`
+- RFC 7529: `RSCALE` and `SKIP=OMIT|BACKWARD|FORWARD` for `RSCALE=GREGORIAN`; other calendar systems and leap months
+  are not expanded as Gregorian (`recurrence.unsupported-rscale`) (#90)
 - `IcalParser::__construct()` accepts `ParserOptions`; `untilInterval` and `shiftEventDates` now work and new
   options are `now` (reproducible results), `maxOccurrences` and `strict`
 - `DTEND` of events and instances is derived from `DURATION`; all-day events without `DTEND` last one day

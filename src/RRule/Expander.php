@@ -9,6 +9,7 @@ use DateTimeInterface;
 use DateTimeZone;
 use Generator;
 use IteratorAggregate;
+use om\ICal\Exception\InvalidRecurrenceRuleException;
 use om\ICal\Exception\ResourceLimitException;
 
 /**
@@ -81,6 +82,7 @@ final class Expander implements IteratorAggregate {
 	 * @param ?int $horizon additional inclusive end of the expansion (timestamp)
 	 * @param int $limit maximal number of occurrences; exceeding it throws ResourceLimitException
 	 * @param int $maxIterations maximal number of FREQ periods examined; exceeding it throws ResourceLimitException
+	 * @throws InvalidRecurrenceRuleException recurrence.unsupported-rscale for a rule of another calendar system than GREGORIAN
 	 */
 	public function __construct(
 		private readonly Rule $rule,
@@ -89,6 +91,7 @@ final class Expander implements IteratorAggregate {
 		private readonly int $limit = 100000,
 		private readonly int $maxIterations = PHP_INT_MAX,
 	) {
+		$rule->assertGregorian(); // other calendar systems would give wrong dates
 		$timezone = $start->getTimezone();
 		$name = $timezone->getName();
 		if ($name === 'Z' || $name === 'UTC' || $name === 'GMT' || preg_match('/^[+-]\d{2}:\d{2}$/D', $name)) {

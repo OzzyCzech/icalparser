@@ -38,6 +38,7 @@ a `ParseWarning` with a stable `code`, a `message`, the `line` and the `property
 | `timezone.unresolved` | a TZID cannot be resolved, its times stay floating |
 | `value.invalid` | a value does not match its type; it is ignored (`null`), an invalid RRULE makes the item a single one, `SKIP` without `RSCALE` (RFC 7529) is ignored |
 | `value.nonstandard` | a value breaking the RFC was accepted: a date with a `Z` suffix (Google), a date without `VALUE=DATE`, `VALUE=DATE` with a time or `VALUE=DATE-TIME` with a date, a TZID on a UTC time, a PERIOD where it is not allowed (its start is used), `ENCODING=QUOTED-PRINTABLE` of vCalendar 1.0 (decoded) |
+| `recurrence.unsupported-rscale` | an RRULE of another calendar system than GREGORIAN or with a leap month (RFC 7529) is not expanded, the item keeps DTSTART and RDATE |
 | `value.leap-second` | a leap second (allowed by the RFC) was read as second 59, PHP cannot represent it |
 
 Unknown properties, parameters and components are kept. Values of known types are converted during
@@ -61,7 +62,7 @@ All exceptions implement `om\ICal\Exception\ICalException` with `errorCode()`, `
 |-----------|--------|-------|
 | `SyntaxException` | `InvalidArgumentException` | `syntax.*` |
 | `InvalidValueException` | `InvalidArgumentException` | `value.invalid-date-time`, `value.invalid-duration`, `value.invalid-integer`, `value.invalid-float`, `value.invalid-boolean`, `value.invalid-geo`, `value.invalid-binary`, `value.invalid-utc-offset` |
-| `InvalidRecurrenceRuleException` | `InvalidValueException` | `recurrence.invalid-rule`, `recurrence.skip-without-rscale` |
+| `InvalidRecurrenceRuleException` | `InvalidValueException` | `recurrence.invalid-rule`, `recurrence.skip-without-rscale`, `recurrence.unsupported-rscale` |
 | `TimezoneResolutionException` | `RuntimeException` | `timezone.unresolved`, `timezone.floating` |
 | `ResourceLimitException` | `RuntimeException` | `limit.*`, `recurrence.limit`, `recurrence.iterations` |
 | `ValidationException` | `RuntimeException` | codes of the [validator](validation.md) |

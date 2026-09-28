@@ -7,6 +7,7 @@ use DateTime;
 use DateTimeInterface;
 use Generator;
 use IteratorAggregate;
+use om\ICal\Exception\InvalidRecurrenceRuleException;
 use om\ICal\Exception\ResourceLimitException;
 
 /**
@@ -39,6 +40,7 @@ final class RecurrenceSet implements IteratorAggregate {
 	 * @param int $limit maximal number of returned occurrences
 	 * @param bool $strict throw ResourceLimitException instead of stopping at the limit
 	 * @param int $maxIterations see Expander
+	 * @throws InvalidRecurrenceRuleException recurrence.unsupported-rscale for a rule of another calendar system than GREGORIAN
 	 */
 	public function __construct(
 		private readonly DateTimeInterface $start,
@@ -53,6 +55,9 @@ final class RecurrenceSet implements IteratorAggregate {
 		private readonly int $maxIterations = PHP_INT_MAX,
 	) {
 		$this->rules = $rule === null ? [] : ($rule instanceof Rule ? [$rule] : $rule);
+		foreach ($this->rules as $item) {
+			$item->assertGregorian();
+		}
 		$rdates = array_values(array_unique($rdates));
 		sort($rdates);
 		$this->rdates = $rdates;

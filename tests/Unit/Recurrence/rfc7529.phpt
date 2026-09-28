@@ -5,6 +5,7 @@ declare(strict_types=1);
  * Non-Gregorian recurrence rules (RFC 7529): RSCALE, SKIP and leap months.
  */
 
+use om\Freq;
 use om\ICal;
 use om\ICal\Exception\InvalidRecurrenceRuleException;
 use om\ICal\Parser\ParserMode;
@@ -13,6 +14,7 @@ use om\ICal\Validation\Issue;
 use om\ICal\Validation\Validator;
 use om\RRule\Expander;
 use om\RRule\Frequency;
+use om\RRule\RecurrenceSet;
 use om\RRule\Rule;
 use om\RRule\Skip;
 use Tester\Assert;
@@ -224,4 +226,58 @@ test('SKIP of an event', function () {
 	Assert::same(['2026-01-31', '2026-02-28', '2026-03-31'], array_map(fn($occurrence) => $occurrence->start->format('Y-m-d'), $occurrences));
 	Assert::same([], warnings($content));
 	Assert::same([], issues($content));
+});
+
+/**
+ * @return list<string>
+ */
+function days(string $content): array {
+	$occurrences = iterator_to_array(ICal::parse($content)->events()[0]->occurrences(20), false);
+	return array_map(fn($occurrence) => $occurrence->start->format('Y-m-d'), $occurrences);
+}
+
+test('Unsupported RSCALE and leap months are not expanded as Gregorian', function () {
+	$rules = [
+		'RSCALE=CHINESE;FREQ=YEARLY' => 'RSCALE=CHINESE',
+		'RSCALE=HEBREW;FREQ=YEARLY;BYMONTH=5L;BYMONTHDAY=8;SKIP=FORWARD' => 'RSCALE=HEBREW',
+		'RSCALE=CHINESE;FREQ=YEARLY;BYMONTH=5L' => 'RSCALE=CHINESE',
+		'RSCALE=ETHIOPIC;FREQ=MONTHLY;BYMONTH=13' => 'RSCALE=ETHIOPIC',
+		'RSCALE=GREGORIAN;FREQ=YEARLY;BYMONTH=5L' => 'BYMONTH=5L',
+	];
+	foreach ($rules as $rrule => $mentioned) {
+		$content = calendar($rrule, 'DTSTART;VALUE=DATE:20140208', 'RDATE;VALUE=DATE:20150227,20160217');
+		Assert::same(['2014-02-08', '2015-02-27', '2016-02-17'], days($content), "$rrule keeps DTSTART and RDATE");
+
+		$result = ICal::parser()->parse($content);
+		Assert::same(['recurrence.unsupported-rscale@8'], warnings($content), $rrule);
+		Assert::contains($mentioned, $result->warnings()[0]->message);
+		Assert::same('RRULE', $result->warnings()[0]->property);
+		Assert::same(Rule::fromString($rrule)->toString(), $result->calendar()->events()[0]->recurrenceRule()?->toString(), 'the rule is available');
+		Assert::contains("RRULE:$rrule\r\n", $result->calendar()->serialize(), 'the rule is serialized unchanged');
+		Assert::same(['WARNING recurrence.unsupported-rscale'], issues($content), $rrule);
+
+		$exception = Assert::exception(fn() => ICal::parser()->mode(ParserMode::Strict)->parse($content), InvalidRecurrenceRuleException::class);
+		Assert::same('recurrence.unsupported-rscale', $exception->errorCode(), $rrule);
+		Assert::same(8, $exception->line());
+		Assert::same('RRULE', $exception->property());
+		Assert::contains($mentioned, $exception->getMessage());
+	}
+});
+
+test('A rule of another calendar system is rejected by the expander', function () {
+	Assert::true(Rule::fromString('FREQ=YEARLY')->isGregorian());
+	Assert::true(Rule::fromString('FREQ=YEARLY;RSCALE=GREGORIAN;SKIP=FORWARD')->isGregorian());
+	Assert::false(Rule::fromString('FREQ=YEARLY;RSCALE=CHINESE')->isGregorian());
+	Assert::false(Rule::fromString('FREQ=YEARLY;RSCALE=GREGORIAN;BYMONTH=5L')->isGregorian());
+
+	$start = new DateTimeImmutable('2013-02-10', new DateTimeZone('UTC'));
+	$exception = Assert::exception(fn() => new Expander(Rule::fromString('RSCALE=CHINESE;FREQ=YEARLY'), $start), InvalidRecurrenceRuleException::class);
+	Assert::same('recurrence.unsupported-rscale', $exception->errorCode());
+	Assert::exception(fn() => new RecurrenceSet($start, Rule::fromString('RSCALE=CHINESE;FREQ=YEARLY')), InvalidRecurrenceRuleException::class);
+	Assert::exception(fn() => new Freq('RSCALE=CHINESE;FREQ=YEARLY', $start->getTimestamp()), InvalidArgumentException::class);
+});
+
+test('Only the unsupported rule of several is not expanded', function () {
+	$content = calendar('RSCALE=CHINESE;FREQ=YEARLY', 'DTSTART;VALUE=DATE:20260131', 'RRULE:FREQ=MONTHLY;RSCALE=GREGORIAN;SKIP=BACKWARD;COUNT=3');
+	Assert::same(['2026-01-31', '2026-02-28', '2026-03-31'], days($content));
 });

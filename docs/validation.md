@@ -28,6 +28,7 @@ the `property`, the `line` and the `uid`.
 | `recurrence.without-start` | Error | RRULE or RDATE without DTSTART |
 | `recurrence.multiple-rrule` | Warning | more than one RRULE |
 | `recurrence.skip-without-rscale` | Error | SKIP without RSCALE (RFC 7529) |
+| `recurrence.unsupported-rscale` | Warning | an RRULE of another calendar system than GREGORIAN or with a leap month, it is not expanded |
 | `value.invalid` | Error | a value that does not match its type |
 | `timezone.not-defined` | Warning | a TZID without a VTIMEZONE definition |
 | `timezone.unresolved` | Warning | a TZID that cannot be resolved |

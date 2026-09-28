@@ -80,6 +80,14 @@ test('#90 SKIP of RFC 7529 moves instances on invalid days', function () {
 	Assert::same($expected, legacy('issue-90-rscale-skip.ics', 'Y-m-d'));
 });
 
+test('#90 rules of other calendar systems are not expanded as Gregorian', function () {
+	$expected = ['2013-02-10', '2014-02-08', '2015-02-27', '2016-02-17'];
+	Assert::same($expected, modern('issue-90-unsupported-rscale.ics', 'Y-m-d'));
+	Assert::same($expected, legacy('issue-90-unsupported-rscale.ics', 'Y-m-d'));
+	$warnings = array_map(fn($warning) => $warning->code . '@' . $warning->line, ICal::parser()->parseFile(REGRESSION . 'issue-90-unsupported-rscale.ics')->warnings());
+	Assert::same(['recurrence.unsupported-rscale@8', 'recurrence.unsupported-rscale@15'], $warnings);
+});
+
 test('#63 getEvents() returns a sortable list', function () {
 	$parser = new IcalParser();
 	$parser->parseFile(REGRESSION . 'issue-82-utc-z.ics');

@@ -1,0 +1,44 @@
+{
+    "warnings": [
+        "line 8: Unsupported calendar system RSCALE=CHINESE, the rule is not expanded. [recurrence.unsupported-rscale]",
+        "line 15: Unsupported calendar system RSCALE=HEBREW, the rule is not expanded. [recurrence.unsupported-rscale]"
+    ],
+    "calendars": [
+        {
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "chinese-new-year",
+                    "summary": "Chinese New Year (RFC 7529, section 4.3.1)",
+                    "start": "2013-02-10 (date)",
+                    "end": "2013-02-11 (date)",
+                    "rrules": [
+                        "FREQ=YEARLY;RSCALE=CHINESE"
+                    ],
+                    "occurrences": [
+                        "2013-02-10 (date) – 2013-02-11 (date)"
+                    ]
+                },
+                {
+                    "type": "VEVENT",
+                    "uid": "hebrew-anniversary",
+                    "summary": "Anniversary (RFC 7529, section 4.3.3)",
+                    "start": "2014-02-08 (date)",
+                    "end": "2014-02-09 (date)",
+                    "rrules": [
+                        "FREQ=YEARLY;RSCALE=HEBREW;BYMONTHDAY=8;BYMONTH=5L;SKIP=FORWARD"
+                    ],
+                    "occurrences": [
+                        "2014-02-08 (date) – 2014-02-09 (date)",
+                        "2015-02-27 (date) – 2015-02-28 (date)",
+                        "2016-02-17 (date) – 2016-02-18 (date)"
+                    ]
+                }
+            ],
+            "issues": [
+                "WARNING VEVENT.RRULE (line 8): Unsupported calendar system RSCALE=CHINESE, the rule is not expanded. [recurrence.unsupported-rscale]",
+                "WARNING VEVENT.RRULE (line 15): Unsupported calendar system RSCALE=HEBREW, the rule is not expanded. [recurrence.unsupported-rscale]"
+            ]
+        }
+    ]
+}
