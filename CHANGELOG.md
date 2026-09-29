@@ -1,10 +1,11 @@
 # Changelog
 
-## 5.0.0 (unreleased)
+## 5.0.0 (2026-09-29)
 
-Version 5 adds a new, layered API (`om\ICal`) and keeps the array based API of version 4 (`IcalParser`, `EventsList`,
-`Freq`, `Recurrence`, `ParserOptions`) with the shape of its data, now deprecated and to be removed in 5.5 at the latest. Both use a new recurrence engine and
-content line parser, which fixes many bugs; the results of affected calendars differ from 4.x.
+Version 5 adds a new, layered API (`om\ICal`) for reading and creating calendars and keeps the array based API of
+version 4 (`IcalParser`, `EventsList`, `Freq`, `Recurrence`, `ParserOptions`) with the shape of its data, now deprecated
+and to be removed in 5.5 at the latest. Both use a new recurrence engine and content line parser, which fixes many bugs;
+the results of affected calendars differ from 4.x.
 See [UPGRADING.md](UPGRADING.md). The fixes of 4.1.4 (#37, #88) are included.
 
 ### New API
@@ -24,7 +25,8 @@ See [UPGRADING.md](UPGRADING.md). The fixes of 4.1.4 (#37, #88) are included.
 - vCalendar 1.0 `ENCODING=QUOTED-PRINTABLE` text values are decoded (with a warning), as by `IcalParser`
 - exceptions with error code, line, property and raw value (`SyntaxException`, `InvalidValueException`,
   `InvalidRecurrenceRuleException`, `TimezoneResolutionException`, `ResourceLimitException`, `ValidationException`)
-- documentation in `docs/`, examples in `examples/`
+- documentation at [ozzyczech.github.io/icalparser](https://ozzyczech.github.io/icalparser/) (guides, recipes and
+  the API reference), examples in `examples/`
 - default value types of RFC 7986, RFC 9074 and RFC 9253 properties: `IMAGE`, `CONFERENCE`, `SOURCE`, `LINK` and
   `CONCEPT` are URIs, `REFRESH-INTERVAL` is a `DURATION`, `ACKNOWLEDGED` is a `DATE-TIME` (the `Validator` reports a
   non-UTC value); `VALUE=UID` and `VALUE=XML-REFERENCE` of RFC 9253 (#91)
@@ -80,8 +82,8 @@ See [UPGRADING.md](UPGRADING.md). The fixes of 4.1.4 (#37, #88) are included.
 
 ### Fixed
 
-- VTIMEZONE rules with `UNTIL` are compared in UTC: definitions east of UTC whose daylight saving time ended (e.g. Europe/Moscow
-  before 2011) are resolved again, west of UTC no transition after `UNTIL` is kept (#110)
+- VTIMEZONE rules with `UNTIL` are compared in UTC: definitions east of UTC whose daylight saving time ended
+  (e.g. Europe/Moscow before 2011) are resolved again, west of UTC no transition after `UNTIL` is kept (#110)
 - `RDATE` without `RRULE` no longer fails with `TypeError` and adds no yearly occurrences (#37, also in 4.1.4)
 - `RDATE` values are always part of the recurrence set (one was lost together with `COUNT`)
 - a `RECURRENCE-ID` replaces only the matching instance of the same UID, compared as an instant in any timezone
