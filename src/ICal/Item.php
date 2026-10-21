@@ -287,10 +287,33 @@ abstract class Item {
 	/**
 	 * Components modifying instances of this recurring item.
 	 *
+	 * Of several revisions of one instance, only the one with the highest SEQUENCE is returned,
+	 * the later one in the calendar when they are equal (RFC 5545, section 3.8.7.4).
+	 *
 	 * @return list<Item>
 	 */
 	public function overrides(): array {
-		return $this->overrides;
+		return $this->remember('overrides', function (): array {
+			$start = $this->start();
+			if ($start === null || count($this->overrides) < 2) {
+				return $this->overrides;
+			}
+			// the instance is matched as by the expansion: an instant, or a day for a date in a timed series
+			$space = new TimeSpace($start);
+			$current = [];
+			foreach ($this->overrides as $override) {
+				$id = $override->recurrenceId();
+				if ($id === null) {
+					$current[] = $override;
+					continue;
+				}
+				$key = $id->isDate() && !$start->isDate() ? 'day ' . $id->format('Ymd') : 'at ' . $space->toBase($id);
+				if (!isset($current[$key]) || $override->sequence() >= $current[$key]->sequence()) {
+					$current[$key] = $override;
+				}
+			}
+			return array_values($current);
+		});
 	}
 
 	/**
@@ -338,7 +361,7 @@ abstract class Item {
 		// overrides: single ones replace their instance, RANGE=THISANDFUTURE ones also change later instances
 		$singles = $replaced = $replacedDays = $ranges = [];
 		$earliest = 0; // the largest shift of a range to an earlier time, in seconds
-		foreach ($this->overrides as $override) {
+		foreach ($this->overrides() as $override) {
 			$id = $override->recurrenceId();
 			if ($id === null) {
 				continue;

@@ -136,6 +136,22 @@ test('Review: instances moved into the window by THISANDFUTURE and the order of 
 	Assert::same(['01-01 10:00', '01-02 10:00', '01-03 15:00 *', '01-04 12:00 *'], series($mixed, '', '', 'm-d H:i', 4, '2026-01-01'));
 });
 
+test('Revisions of an overridden instance: the highest SEQUENCE wins, the later one when equal', function () {
+	$expected = ['2026-01-01 14:00', '2026-01-02 13:00', '2026-01-03 15:00'];
+	Assert::same($expected, modern('duplicate-override-sequence.ics'));
+	Assert::same($expected, legacy('duplicate-override-sequence.ics'));
+	Assert::count(3, ICal::parseFile(REGRESSION . 'duplicate-override-sequence.ics')->events()[0]->overrides());
+
+	// the new API compares the RECURRENCE-IDs as instants, also of THISANDFUTURE overrides
+	$base = "BEGIN:VEVENT\r\nUID:s\r\nDTSTART:20260101T100000Z\r\nRRULE:FREQ=DAILY;COUNT=3\r\nEND:VEVENT\r\n";
+	$zoned = $base . "BEGIN:VEVENT\r\nUID:s\r\nRECURRENCE-ID;TZID=Europe/Prague:20260101T110000\r\nDTSTART:20260101T140000Z\r\nSEQUENCE:2\r\nEND:VEVENT\r\n"
+		. "BEGIN:VEVENT\r\nUID:s\r\nRECURRENCE-ID:20260101T100000Z\r\nDTSTART:20260101T120000Z\r\nSEQUENCE:1\r\nEND:VEVENT";
+	Assert::same(['01-01 14:00 *', '01-02 10:00', '01-03 10:00'], series($zoned, '2026-01-01', '2026-02-01'));
+	$range = $base . "BEGIN:VEVENT\r\nUID:s\r\nRECURRENCE-ID;RANGE=THISANDFUTURE:20260102T100000Z\r\nDTSTART:20260102T140000Z\r\nSEQUENCE:2\r\nEND:VEVENT\r\n"
+		. "BEGIN:VEVENT\r\nUID:s\r\nRECURRENCE-ID;RANGE=THISANDFUTURE:20260102T100000Z\r\nDTSTART:20260102T120000Z\r\nSEQUENCE:1\r\nEND:VEVENT";
+	Assert::same(['01-01 10:00', '01-02 14:00 *', '01-03 14:00 *'], series($range, '2026-01-01', '2026-02-01'));
+});
+
 test('Review: floating values resolve repeated local times to the first occurrence', function () {
 	$prague = new DateTimeZone('Europe/Prague');
 	Assert::same('+02:00', ICal\Value\DateTimeValue::parse('20261025T023000')->toDateTime($prague)->format('P'));

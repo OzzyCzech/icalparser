@@ -1,0 +1,25 @@
+{
+    "warnings": [],
+    "calendars": [
+        {
+            "items": [
+                {
+                    "type": "VEVENT",
+                    "uid": "series",
+                    "summary": "Daily",
+                    "start": "2026-01-01 10:00:00 UTC",
+                    "end": "2026-01-01 11:00:00 UTC",
+                    "rrules": [
+                        "FREQ=DAILY;COUNT=3"
+                    ],
+                    "overrides": 3,
+                    "occurrences": [
+                        "2026-01-01 14:00:00 UTC – 2026-01-01 15:00:00 UTC [Higher sequence first]",
+                        "2026-01-02 13:00:00 UTC – 2026-01-02 14:00:00 UTC [Equal sequence last]",
+                        "2026-01-03 15:00:00 UTC – 2026-01-03 16:00:00 UTC [Sequence 1]"
+                    ]
+                }
+            ]
+        }
+    ]
+}

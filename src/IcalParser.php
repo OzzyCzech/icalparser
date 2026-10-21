@@ -61,9 +61,10 @@ class IcalParser {
 	private array $meta = [];
 
 	/**
-	 * Overridden instances (VEVENT with RECURRENCE-ID) by UID.
+	 * Overridden instances (VEVENT with RECURRENCE-ID) by UID and RECURRENCE-ID,
+	 * with the counter of the current revision.
 	 *
-	 * @var array<string, list<array{value: string, timezone: ?DateTimeZone}>>
+	 * @var array<string, array<array-key, array{value: string, timezone: ?DateTimeZone, counter: int}>>
 	 */
 	private array $overrides = [];
 
@@ -265,11 +266,16 @@ class IcalParser {
 	 *
 	 * Every instance has DTEND: from DTEND, from DURATION, or one day for all-day
 	 * events (RFC 5545, section 3.6.1). Recurring instances also carry RECURRING
-	 * and RECURRENCE_INSTANCE (zero based).
+	 * and RECURRENCE_INSTANCE (zero based). Of several revisions of an overridden
+	 * instance (same UID and RECURRENCE-ID), only the one with the highest SEQUENCE is returned.
 	 */
 	public function getEvents(): EventsList {
 		$events = new EventsList();
 		foreach ($this->data['VEVENT'] ?? [] as $counter => $event) {
+			if (isset($event['UID'], $event['RECURRENCE-ID']) && is_string($event['RECURRENCE-ID'])
+				&& ($this->overrides[$event['UID']][$event['RECURRENCE-ID']]['counter'] ?? $counter) !== $counter) {
+				continue; // a superseded revision
+			}
 			$start = $event['DTSTART'] ?? null;
 			if (!isset($event['RECURRENCES']) || !$start instanceof DateTimeInterface) {
 				if (!array_key_exists('DTEND', $event) && $start instanceof DateTimeInterface
@@ -373,10 +379,17 @@ class IcalParser {
 		if (!isset($event['RECURRENCE-ID'], $event['UID']) || !is_string($event['RECURRENCE-ID'])) {
 			return;
 		}
+		// of several revisions of one instance, the highest SEQUENCE wins, the later one when they are equal
+		// (RFC 5545, section 3.8.7.4); unlike the new API, the RECURRENCE-ID is compared as written
+		$previous = $this->overrides[$event['UID']][$event['RECURRENCE-ID']]['counter'] ?? null;
+		if ($previous !== null && (int) ($event['SEQUENCE'] ?? 0) < (int) ($this->data['VEVENT'][$previous]['SEQUENCE'] ?? 0)) {
+			return;
+		}
 		$this->data['_RECURRENCE_IDS'][$event['UID']][$event['RECURRENCE-ID']] = $event;
-		$this->overrides[$event['UID']][] = [
+		$this->overrides[$event['UID']][$event['RECURRENCE-ID']] = [
 			'value' => $event['RECURRENCE-ID'],
 			'timezone' => $this->meta['VEVENT'][$counter]['recurrenceIdTimezone'] ?? null,
+			'counter' => $counter,
 		];
 	}
 

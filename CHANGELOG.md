@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- of several revisions of an overridden instance (the same UID and `RECURRENCE-ID`), only the one with the highest
+  `SEQUENCE` is used, the later one when they are equal; all of them were returned as occurrences
+  (`IcalParser` compares the `RECURRENCE-ID` as written, `Item::overrides()` returns the current revisions)
+
 ## 5.0.0 (2026-09-29)
 
 Version 5 adds a new, layered API (`om\ICal`) for reading and creating calendars and keeps the array based API of
