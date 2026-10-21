@@ -285,35 +285,51 @@ abstract class Item {
 	}
 
 	/**
-	 * Components modifying instances of this recurring item.
+	 * Components modifying instances of this recurring item, in the order of the calendar.
 	 *
-	 * Of several revisions of one instance, only the one with the highest SEQUENCE is returned,
-	 * the later one in the calendar when they are equal (RFC 5545, section 3.8.7.4).
+	 * Of several revisions of one instance, only the current one is returned (see currentRevisions()).
 	 *
 	 * @return list<Item>
 	 */
 	public function overrides(): array {
-		return $this->remember('overrides', function (): array {
-			$start = $this->start();
-			if ($start === null || count($this->overrides) < 2) {
-				return $this->overrides;
+		return $this->remember('overrides', fn(): array => self::currentRevisions($this->overrides, $this->start()));
+	}
+
+	/**
+	 * Overrides without their superseded revisions: of several with the same RECURRENCE-ID and RANGE,
+	 * the one with the highest SEQUENCE (RFC 5545, section 3.8.7.4) is kept, the later one when they are equal.
+	 *
+	 * @param list<Item> $overrides of one UID
+	 * @param ?DateTimeValue $start DTSTART of the recurring item, the first RECURRENCE-ID without it
+	 * @return list<Item>
+	 * @internal used by Calendar
+	 */
+	public static function currentRevisions(array $overrides, ?DateTimeValue $start = null): array {
+		if (count($overrides) < 2) {
+			return $overrides;
+		}
+		$current = $superseded = [];
+		$space = null;
+		foreach ($overrides as $index => $override) {
+			$id = $override->recurrenceId();
+			if ($id === null) {
+				continue;
 			}
+			$start ??= $id;
+			$space ??= new TimeSpace($start);
 			// the instance is matched as by the expansion: an instant, or a day for a date in a timed series
-			$space = new TimeSpace($start);
-			$current = [];
-			foreach ($this->overrides as $override) {
-				$id = $override->recurrenceId();
-				if ($id === null) {
-					$current[] = $override;
+			$key = ($override->isThisAndFuture() ? 'range ' : '')
+				. ($id->isDate() && !$start->isDate() ? 'day ' . $id->format('Ymd') : 'at ' . $space->toBase($id));
+			if (isset($current[$key])) {
+				$loser = $override->sequence() >= $overrides[$current[$key]]->sequence() ? $current[$key] : $index;
+				$superseded[$loser] = true;
+				if ($loser === $index) {
 					continue;
 				}
-				$key = $id->isDate() && !$start->isDate() ? 'day ' . $id->format('Ymd') : 'at ' . $space->toBase($id);
-				if (!isset($current[$key]) || $override->sequence() >= $current[$key]->sequence()) {
-					$current[$key] = $override;
-				}
 			}
-			return array_values($current);
-		});
+			$current[$key] = $index;
+		}
+		return $superseded === [] ? $overrides : array_values(array_diff_key($overrides, $superseded));
 	}
 
 	/**

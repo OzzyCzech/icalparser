@@ -4,9 +4,10 @@
 
 ### Fixed
 
-- of several revisions of an overridden instance (the same UID and `RECURRENCE-ID`), only the one with the highest
-  `SEQUENCE` is used, the later one when they are equal; all of them were returned as occurrences
-  (`IcalParser` compares the `RECURRENCE-ID` as written, `Item::overrides()` returns the current revisions)
+- of several revisions of an overridden instance (the same UID, `RECURRENCE-ID` and `RANGE`), only the one with the
+  highest `SEQUENCE` is used, the later one when they are equal, also without the recurring item; all of them were
+  returned as occurrences (`IcalParser` compares the `RECURRENCE-ID` as written with its `TZID`,
+  `Item::overrides()` returns the current revisions)
 
 ## 5.0.0 (2026-09-29)
 
