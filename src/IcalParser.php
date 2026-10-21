@@ -61,9 +61,10 @@ class IcalParser {
 	private array $meta = [];
 
 	/**
-	 * Overridden instances (VEVENT with RECURRENCE-ID) by UID.
+	 * Overridden instances (VEVENT with RECURRENCE-ID) by UID and RANGE, TZID and RECURRENCE-ID,
+	 * with the counter of the current revision.
 	 *
-	 * @var array<string, list<array{value: string, timezone: ?DateTimeZone}>>
+	 * @var array<string, array<string, array{value: string, timezone: ?DateTimeZone, counter: int}>>
 	 */
 	private array $overrides = [];
 
@@ -265,11 +266,15 @@ class IcalParser {
 	 *
 	 * Every instance has DTEND: from DTEND, from DURATION, or one day for all-day
 	 * events (RFC 5545, section 3.6.1). Recurring instances also carry RECURRING
-	 * and RECURRENCE_INSTANCE (zero based).
+	 * and RECURRENCE_INSTANCE (zero based). Of several revisions of an overridden
+	 * instance (same UID and RECURRENCE-ID), only the one with the highest SEQUENCE is returned.
 	 */
 	public function getEvents(): EventsList {
 		$events = new EventsList();
 		foreach ($this->data['VEVENT'] ?? [] as $counter => $event) {
+			if (isset($this->meta['VEVENT'][$counter]['superseded'])) {
+				continue; // an older revision of an override
+			}
 			$start = $event['DTSTART'] ?? null;
 			if (!isset($event['RECURRENCES']) || !$start instanceof DateTimeInterface) {
 				if (!array_key_exists('DTEND', $event) && $start instanceof DateTimeInterface
@@ -364,6 +369,9 @@ class IcalParser {
 				if (($params['TZID'] ?? null) instanceof DateTimeZone) {
 					$this->meta[$section][$counter]['recurrenceIdTimezone'] = $params['TZID'];
 				}
+				if (is_string($params['RANGE'] ?? null) && strtoupper($params['RANGE']) === 'THISANDFUTURE') {
+					$this->meta[$section][$counter]['thisAndFuture'] = true;
+				}
 				break;
 		}
 	}
@@ -373,11 +381,32 @@ class IcalParser {
 		if (!isset($event['RECURRENCE-ID'], $event['UID']) || !is_string($event['RECURRENCE-ID'])) {
 			return;
 		}
+		$meta = $this->meta['VEVENT'][$counter] ?? [];
+		$timezone = $meta['recurrenceIdTimezone'] ?? null;
+
+		// of several revisions of one instance, the one with the highest SEQUENCE (RFC 5545, section 3.8.7.4)
+		// is kept, the later one when they are equal; unlike the new API, the RECURRENCE-ID is compared as written
+		$key = (empty($meta['thisAndFuture']) ? '' : 'range ') . $timezone?->getName() . ':' . $event['RECURRENCE-ID'];
+		$previous = $this->overrides[$event['UID']][$key]['counter'] ?? null;
+		if ($previous !== null) {
+			$loser = self::sequence($event) >= self::sequence($this->data['VEVENT'][$previous] ?? []) ? $previous : $counter;
+			$this->meta['VEVENT'][$loser]['superseded'] = true;
+			if ($loser === $counter) {
+				return;
+			}
+		}
 		$this->data['_RECURRENCE_IDS'][$event['UID']][$event['RECURRENCE-ID']] = $event;
-		$this->overrides[$event['UID']][] = [
-			'value' => $event['RECURRENCE-ID'],
-			'timezone' => $this->meta['VEVENT'][$counter]['recurrenceIdTimezone'] ?? null,
-		];
+		$this->overrides[$event['UID']][$key] = ['value' => $event['RECURRENCE-ID'], 'timezone' => $timezone, 'counter' => $counter];
+	}
+
+	/**
+	 * SEQUENCE of a component, 0 when missing or invalid (as in the new API).
+	 *
+	 * @param array<string, mixed> $event
+	 */
+	private static function sequence(array $event): int {
+		$value = is_string($event['SEQUENCE'] ?? null) ? trim($event['SEQUENCE']) : '';
+		return preg_match('/^[+-]?\d{1,18}$/D', $value) ? (int) $value : 0;
 	}
 
 	private function expandRecurringEvents(): void {

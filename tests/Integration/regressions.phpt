@@ -136,6 +136,60 @@ test('Review: instances moved into the window by THISANDFUTURE and the order of 
 	Assert::same(['01-01 10:00', '01-02 10:00', '01-03 15:00 *', '01-04 12:00 *'], series($mixed, '', '', 'm-d H:i', 4, '2026-01-01'));
 });
 
+test('Revisions of an overridden instance: the highest SEQUENCE wins, the later one when equal', function () {
+	$expected = ['2026-01-01 14:00', '2026-01-02 13:00', '2026-01-03 15:00'];
+	Assert::same($expected, modern('duplicate-override-sequence.ics'));
+	Assert::same($expected, legacy('duplicate-override-sequence.ics'));
+	Assert::count(3, ICal::parseFile(REGRESSION . 'duplicate-override-sequence.ics')->events()[0]->overrides());
+
+	// the new API compares the RECURRENCE-IDs as instants, also of THISANDFUTURE overrides
+	$base = "BEGIN:VEVENT\r\nUID:s\r\nDTSTART:20260101T100000Z\r\nRRULE:FREQ=DAILY;COUNT=3\r\nEND:VEVENT\r\n";
+	$zoned = $base . "BEGIN:VEVENT\r\nUID:s\r\nRECURRENCE-ID;TZID=Europe/Prague:20260101T110000\r\nDTSTART:20260101T140000Z\r\nSEQUENCE:2\r\nEND:VEVENT\r\n"
+		. "BEGIN:VEVENT\r\nUID:s\r\nRECURRENCE-ID:20260101T100000Z\r\nDTSTART:20260101T120000Z\r\nSEQUENCE:1\r\nEND:VEVENT";
+	Assert::same(['01-01 14:00 *', '01-02 10:00', '01-03 10:00'], series($zoned, '2026-01-01', '2026-02-01'));
+	$range = $base . "BEGIN:VEVENT\r\nUID:s\r\nRECURRENCE-ID;RANGE=THISANDFUTURE:20260102T100000Z\r\nDTSTART:20260102T140000Z\r\nSEQUENCE:2\r\nEND:VEVENT\r\n"
+		. "BEGIN:VEVENT\r\nUID:s\r\nRECURRENCE-ID;RANGE=THISANDFUTURE:20260102T100000Z\r\nDTSTART:20260102T120000Z\r\nSEQUENCE:1\r\nEND:VEVENT";
+	Assert::same(['01-01 10:00', '01-02 14:00 *', '01-03 14:00 *'], series($range, '2026-01-01', '2026-02-01'));
+});
+
+test('Review: revisions of an override are told apart by RANGE and TZID, also without a master', function () {
+	$legacy = function (string $lines): array {
+		$parser = new IcalParser();
+		$parser->parseString("BEGIN:VCALENDAR\r\n" . $lines . "\r\nEND:VCALENDAR\r\n");
+		return array_map(fn($event) => $event['DTSTART']->format('m-d H:i') . ' ' . ($event['SUMMARY'] ?? ''), $parser->getEvents()->sorted()->getArrayCopy());
+	};
+	$override = fn(string $id, string $start, string $more = '') => "BEGIN:VEVENT\r\nUID:s\r\nRECURRENCE-ID$id\r\nDTSTART:$start\r\n{$more}END:VEVENT";
+
+	// THISANDFUTURE changes the later instances, the single override with the same RECURRENCE-ID only its own
+	$daily = "BEGIN:VEVENT\r\nUID:s\r\nDTSTART:20260101T100000Z\r\nRRULE:FREQ=DAILY;COUNT=4\r\nEND:VEVENT\r\n";
+	$range = $daily . $override(';RANGE=THISANDFUTURE:20260102T100000Z', '20260102T150000Z', "SEQUENCE:1\r\n") . "\r\n" . $override(':20260102T100000Z', '20260102T170000Z', "SEQUENCE:2\r\n");
+	Assert::same(['01-01 10:00', '01-02 17:00 *', '01-03 15:00 *', '01-04 15:00 *'], series($range, '2026-01-01', '2026-02-01'));
+
+	// the same local time in another timezone is another instance
+	$hourly = "BEGIN:VEVENT\r\nUID:s\r\nDTSTART:20260101T100000Z\r\nRRULE:FREQ=HOURLY;COUNT=3\r\nEND:VEVENT\r\n";
+	$zones = $hourly . $override(';TZID=Europe/Prague:20260101T120000', '20260101T150000Z') . "\r\n" . $override(';TZID=Europe/London:20260101T120000', '20260101T160000Z');
+	Assert::same(['01-01 10:00', '01-01 15:00 *', '01-01 16:00 *'], series($zones, '2026-01-01', '2026-02-01'));
+	Assert::same(['01-01 10:00 ', '01-01 15:00 ', '01-01 16:00 '], $legacy($zones));
+
+	// overrides without their recurring item
+	$orphans = $override(':20260102T100000Z', '20260102T120000Z', "SEQUENCE:2\r\nSUMMARY:New\r\n") . "\r\n" . $override(':20260102T100000Z', '20260102T100000Z', "SEQUENCE:1\r\nSUMMARY:Old\r\n");
+	Assert::same(['New'], array_map(fn($event) => $event->summary(), ICal::parse("BEGIN:VCALENDAR\r\n$orphans\r\nEND:VCALENDAR")->events()));
+	Assert::same(['01-02 12:00 New'], $legacy($orphans));
+
+	// a task without DTSTART, the order of the overrides is kept
+	$todo = "BEGIN:VTODO\r\nUID:t\r\nDUE:20260101T100000Z\r\nRRULE:FREQ=DAILY;COUNT=2\r\nEND:VTODO\r\n"
+		. "BEGIN:VTODO\r\nUID:t\r\nRECURRENCE-ID:20260101T100000Z\r\nSEQUENCE:1\r\nEND:VTODO\r\nBEGIN:VTODO\r\nUID:t\r\nRECURRENCE-ID:20260101T100000Z\r\nSEQUENCE:2\r\nEND:VTODO";
+	Assert::count(1, ICal::parse("BEGIN:VCALENDAR\r\n$todo\r\nEND:VCALENDAR")->todos()[0]->overrides());
+	$ordered = $daily . $override(':20260101T100000Z', '20260101T120000Z', "SEQUENCE:1\r\nSUMMARY:X\r\n") . "\r\n" . $override(':20260102T100000Z', '20260102T120000Z', "SUMMARY:Y\r\n")
+		. "\r\n" . $override(':20260101T100000Z', '20260101T130000Z', "SEQUENCE:2\r\nSUMMARY:X2\r\n");
+	Assert::same(['Y', 'X2'], array_map(fn($item) => $item->summary(), ICal::parse("BEGIN:VCALENDAR\r\n$ordered\r\nEND:VCALENDAR")->events()[0]->overrides()));
+
+	// an invalid SEQUENCE is 0 in both APIs
+	$invalid = $daily . $override(':20260101T100000Z', '20260101T120000Z', "SEQUENCE:2x\r\nSUMMARY:A\r\n") . "\r\n" . $override(':20260101T100000Z', '20260101T130000Z', "SEQUENCE:1\r\nSUMMARY:B\r\n");
+	Assert::same(['01-01 13:00 *', '01-02 10:00', '01-03 10:00', '01-04 10:00'], series($invalid, '2026-01-01', '2026-02-01'));
+	Assert::same('01-01 13:00 B', $legacy($invalid)[0]);
+});
+
 test('Review: floating values resolve repeated local times to the first occurrence', function () {
 	$prague = new DateTimeZone('Europe/Prague');
 	Assert::same('+02:00', ICal\Value\DateTimeValue::parse('20261025T023000')->toDateTime($prague)->format('P'));

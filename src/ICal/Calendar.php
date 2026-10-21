@@ -323,9 +323,8 @@ final class Calendar {
 		}
 		// overrides without a recurring item are single items
 		foreach ($overrides as $orphans) {
-			foreach ($orphans as $component) {
-				$items[] = new $class($component, $this);
-			}
+			$orphans = array_map(fn(Component $component): Item => new $class($component, $this), $orphans);
+			array_push($items, ...Item::currentRevisions($orphans));
 		}
 		return $this->items[$name] = $items;
 	}

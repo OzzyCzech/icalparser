@@ -90,6 +90,8 @@ starting at that time (compared as an instant in any timezone, or as a day for d
   changes like the one of the override (also over DST changes) and they get its duration; an
   override without DTSTART keeps the time and duration of the instances,
 - a moved instance may move into the window from outside of it, in both directions,
+- of several revisions of one instance, the override with the highest SEQUENCE applies, the later one
+  when they are equal,
 - an override without its recurring item is a single item.
 
 ## Durations
