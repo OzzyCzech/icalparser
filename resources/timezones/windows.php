@@ -8,6 +8,7 @@ declare(strict_types=1);
 return [
 	'Afghanistan Standard Time' => 'Asia/Kabul',
 	'Alaskan Standard Time' => 'America/Anchorage',
+	'Alberta Standard Time' => 'America/Edmonton',
 	'Aleutian Standard Time' => 'America/Adak',
 	'Altai Standard Time' => 'Asia/Barnaul',
 	'Arab Standard Time' => 'Asia/Riyadh',
@@ -25,6 +26,7 @@ return [
 	'Bangladesh Standard Time' => 'Asia/Dhaka',
 	'Belarus Standard Time' => 'Europe/Minsk',
 	'Bougainville Standard Time' => 'Pacific/Bougainville',
+	'British Columbia Standard Time' => 'America/Vancouver',
 	'Canada Central Standard Time' => 'America/Regina',
 	'Cape Verde Standard Time' => 'Atlantic/Cape_Verde',
 	'Caucasus Standard Time' => 'Asia/Yerevan',
@@ -70,6 +72,7 @@ return [
 	'Lord Howe Standard Time' => 'Australia/Lord_Howe',
 	'Magadan Standard Time' => 'Asia/Magadan',
 	'Magallanes Standard Time' => 'America/Punta_Arenas',
+	'Manitoba Standard Time' => 'America/Winnipeg',
 	'Marquesas Standard Time' => 'Pacific/Marquesas',
 	'Mauritius Standard Time' => 'Indian/Mauritius',
 	'Middle East Standard Time' => 'Asia/Beirut',
