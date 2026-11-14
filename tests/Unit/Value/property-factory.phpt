@@ -31,7 +31,7 @@ function line(Property $property): string {
 test('A DateTimeInterface with a named timezone keeps its local time and gets a TZID', function () {
 	$prague = new DateTimeImmutable('2026-01-05 09:30', new DateTimeZone('Europe/Prague'));
 	Assert::same('DTSTART;TZID=Europe/Prague:20260105T093000', line(PropertyFactory::dateTime('DTSTART', $prague)));
-	Assert::same('DTSTART;TZID=US/Eastern:20260105T093000', line(PropertyFactory::dateTime('dtstart', new DateTime('2026-01-05 09:30', new DateTimeZone('US/Eastern')))));
+	Assert::same('DTSTART;TZID=America/New_York:20260105T093000', line(PropertyFactory::dateTime('dtstart', new DateTime('2026-01-05 09:30', new DateTimeZone('America/New_York')))));
 });
 
 test('UTC is written with Z, offsets and abbreviations are converted to UTC', function () {

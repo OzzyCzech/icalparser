@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 /**
  * Timezone names used by Outlook, Exchange and other programs that are not in CLDR,
- * mapped to IANA timezones. Maintained by hand; bin/timezones.php updates renamed zones.
+ * mapped to IANA timezones. Maintained by hand; bin/timezones.php updates renamed and old zones.
  */
 return [
 	'(UTC-12:00) International Date Line West' => 'Etc/GMT+12',
@@ -29,7 +29,7 @@ return [
 	'Eastern Time' => 'America/New_York',
 	'(UTC-05:00) Eastern Time (US and Canada)' => 'America/New_York',
 	'(UTC-05:00) Eastern Time (US & Canada)' => 'America/New_York',
-	'(UTC-05:00) Indiana (East)' => 'America/Indianapolis',
+	'(UTC-05:00) Indiana (East)' => 'America/Indiana/Indianapolis',
 	'(UTC-04:30) Caracas' => 'America/Caracas',
 	'(UTC-04:00) Asuncion' => 'America/Asuncion',
 	'(UTC-04:00) Atlantic Time (Canada)' => 'America/Halifax',
@@ -38,9 +38,9 @@ return [
 	'(UTC-04:00) Santiago' => 'America/Santiago',
 	'(UTC-03:30) Newfoundland' => 'America/St_Johns',
 	'(UTC-03:00) Brasilia' => 'America/Sao_Paulo',
-	'(UTC-03:00) Buenos Aires' => 'America/Buenos_Aires',
+	'(UTC-03:00) Buenos Aires' => 'America/Argentina/Buenos_Aires',
 	'(UTC-03:00) Cayenne, Fortaleza' => 'America/Cayenne',
-	'(UTC-03:00) Greenland' => 'America/Godthab',
+	'(UTC-03:00) Greenland' => 'America/Nuuk',
 	'(UTC-03:00) Montevideo' => 'America/Montevideo',
 	'(UTC-02:00) Coordinated Universal Time -02' => 'Etc/GMT+2',
 	'(UTC-01:00) Azores' => 'Atlantic/Azores',
@@ -62,7 +62,7 @@ return [
 	'(UTC+02:00) Cairo' => 'Africa/Cairo',
 	'(UTC+02:00) Damascus' => 'Asia/Damascus',
 	'(UTC+02:00) Harare, Pretoria' => 'Africa/Johannesburg',
-	'(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius' => 'Europe/Kiev',
+	'(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius' => 'Europe/Kyiv',
 	'(UTC+02:00) Istanbul' => 'Europe/Istanbul',
 	'(UTC+02:00) Jerusalem' => 'Asia/Jerusalem',
 	'(UTC+02:00) Amman' => 'Asia/Amman',
@@ -80,13 +80,13 @@ return [
 	'(UTC+04:30) Kabul' => 'Asia/Kabul',
 	'(UTC+05:00) Tashkent' => 'Asia/Tashkent',
 	'(UTC+05:00) Islamabad, Karachi' => 'Asia/Karachi',
-	'(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi' => 'Asia/Calcutta',
+	'(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi' => 'Asia/Kolkata',
 	'(UTC+05:30) Sri Jayawardenepura' => 'Asia/Colombo',
-	'(UTC+05:45) Kathmandu' => 'Asia/Katmandu',
+	'(UTC+05:45) Kathmandu' => 'Asia/Kathmandu',
 	'(UTC+06:00) Astana' => 'Asia/Almaty',
 	'(UTC+06:00) Dhaka' => 'Asia/Dhaka',
 	'(UTC+06:00) Ekaterinburg' => 'Asia/Yekaterinburg',
-	'(UTC+06:30) Yangon (Rangoon)' => 'Asia/Rangoon',
+	'(UTC+06:30) Yangon (Rangoon)' => 'Asia/Yangon',
 	'(UTC+07:00) Bangkok, Hanoi, Jakarta' => 'Asia/Bangkok',
 	'(UTC+07:00) Novosibirsk' => 'Asia/Novosibirsk',
 	'(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi' => 'Asia/Shanghai',
